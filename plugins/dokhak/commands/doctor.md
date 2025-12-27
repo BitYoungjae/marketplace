@@ -1,7 +1,5 @@
 ---
-description: >
-  Diagnose project structure health and interactively fix issues.
-  Checks required files, cross-file consistency, and completion status sync.
+description: "Diagnose project structure health and interactively fix issues. Checks required files, cross-file consistency, and completion status sync."
 allowed-tools: Read, Write, Edit, Grep, Glob, Bash(wc:*), Bash(ls:*), AskUserQuestion
 argument-hint: "[--auto | --check]"
 model: haiku

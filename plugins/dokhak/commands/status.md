@@ -1,7 +1,5 @@
 ---
-description: >
-  Show project progress and statistics. Displays completion percentage,
-  Part/Chapter breakdown, and next pending tasks.
+description: "Show project progress and statistics. Displays completion percentage, Part/Chapter breakdown, and next pending tasks."
 allowed-tools: Read, Grep, Glob, Bash(grep:*), Bash(head:*), Bash(wc:*)
 model: haiku
 ---

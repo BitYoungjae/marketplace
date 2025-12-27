@@ -1,7 +1,5 @@
 ---
-description: >
-  Add a new chapter to plan.md and task.md. Calculates next chapter number,
-  creates section placeholders, and updates task checklist.
+description: "Add a new chapter to plan.md and task.md. Calculates next chapter number, creates section placeholders, and updates task checklist."
 allowed-tools: Read, Write, Edit, Grep, Glob
 argument-hint: "<chapter-title> [--part <part-number>] [--pages <number>]"
 model: haiku

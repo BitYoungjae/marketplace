@@ -1,8 +1,5 @@
 ---
-description: >
-  Initialize a new learning resource project through interactive interview.
-  Creates plan.md, task.md, persona.md, project-context.md, interview-data.md, and CLAUDE.md.
-  Supports multiple domains: technology, history, science, arts, and general.
+description: "Initialize a new learning resource project through interactive interview. Creates plan.md, task.md, persona.md, project-context.md, interview-data.md, and CLAUDE.md. Supports multiple domains: technology, history, science, arts, and general."
 allowed-tools: Read, Write, Edit, Bash, Glob, WebSearch, WebFetch, Task, AskUserQuestion
 argument-hint: ""
 model: opus

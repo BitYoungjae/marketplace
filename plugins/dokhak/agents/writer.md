@@ -1,10 +1,6 @@
 ---
 name: writer
-description: >
-  Writes learning documents based on research results and project context.
-  Adapts writing style based on domain (technology, history, science, arts, general).
-  Use when you have gathered research and need to produce the actual document.
-  Writes files directly, returns only completion summary.
+description: "Writes learning documents based on research results and project context. Adapts writing style based on domain (technology, history, science, arts, general). Use when you have gathered research and need to produce the actual document. Writes files directly, returns only completion summary."
 tools: Read, Write, Edit, WebSearch, WebFetch
 model: opus
 permissionMode: acceptEdits

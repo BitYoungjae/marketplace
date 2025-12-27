@@ -1,9 +1,5 @@
 ---
-description: >
-  Continue writing multiple sections in current session.
-  Uses researcher->writer->reviewer pipeline for each section.
-  Supports domain-adaptive content generation (technology, history, science, arts, general).
-  Respects session boundaries in task.md.
+description: "Continue writing multiple sections in current session. Uses researcher->writer->reviewer pipeline for each section. Supports domain-adaptive content generation (technology, history, science, arts, general). Respects session boundaries in task.md."
 allowed-tools: Read, Grep, Glob, Task, Edit
 argument-hint: "[count] [--skip-review]"
 model: opus

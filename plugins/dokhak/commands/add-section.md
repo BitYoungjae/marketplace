@@ -1,7 +1,5 @@
 ---
-description: >
-  Add a new section to an existing chapter. Calculates section number (e.g., 5.4),
-  adds subtopic placeholders to plan.md, and updates task.md checklist.
+description: "Add a new section to an existing chapter. Calculates section number (e.g., 5.4), adds subtopic placeholders to plan.md, and updates task.md checklist."
 allowed-tools: Read, Write, Edit, Grep, Glob
 argument-hint: "<section-title> --chapter <chapter-number> [--pages <number>]"
 model: haiku

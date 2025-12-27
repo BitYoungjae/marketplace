@@ -1,11 +1,6 @@
 ---
 name: research-collector
-description: >
-  Collects and structures web research results for learning resource projects.
-  Use proactively when: gathering official documentation URLs, finding learning
-  paths/roadmaps, collecting core concepts for a topic, or starting a new
-  self-learning project. Adapts search strategy based on domain (technology, history, science, arts, general).
-  Returns structured XML+Markdown summary to minimize context usage.
+description: "Collects and structures web research results for learning resource projects. Use proactively when: gathering official documentation URLs, finding learning paths/roadmaps, collecting core concepts for a topic, or starting a new self-learning project. Adapts search strategy based on domain (technology, history, science, arts, general). Returns structured XML+Markdown summary to minimize context usage."
 tools: WebSearch, WebFetch, Read, Write
 model: haiku
 permissionMode: acceptEdits

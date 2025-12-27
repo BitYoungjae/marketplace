@@ -1,10 +1,6 @@
 ---
 name: reviewer
-description: >
-  Reviews written document for quality and consistency.
-  Checks page count, writer identity alignment, adjacent section coherence,
-  code policy, and terminology. Returns structured XML feedback.
-  Use after writer completes a section to ensure quality standards.
+description: "Reviews written document for quality and consistency. Checks page count, writer identity alignment, adjacent section coherence, code policy, and terminology. Returns structured XML feedback. Use after writer completes a section to ensure quality standards."
 tools: Read, Grep, Glob
 model: haiku
 permissionMode: default

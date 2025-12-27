@@ -1,8 +1,5 @@
 ---
-description: >
-  Write the next document section using researcher->writer->reviewer pipeline.
-  Identifies next incomplete task, gathers research, writes document, and reviews quality.
-  Supports domain-adaptive content generation (technology, history, science, arts, general).
+description: "Write the next document section using researcher->writer->reviewer pipeline. Identifies next incomplete task, gathers research, writes document, and reviews quality. Supports domain-adaptive content generation (technology, history, science, arts, general)."
 allowed-tools: Read, Grep, Glob, Task, Edit
 argument-hint: "[section-id] [--skip-review]"
 model: opus

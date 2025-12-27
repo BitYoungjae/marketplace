@@ -1,10 +1,6 @@
 ---
 name: structure-designer
-description: >
-  Designs learning resource structure (Part/Chapter/Section hierarchy) and
-  creates plan.md/task.md files. Use when: creating plan.md structure, allocating
-  pages per section, designing curriculum flow, or setting up session-based task
-  distribution. Automatically loads project-scaffolder skill for templates.
+description: "Designs learning resource structure (Part/Chapter/Section hierarchy) and creates plan.md/task.md files. Use when: creating plan.md structure, allocating pages per section, designing curriculum flow, or setting up session-based task distribution. Automatically loads project-scaffolder skill for templates."
 tools: Read, Write, Edit, Glob, Grep
 model: opus
 skills: project-scaffolder

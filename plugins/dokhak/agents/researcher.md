@@ -1,9 +1,6 @@
 ---
 name: researcher
-description: >
-  Gathers and synthesizes information for learning document writing.
-  Returns structured XML+Markdown summary. Use when preparing educational content.
-  Adapts search strategy based on domain (technology, history, science, arts, general).
+description: "Gathers and synthesizes information for learning document writing. Returns structured XML+Markdown summary. Use when preparing educational content. Adapts search strategy based on domain (technology, history, science, arts, general)."
 tools: WebSearch, WebFetch, Read
 model: haiku
 permissionMode: acceptEdits
