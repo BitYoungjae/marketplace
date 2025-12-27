@@ -1,0 +1,35 @@
+# Claude Code local settings
+.claude/
+
+# Generated projects (user-created learning materials)
+projects/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Editor directories and files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+*.sublime-workspace
+*.sublime-project
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+*.bak
+
+# Node.js (in case of future tooling)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

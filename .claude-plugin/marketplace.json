@@ -1,0 +1,21 @@
+{
+  "name": "bityoungjae-marketplace",
+  "description": "BitYoungjae's Claude Code plugin marketplace",
+  "owner": {
+    "name": "BitYoungjae",
+    "email": "bityoungjae@gmail.com"
+  },
+  "plugins": [
+    {
+      "name": "dokhak",
+      "source": "./plugins/dokhak",
+      "description": "A Claude Code plugin for creating comprehensive self-learning resources. Automates the entire workflow from project scaffolding to document generation.",
+      "version": "1.4.0",
+      "author": {
+        "name": "BitYoungjae",
+        "email": "bityoungjae@gmail.com"
+      },
+      "keywords": ["self-learning", "documentation", "tutorial", "guide", "독학"]
+    }
+  ]
+}
