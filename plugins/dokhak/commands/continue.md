@@ -1,5 +1,5 @@
 ---
-description: "Continue writing multiple sections in current session. Uses researcher->writer->reviewer pipeline for each section. Supports domain-adaptive content generation (technology, history, science, arts, general). Respects session boundaries in task.md."
+description: "Continue writing multiple sections. Uses researcher->writer->reviewer pipeline for each section. Supports domain-adaptive content generation (technology, history, science, arts, general)."
 allowed-tools: Read, Grep, Glob, Task, Edit
 argument-hint: "[count] [--skip-review]"
 model: opus
@@ -7,7 +7,7 @@ model: opus
 
 # Continue Session
 
-Write the next N sections (default: 3) or until session boundary.
+Write the next N incomplete sections (default: 3).
 
 ## Context Files
 
@@ -31,11 +31,7 @@ skip_review = $ARGUMENTS.includes("--skip-review")
 
 ### 2. Read task.md and Extract Domain
 
-Read task.md and identify:
-
-- All incomplete sections (`[ ]` items)
-- Session boundary markers (`<!-- Session N: ... -->`)
-- Current session number
+Read task.md and identify all incomplete sections (`[ ]` items).
 
 Read persona.md and extract domain information:
 
@@ -48,9 +44,8 @@ Domain values: technology, history, science, arts, general
 
 Create a queue of sections to write:
 
-1. Start from first `[ ]` item
-2. Stop at session boundary marker or when queue reaches `count`
-3. Extract section IDs and titles for each queued item
+1. Collect first `count` incomplete (`[ ]`) items from task.md
+2. Extract section IDs and titles for each queued item
 
 ### 4. Execute Write Loop
 
@@ -64,79 +59,72 @@ for (i = 1; i <= queue.length; i++) {
   // Progress report
   "📝 [{i}/{queue.length}] Starting: {section.title} (domain: {domain})"
 
+  // Generate paths
+  research_dir = ".research/sections/{section.id}-{slugified_title}/"
+
+  // Check existing research (Glob for existence only)
+  existing_research = Glob("{research_dir}research.md") exists ? true : false
+
   // Research Phase
   Task(
-    subagent_type="researcher",
+    subagent_type="dokhak:researcher",
     model="haiku",
     description="Research for {section.title}",
     prompt="""
-      Research the following topic for a learning document.
-
-      ## Topic
-      {section.title}
-
-      ## Domain
-      {domain}
-
-      ## Subtopics to Cover
-      {section.subtopics}
-
-      ## Target Audience
-      Based on project context: {audience_level}
-
-      ## Instructions
-      - Follow domain-specific search strategy
-      - For technology: Find code examples, official docs
-      - For history: Find primary sources, timelines
-      - For science: Find equations, experimental data
-      - For arts: Find visual examples, techniques
-      - Keep output under 1000 tokens
-      - Return structured XML+Markdown format with domain-specific sections
+      <research_request>
+        <section>
+          <id>{section.id}</id>
+          <slug>{slugified_title}</slug>
+          <title>{section.title}</title>
+        </section>
+        <subtopics>
+          <subtopic>{subtopic 1}</subtopic>
+          <subtopic>{subtopic 2}</subtopic>
+        </subtopics>
+        <domain>{domain}</domain>
+        <output_dir>{research_dir}</output_dir>
+        <existing_research>{existing_research}</existing_research>
+      </research_request>
     """
   )
+  // Agent returns: "research_saved:{research_dir}\nsources:N\nsubtopics_covered:X/Y"
 
-  // Writing Phase
+  // Writing Phase - Pass FILE PATHS only
   Task(
-    subagent_type="writer",
+    subagent_type="dokhak:writer",
     model="opus",
     description="Write {section.title}",
     prompt="""
-      ## Persona
-      {full content of persona.md}
+      <writing_request>
+        <section>
+          <title>{section.title}</title>
+          <page_count>{section.pages}</page_count>
+          <subtopics>
+            <subtopic>{subtopic 1}</subtopic>
+            <subtopic>{subtopic 2}</subtopic>
+          </subtopics>
+        </section>
+        <domain>{domain}</domain>
+        <output_path>docs/{section.id}-{slugified_title}.md</output_path>
+      </writing_request>
 
-      ## Project Context
-      {full content of project-context.md}
+      <context_files>
+        <persona_path>persona.md</persona_path>
+        <project_context_path>project-context.md</project_context_path>
+        <research_path>{research_dir}research.md</research_path>
+        <sources_path>{research_dir}sources.md</sources_path>
+        <init_summary_path>.research/init/summary.md</init_summary_path>
+      </context_files>
 
-      ## Domain
-      {domain}
-
-      ## Section Information
-      - Title: {section.title}
-      - Section ID: {section.id}
-      - Pages: {section.pages}
-      - Subtopics: {section.subtopics}
-
-      ## Research Results
-      {research_result}
-
-      ## Output Path
-      Write to: docs/{section.id}-{slugified_title}.md
-
-      ## Instructions
-      - Adopt the persona completely
-      - Match the project's language
-      - Respect the page count (1 page ≈ 50-70 lines, excluding frontmatter)
-      - Apply domain-specific writing style
-      - Follow Domain Guidelines from persona.md
-      - Structure is YOUR decision based on content
-      - Write the file directly using Write tool
+      Read the context files above. Write the section following persona voice.
     """
   )
+  // Agent returns: "document_written:{path}\nlines:{count}"
 
   // Review Phase (if skip_review is false)
   if (!skip_review) {
     Task(
-      subagent_type="reviewer",
+      subagent_type="dokhak:reviewer",
       model="haiku",
       description="Review {section.title}",
       prompt="""
@@ -149,36 +137,31 @@ for (i = 1; i <= queue.length; i++) {
       """
     )
 
-    // Revision Phase (if needed)
+    // Revision Phase (if needed) - Pass FILE PATHS only
     if (review_result.status == "NEEDS_REVISION") {
       Task(
-        subagent_type="writer",
+        subagent_type="dokhak:writer",
         model="opus",
         description="Revise {section.title}",
         prompt="""
-          ## Persona
-          {full content of persona.md}
+          <revision_request>
+            <document_path>docs/{section.id}-{slugified_title}.md</document_path>
+            <domain>{domain}</domain>
+            <review_feedback>
+              {revision_suggestions from review_result}
+            </review_feedback>
+          </revision_request>
 
-          ## Project Context
-          {full content of project-context.md}
+          <context_files>
+            <persona_path>persona.md</persona_path>
+            <project_context_path>project-context.md</project_context_path>
+          </context_files>
 
-          ## Domain
-          {domain}
-
-          ## Original Document
-          {content of docs/{section.id}-{slugified_title}.md}
-
-          ## Review Feedback
-          {revision_suggestions from review_result}
-
-          ## Instructions
-          - Focus ONLY on the issues listed in revision suggestions
-          - Do NOT rewrite the entire document
-          - Apply fixes for high-priority items first
-          - Maintain existing structure and voice
-          - Write the revised file directly using Write tool
+          Read the document and context files. Apply the review feedback.
+          Focus ONLY on issues in feedback. Maintain structure and voice.
         """
       )
+      // Agent returns: "document_written:{path}\nlines:{count}"
       review_status = "REVISED"
     } else {
       review_status = "PASS"
@@ -198,13 +181,7 @@ for (i = 1; i <= queue.length; i++) {
 Stop the loop when ANY of these occur:
 
 1. **Count reached**: Completed `count` sections
-2. **Session boundary**: Encountered `<!-- Session N: ... -->` marker
-3. **Queue empty**: No more incomplete sections
-
-When stopping at session boundary:
-```
-"⏸ Session boundary reached. Next session: {next_session_title}"
-```
+2. **Queue empty**: No more incomplete sections
 
 ## Output
 

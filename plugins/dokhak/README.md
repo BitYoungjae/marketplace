@@ -283,6 +283,12 @@ your-project/
 ├── task.md              # Checklist with session markers
 ├── project-context.md   # Research and environment info
 ├── CLAUDE.md            # Project guidelines for Claude
+├── .research/           # Research cache (auto-generated)
+│   ├── init/            # Initial research from /init
+│   │   ├── summary.md   # Structured research summary
+│   │   └── sources.md   # Source registry with reliability
+│   └── sections/        # Section-specific research
+│       └── {XX-Y-slug}/ # Research per section
 └── docs/                # Generated documents
     ├── 01-1-introduction.md
     ├── 01-2-getting-started.md
@@ -304,7 +310,8 @@ dokhak/
 ├── skills/
 │   ├── project-scaffolder/   # Project setup templates
 │   ├── project-interview/    # Interview flow and questions
-│   └── domain-profiles/      # Domain-specific strategies
+│   ├── domain-profiles/      # Domain-specific strategies
+│   └── research-storage/     # Research file storage conventions
 └── agents/
     ├── project-interviewer.md  # Interview agent (opus)
     ├── researcher.md           # Research gathering (haiku)

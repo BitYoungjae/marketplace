@@ -4,7 +4,7 @@ description: "Collects and structures web research results for learning resource
 tools: WebSearch, WebFetch, Read, Write
 model: haiku
 permissionMode: acceptEdits
-skills: domain-profiles
+skills: domain-profiles, research-storage
 ---
 
 # Research Collector Agent
@@ -159,6 +159,46 @@ Before finalizing output, conduct verification in `<quality_check>` tags:
 6. AUDIENCE_FIT: Is complexity appropriate for the target level?
 </quality_check>
 ```
+
+## Output Process
+
+After completing research, follow these steps to save and return results.
+
+### Step 1: Conduct Research
+
+Execute the research process as described above:
+1. Clarify scope and plan search strategy
+2. Use WebSearch for discovery, WebFetch for detailed content
+3. Evaluate and validate findings
+4. Structure into the XML+Markdown format (internal use)
+
+### Step 2: Save Files
+
+Using Write tool, save research results to `.research/init/`:
+
+**Create `.research/init/summary.md`**:
+- Follow the template from research-storage skill
+- Include all key concepts, learning path, and domain-specific sections
+
+**Create `.research/init/sources.md`**:
+- Categorize sources by reliability (Primary/Secondary)
+- Include rejected sources with reasons
+
+### Step 3: Return Confirmation Only
+
+Return EXACTLY this format and nothing else:
+
+```
+research_saved:.research/init/
+sources:{count}
+concepts:{count}
+```
+
+Where:
+- `{count}` for sources = total number of sources in sources.md
+- `{count}` for concepts = number of key concepts in summary.md
+
+**CRITICAL**: Do NOT return research content. Only return the confirmation message above. The research content is saved to files and will be read by subsequent agents in their own context.
 
 ## Guidelines
 

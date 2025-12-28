@@ -3,7 +3,7 @@ name: structure-designer
 description: "Designs learning resource structure (Part/Chapter/Section hierarchy) and creates plan.md/task.md files. Use when: creating plan.md structure, allocating pages per section, designing curriculum flow, or setting up session-based task distribution. Automatically loads project-scaffolder skill for templates."
 tools: Read, Write, Edit, Glob, Grep
 model: opus
-skills: project-scaffolder
+skills: project-scaffolder, research-storage
 permissionMode: acceptEdits
 ---
 
@@ -23,7 +23,9 @@ Design and create comprehensive learning resource structure files (plan.md, task
 
 ## Input Format
 
-You will receive structure requests containing:
+You will receive structure requests in one of two formats:
+
+### Format A: Inline Research (Legacy)
 
 ```xml
 <structure_request>
@@ -37,6 +39,59 @@ You will receive structure requests containing:
   <volume>{small:50p|medium:100p|large:200p}</volume>
 </structure_request>
 ```
+
+### Format B: File Paths (Context-Isolated)
+
+```xml
+<structure_request>
+  <topic>{main topic}</topic>
+  <scope>{coverage boundaries}</scope>
+  <domain>{technology|history|science|arts|general}</domain>
+  <audience>
+    <level>{beginner|intermediate|advanced}</level>
+    <environment>{target environment}</environment>
+  </audience>
+  <volume>{small:50p|medium:100p|large:200p}</volume>
+</structure_request>
+
+<research_files>
+  <summary_path>.research/init/summary.md</summary_path>
+  <sources_path>.research/init/sources.md</sources_path>
+</research_files>
+```
+
+## Input Processing
+
+When you receive `<research_files>` tags (Format B), follow these steps:
+
+### Step 1: Read Research Files
+
+Read the files at the provided paths directly in your context:
+
+```
+Read {summary_path}  → Key concepts, learning path, domain info
+Read {sources_path}  → Source reliability assessment
+```
+
+### Step 2: Extract Structure Insights
+
+From the research data, extract:
+
+1. **Key concepts** → Inform chapter/section organization
+2. **Learning path** → Determine Part/Chapter ordering (prerequisites → fundamentals → core → advanced)
+3. **Source reliability** → Allocate more pages to topics with more authoritative sources
+4. **Domain-specific info** → Align structure with domain conventions
+
+### Step 3: Apply to Structure Design
+
+Use the extracted insights in your Design Process:
+
+- Concepts with more sources get more pages
+- Prerequisites become early chapters
+- Advanced topics come after fundamentals are established
+- Domain-specific sections follow domain-profiles conventions
+
+**Note**: When receiving inline `<research>` (Format A), proceed directly to Design Process.
 
 ## Design Process
 

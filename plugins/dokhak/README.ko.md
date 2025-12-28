@@ -357,6 +357,14 @@ Dokhak은 학습 자료의 분야에 따라 생성 전략을 자동으로 조정
 - `arts.md` - 예술 분야 프로필
 - `language.md` - 일반/언어 분야 프로필
 
+#### research-storage
+
+조사 자료 저장 규약:
+
+- 파일 포맷 템플릿 (summary.md, sources.md, research.md)
+- 디렉토리 구조 및 경로 규칙
+- 조사 재사용을 위한 캐시 관리
+
 ### 플러그인 디렉토리 구조
 
 ```
@@ -372,7 +380,8 @@ dokhak/
 ├── skills/                   # 재사용 가능한 스킬
 │   ├── project-scaffolder/
 │   ├── project-interview/
-│   └── domain-profiles/
+│   ├── domain-profiles/
+│   └── research-storage/
 └── agents/                   # AI 에이전트 정의
     ├── project-interviewer.md
     ├── researcher.md
@@ -396,6 +405,12 @@ your-project/
 ├── task.md              # 작업 체크리스트 (세션 마커 포함)
 ├── project-context.md   # 프로젝트 맥락 및 리서치 결과
 ├── CLAUDE.md            # Claude용 프로젝트 가이드라인
+├── .research/           # 조사 자료 캐시 (자동 생성)
+│   ├── init/            # /init 시 수집된 초기 조사 자료
+│   │   ├── summary.md   # 구조화된 조사 요약
+│   │   └── sources.md   # 출처 목록 및 신뢰도 평가
+│   └── sections/        # 섹션별 조사 자료
+│       └── {XX-Y-slug}/ # 섹션별 조사 결과
 └── docs/                # 생성된 문서들이 저장되는 디렉토리
     ├── 01-1-introduction.md
     ├── 01-2-getting-started.md

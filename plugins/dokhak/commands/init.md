@@ -87,6 +87,7 @@ After the interview completes, execute Phases 2-6 silently in sequence.
 ### Phase 2: Research Collection
 
 Use the research-collector subagent with domain-adaptive strategy.
+Research results are saved to `.research/init/` directory.
 
 ```
 Task(
@@ -94,22 +95,34 @@ Task(
   model="haiku",
   description="Research {topic} resources",
   prompt="""
-    Topic: {topic}
-    Domain: {domain}
+    <research_request>
+      <topic>{topic}</topic>
+      <domain>{domain}</domain>
+      <audience_level>{audience}</audience_level>
+    </research_request>
 
     Conduct research appropriate for this domain using the domain-profiles skill.
-    Return results in research_summary XML format.
+    Save results to .research/init/ following research-storage skill conventions.
+    Return confirmation message only (not the research content).
   """
 )
 ```
 
-Store the research result as `research_xml`.
+Agent returns confirmation like:
+```
+research_saved:.research/init/
+sources:12
+concepts:8
+```
+
+**IMPORTANT**: Do NOT store the research content. The confirmation message is sufficient.
 
 ---
 
 ### Phase 3: Create plan.md
 
 Use the structure-designer subagent to create plan.md.
+Pass file PATHS only - structure-designer reads files directly.
 
 ```
 Task(
@@ -117,14 +130,27 @@ Task(
   model="opus",
   description="Create plan.md structure",
   prompt="""
-    Topic: {topic} | Domain: {domain} | Volume: {pages}p | Language: {lang}
-    Audience: {audience} | Environment: {environment}
-    Research: {research_xml}
+    <structure_request>
+      <topic>{topic}</topic>
+      <domain>{domain}</domain>
+      <volume>{pages} pages</volume>
+      <language>{lang}</language>
+      <audience>{audience}</audience>
+      <environment>{environment}</environment>
+    </structure_request>
 
+    <research_files>
+      <summary_path>.research/init/summary.md</summary_path>
+      <sources_path>.research/init/sources.md</sources_path>
+    </research_files>
+
+    Read the research files above using Read tool.
     Create plan.md using the project-scaffolder skill as reference.
   """
 )
 ```
+
+**IMPORTANT**: Do NOT Read the research files in this command. The structure-designer reads them directly in its isolated context.
 
 ---
 
