@@ -10,7 +10,7 @@ This skill provides domain-specific configurations for learning resource creatio
 
 ## When to Use
 
-- During `/init-project` Phase 2 (Research Collection)
+- During `/init` Phase 2 (Research Collection)
 - When researcher agent needs domain-specific search strategies
 - When writer agent needs domain-adapted content structure
 - When creating persona.md with Domain Guidelines section

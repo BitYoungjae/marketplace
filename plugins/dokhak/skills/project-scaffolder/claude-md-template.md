@@ -23,7 +23,7 @@
 
 ## Key Skills and Commands
 
-### `/write-doc`
+### `/write`
 
 Use this command to write the next incomplete document section.
 

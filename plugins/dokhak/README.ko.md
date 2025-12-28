@@ -48,10 +48,10 @@ Claude Code CLI에서 다음 명령어를 순서대로 실행하세요:
 mkdir rust-learning && cd rust-learning
 ```
 
-그 다음 Claude Code를 실행하고 `init-project` 명령어로 프로젝트를 초기화합니다:
+그 다음 Claude Code를 실행하고 `init` 명령어로 프로젝트를 초기화합니다:
 
 ```bash
-/dokhak:init-project
+/dokhak:init
 ```
 
 다국어 인사와 함께 대화형 인터뷰가 시작됩니다:
@@ -87,13 +87,13 @@ mkdir rust-learning && cd rust-learning
 
 ```bash
 # task.md에서 다음 대기 중인 섹션 1개를 작성
-/dokhak:write-doc
+/dokhak:write
 
 # 특정 섹션을 지정하여 작성
-/dokhak:write-doc 2-3
+/dokhak:write 2-3
 
 # 여러 섹션을 연속으로 작성 (권장)
-/dokhak:continue-session 5
+/dokhak:continue 5
 ```
 
 **작동 방식**:
@@ -176,9 +176,9 @@ Dokhak은 학습 자료의 분야에 따라 생성 전략을 자동으로 조정
 
 | 커맨드                     | 설명                                          | 사용 시점             |
 | -------------------------- | --------------------------------------------- | --------------------- |
-| `/dokhak:init-project`     | 인터뷰 기반 프로젝트 초기화                   | 처음 시작할 때 1회    |
-| `/dokhak:write-doc`        | 다음 섹션 1개 작성 (researcher→writer→reviewer) | 섹션 단위로 작업할 때 |
-| `/dokhak:continue-session` | 여러 섹션 연속 작성                           | 배치 작업할 때 (권장) |
+| `/dokhak:init`     | 인터뷰 기반 프로젝트 초기화                   | 처음 시작할 때 1회    |
+| `/dokhak:write`        | 다음 섹션 1개 작성 (researcher→writer→reviewer) | 섹션 단위로 작업할 때 |
+| `/dokhak:continue` | 여러 섹션 연속 작성                           | 배치 작업할 때 (권장) |
 | `/dokhak:status`           | 진행 상황 확인                                | 언제든지              |
 
 ### 구조 수정 커맨드
@@ -191,34 +191,34 @@ Dokhak은 학습 자료의 분야에 따라 생성 전략을 자동으로 조정
 
 ### 상세 사용법
 
-#### `/dokhak:init-project`
+#### `/dokhak:init`
 
 ```bash
-/dokhak:init-project [--resume]
+/dokhak:init [--resume]
 ```
 
 - `--resume`: `interview-data.md`에서 중단된 인터뷰 재개
 
-#### `/dokhak:write-doc`
+#### `/dokhak:write`
 
 ```bash
-/dokhak:write-doc [섹션ID] [--skip-review]
+/dokhak:write [섹션ID] [--skip-review]
 ```
 
 - `섹션ID`: 특정 섹션을 지정 (선택, 생략 시 task.md의 다음 대기 섹션 작성)
 - `--skip-review`: reviewer 단계를 건너뛰고 바로 완료 처리
-- 예: `/dokhak:write-doc 2-3` → Chapter 2의 Section 3 작성
+- 예: `/dokhak:write 2-3` → Chapter 2의 Section 3 작성
 
-#### `/dokhak:continue-session`
+#### `/dokhak:continue`
 
 ```bash
-/dokhak:continue-session [개수] [--skip-review]
+/dokhak:continue [개수] [--skip-review]
 ```
 
 - `개수`: 연속으로 작성할 섹션 수 (선택, 기본값: 3)
 - `--skip-review`: 모든 섹션에서 reviewer 단계 건너뛰기
 - task.md의 세션 경계를 존중함
-- 예: `/dokhak:continue-session 5` → 5개 섹션 연속 작성
+- 예: `/dokhak:continue 5` → 5개 섹션 연속 작성
 
 #### `/dokhak:add-chapter`
 
@@ -271,7 +271,7 @@ Dokhak은 학습 자료의 분야에 따라 생성 전략을 자동으로 조정
 ```
 
 - 1 세션 = 3-5개 섹션 또는 20-40 페이지
-- `/continue-session`이 세션 경계를 자동 인식
+- `/continue`가 세션 경계를 자동 인식
 - 관련 콘텐츠를 그룹화하여 일관된 작성 유지
 
 ---
@@ -281,7 +281,7 @@ Dokhak은 학습 자료의 분야에 따라 생성 전략을 자동으로 조정
 ```
 ┌──────────────────────────────────────────────────────────────┐
 │                    1. 프로젝트 초기화                          │
-│  /dokhak:init-project                                        │
+│  /dokhak:init                                        │
 │                                                              │
 │  → project-interviewer가 대화형 인터뷰 진행                    │
 │  → research-collector가 도메인별 정보 수집                     │
@@ -291,7 +291,7 @@ Dokhak은 학습 자료의 분야에 따라 생성 전략을 자동으로 조정
                        ▼
 ┌──────────────────────────────────────────────────────────────┐
 │                    2. 문서 작성 (반복)                         │
-│  /dokhak:write-doc 또는 /dokhak:continue-session 3           │
+│  /dokhak:write 또는 /dokhak:continue 3           │
 │                                                              │
 │  ┌─────────────┐     ┌─────────────┐     ┌─────────────┐     │
 │  │ researcher  │────▶│   writer    │────▶│  reviewer   │     │
@@ -385,9 +385,9 @@ dokhak/
 ├── .claude-plugin/
 │   └── plugin.json           # 플러그인 메타데이터
 ├── commands/                 # 사용자 명령어 정의
-│   ├── init-project.md
-│   ├── write-doc.md          # researcher→writer→reviewer 파이프라인
-│   ├── continue-session.md
+│   ├── init.md
+│   ├── write.md          # researcher→writer→reviewer 파이프라인
+│   ├── continue.md
 │   ├── add-chapter.md
 │   ├── add-section.md
 │   ├── status.md
@@ -409,7 +409,7 @@ dokhak/
 
 ## 생성되는 프로젝트 구조
 
-`/dokhak:init-project` 실행 후 생성되는 파일들:
+`/dokhak:init` 실행 후 생성되는 파일들:
 
 ```
 your-project/
@@ -431,7 +431,7 @@ your-project/
 
 ### 효율적인 사용법
 
-- **배치 작업 추천**: `/dokhak:continue-session 5`처럼 여러 섹션을 한 번에 작성하면 효율적입니다
+- **배치 작업 추천**: `/dokhak:continue 5`처럼 여러 섹션을 한 번에 작성하면 효율적입니다
 - **진행 상황 수시 확인**: `/dokhak:status`로 현재 진행률을 확인하며 작업하세요
 - **페르소나 커스터마이징**: `persona.md`를 수정하면 문서의 톤과 스타일을 조절할 수 있습니다
 
@@ -456,7 +456,7 @@ your-project/
 
 ### Q: 인터뷰가 중간에 중단되었어요
 
-`/dokhak:init-project --resume`을 실행하면 중단된 지점부터 이어서 진행합니다.
+`/dokhak:init --resume`을 실행하면 중단된 지점부터 이어서 진행합니다.
 
 ### Q: 인터뷰를 빠르게 끝내고 싶어요
 
@@ -464,7 +464,7 @@ your-project/
 
 ### Q: 문서 작성이 중간에 중단되었어요
 
-`/dokhak:status`로 현재 상태를 확인하고, `/dokhak:write-doc`을 다시 실행하면 중단된 지점부터 이어서 작성합니다.
+`/dokhak:status`로 현재 상태를 확인하고, `/dokhak:write`을 다시 실행하면 중단된 지점부터 이어서 작성합니다.
 
 ### Q: 커리큘럼 구조를 수정하고 싶어요
 

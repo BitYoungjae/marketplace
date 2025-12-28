@@ -249,5 +249,5 @@
 <!--
 > ⚠️ This persona was generated with quick start.
 > Some fields have default values applied.
-> You can run `/init-project` again to create a detailed profile if needed.
+> You can run `/init` again to create a detailed profile if needed.
 -->

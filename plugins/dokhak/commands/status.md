@@ -21,13 +21,13 @@ Generate a progress report for this learning resource project.
 If task.md does not exist, report:
 ```
 Error: task.md not found.
-Run /init-project first to initialize the project.
+Run /init first to initialize the project.
 ```
 
 If plan.md does not exist, report:
 ```
 Error: plan.md not found.
-Run /init-project first to initialize the project.
+Run /init first to initialize the project.
 ```
 
 ### Step 2: Extract Project Information

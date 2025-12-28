@@ -13,7 +13,7 @@ dokhak/
 ├── .claude-plugin/marketplace.json    # Marketplace definition
 ├── plugins/dokhak/                    # Main plugin
 │   ├── .claude-plugin/plugin.json     # Plugin metadata (version here)
-│   ├── commands/                      # Slash commands (/init-project, /write-doc, etc.)
+│   ├── commands/                      # Slash commands (/init, /write, etc.)
 │   ├── agents/                        # Subagent definitions (researcher, writer, reviewer)
 │   ├── skills/                        # Reusable skill modules
 │   │   ├── project-scaffolder/        # Templates for plan.md, task.md, persona.md
@@ -28,7 +28,7 @@ dokhak/
 
 The plugin uses a multi-agent pipeline for document generation:
 
-1. **Project Initialization** (`/init-project`):
+1. **Project Initialization** (`/init`):
    ```
    project-interviewer (opus) → persona.md, interview-data.md
          ↓
@@ -37,7 +37,7 @@ The plugin uses a multi-agent pipeline for document generation:
    structure-designer (opus) → plan.md, task.md, project-context.md, CLAUDE.md
    ```
 
-2. **Document Writing** (`/write-doc`, `/continue-session`):
+2. **Document Writing** (`/write`, `/continue`):
    ```
    researcher (haiku) → XML+MD research (<1000 tokens)
          ↓

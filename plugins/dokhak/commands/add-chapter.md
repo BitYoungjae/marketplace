@@ -12,10 +12,10 @@ Add a new chapter to the current learning resource project.
 ## Context
 
 Current plan structure:
-!`grep -E "^###? (Part|Chapter)" plan.md 2>/dev/null | head -30 || echo "[ERROR] plan.md not found - run /init-project first"`
+!`grep -E "^###? (Part|Chapter)" plan.md 2>/dev/null | head -30 || echo "[ERROR] plan.md not found - run /init first"`
 
 Current task structure:
-!`grep -E "^## Part|^### Chapter" task.md 2>/dev/null | head -20 || echo "[ERROR] task.md not found - run /init-project first"`
+!`grep -E "^## Part|^### Chapter" task.md 2>/dev/null | head -20 || echo "[ERROR] task.md not found - run /init first"`
 
 ---
 
@@ -45,7 +45,7 @@ Examples:
 3. If either is missing, report error:
 
    ```
-   Error: Project not initialized. Run /init-project first.
+   Error: Project not initialized. Run /init first.
    ```
 
 ### Step 2: Analyze Current Structure
@@ -141,7 +141,7 @@ Files Updated:
   ✓ plan.md - Chapter structure added
   ✓ task.md - 3 new tasks added
 
-Next: Use /add-section to add more sections, or /write-doc to start writing.
+Next: Use /add-section to add more sections, or /write to start writing.
 ```
 
 ---
@@ -158,7 +158,7 @@ Available parts: Part 1, Part 2, Part 3
 ### No Project Files
 
 ```
-Error: plan.md not found. Initialize project with /init-project first.
+Error: plan.md not found. Initialize project with /init first.
 ```
 
 ### Invalid Arguments

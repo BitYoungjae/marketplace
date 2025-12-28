@@ -1,6 +1,6 @@
 ---
 name: project-interviewer
-description: "Conducts conversational interviews to create learner profiles. Use PROACTIVELY when /init-project is invoked. Outputs persona.md, interview-data.md and returns project metadata."
+description: "Conducts conversational interviews to create learner profiles. Use PROACTIVELY when /init is invoked. Outputs persona.md, interview-data.md and returns project metadata."
 tools: Read, Write, AskUserQuestion
 model: opus
 permissionMode: acceptEdits

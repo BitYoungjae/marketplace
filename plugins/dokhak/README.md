@@ -29,7 +29,7 @@ A Claude Code plugin for creating comprehensive self-learning resources. Just sp
 ### 1. Initialize a New Project
 
 ```bash
-/dokhak:init-project
+/dokhak:init
 ```
 
 This starts a conversational interview with multi-language greetings:
@@ -63,13 +63,13 @@ After initialization, the following files are created:
 
 ```bash
 # Write single section
-/dokhak:write-doc
+/dokhak:write
 
 # Write specific section
-/dokhak:write-doc 2-3
+/dokhak:write 2-3
 
 # Write multiple sections continuously (recommended)
-/dokhak:continue-session 5
+/dokhak:continue 5
 ```
 
 Uses a context-isolated pipeline (researcher → writer) to generate documents while keeping the main session context minimal.
@@ -138,9 +138,9 @@ Dokhak automatically adjusts generation strategy based on the learning domain:
 
 | Command             | Description                                                        |
 | ------------------- | ------------------------------------------------------------------ |
-| `/init-project`     | Initialize project with interview-based persona creation           |
-| `/write-doc`        | Write the next document using researcher→writer→reviewer pipeline  |
-| `/continue-session` | Write multiple sections continuously (default: 3)                  |
+| `/init`     | Initialize project with interview-based persona creation           |
+| `/write`        | Write the next document using researcher→writer→reviewer pipeline  |
+| `/continue` | Write multiple sections continuously (default: 3)                  |
 | `/add-chapter`      | Add a new chapter to plan.md and task.md                           |
 | `/add-section`      | Add a new section to an existing chapter                           |
 | `/status`           | Show project progress and statistics                               |
@@ -148,27 +148,27 @@ Dokhak automatically adjusts generation strategy based on the learning domain:
 
 ### Command Details
 
-#### `/init-project`
+#### `/init`
 
 ```bash
-/dokhak:init-project [--resume]
+/dokhak:init [--resume]
 ```
 
 - `--resume`: Resume interrupted interview from `interview-data.md`
 
-#### `/write-doc`
+#### `/write`
 
 ```bash
-/dokhak:write-doc [section-id] [--skip-review]
+/dokhak:write [section-id] [--skip-review]
 ```
 
 - `section-id`: Optional. Specific section to write (e.g., `2-3` for Chapter 2, Section 3)
 - `--skip-review`: Skip the reviewer step and proceed directly to completion
 
-#### `/continue-session`
+#### `/continue`
 
 ```bash
-/dokhak:continue-session [count] [--skip-review]
+/dokhak:continue [count] [--skip-review]
 ```
 
 - `count`: Number of sections to write continuously (default: 3)
@@ -224,7 +224,7 @@ Dokhak automatically adjusts generation strategy based on the learning domain:
 ```
 
 - 1 session = 3-5 sections or 20-40 pages
-- `/continue-session` respects these boundaries
+- `/continue` respects these boundaries
 - Sessions group related content for coherent writing
 
 ## Workflow
@@ -232,7 +232,7 @@ Dokhak automatically adjusts generation strategy based on the learning domain:
 ```
 ┌──────────────────────────────────────────────────────────────┐
 │                    1. Project Initialization                  │
-│  /dokhak:init-project                                        │
+│  /dokhak:init                                        │
 │                                                              │
 │  → project-interviewer conducts conversational interview     │
 │  → research-collector gathers domain-specific information    │
@@ -242,7 +242,7 @@ Dokhak automatically adjusts generation strategy based on the learning domain:
                        ▼
 ┌──────────────────────────────────────────────────────────────┐
 │                    2. Document Writing (Loop)                 │
-│  /dokhak:write-doc or /dokhak:continue-session 3             │
+│  /dokhak:write or /dokhak:continue 3             │
 │                                                              │
 │  ┌─────────────┐     ┌─────────────┐     ┌─────────────┐     │
 │  │ researcher  │────▶│   writer    │────▶│  reviewer   │     │
@@ -289,12 +289,12 @@ Dokhak automatically adjusts generation strategy based on the learning domain:
 | `researcher`          | Haiku | Gather and synthesize information for document writing    |
 | `writer`              | Opus  | Write technical documents based on research and context   |
 | `reviewer`            | Haiku | Review written documents for quality and consistency      |
-| `research-collector`  | Haiku | Collect and structure web research (init-project)         |
-| `structure-designer`  | Opus  | Design curriculum hierarchy (init-project)                |
+| `research-collector`  | Haiku | Collect and structure web research (init)         |
+| `structure-designer`  | Opus  | Design curriculum hierarchy (init)                |
 
 ## Generated Project Structure
 
-After running `/init-project`, your project will have:
+After running `/init`, your project will have:
 
 ```
 your-project/
@@ -317,9 +317,9 @@ dokhak/
 ├── .claude-plugin/
 │   └── plugin.json           # Plugin metadata
 ├── commands/
-│   ├── init-project.md       # Project initialization with interview
-│   ├── write-doc.md          # Single section writing (researcher→writer→reviewer)
-│   ├── continue-session.md   # Multiple section writing
+│   ├── init.md       # Project initialization with interview
+│   ├── write.md          # Single section writing (researcher→writer→reviewer)
+│   ├── continue.md   # Multiple section writing
 │   ├── add-chapter.md        # Add chapter
 │   ├── add-section.md        # Add section
 │   ├── status.md             # Progress tracking
@@ -341,7 +341,7 @@ dokhak/
 
 ### Efficient Usage
 
-- **Batch Writing**: Use `/dokhak:continue-session 5` to write multiple sections at once
+- **Batch Writing**: Use `/dokhak:continue 5` to write multiple sections at once
 - **Check Progress**: Run `/dokhak:status` regularly to monitor completion
 - **Customize Persona**: Edit `persona.md` to adjust document tone and style
 
@@ -364,7 +364,7 @@ Key sections you can modify:
 
 ### Q: The interview was interrupted. How do I continue?
 
-Run `/dokhak:init-project --resume` to continue from where you left off.
+Run `/dokhak:init --resume` to continue from where you left off.
 
 ### Q: Can I speed up the interview?
 

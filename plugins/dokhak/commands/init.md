@@ -146,7 +146,7 @@ Create project-context.md with:
 Create CLAUDE.md using claude-md-template.md from project-scaffolder skill as reference:
 
 - Project overview (topic, domain, audience)
-- Key skills and agents references (/write-doc, researcher, writer)
+- Key skills and agents references (/write, researcher, writer)
 - Document structure guidelines
 - Writing persona summary (from persona.md)
 - Domain-specific guidelines (from domain-profiles)
@@ -178,7 +178,7 @@ Files Created:
 Next Steps:
   1. Review plan.md structure
   2. Review persona.md for accuracy
-  3. Run /write-doc to start writing first section
+  3. Run /write to start writing first section
   4. Use /status to track progress
 ```
 

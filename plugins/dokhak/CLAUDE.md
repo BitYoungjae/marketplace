@@ -28,7 +28,7 @@ Main Session
 ### Project Initialization Pipeline
 
 ```
-/init-project
+/init
      │
      ├─▶ Task(project-interviewer, opus) ──▶ persona.md + interview-data.md
      │                                              │

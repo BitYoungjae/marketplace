@@ -12,7 +12,7 @@ Add a new section to an existing chapter in the learning resource project.
 ## Context
 
 Target chapter structure (use $1 as chapter number from parsed arguments):
-!`grep -A 15 "^### Chapter" plan.md 2>/dev/null | head -40 || echo "[ERROR] plan.md not found - run /init-project first"`
+!`grep -A 15 "^### Chapter" plan.md 2>/dev/null | head -40 || echo "[ERROR] plan.md not found - run /init first"`
 
 Current sections in project:
 !`grep -E "^#### [0-9]+\.[0-9]+" plan.md 2>/dev/null | tail -10 || echo "[No sections found]"`
@@ -45,7 +45,7 @@ Examples:
 3. If either is missing, report error:
 
    ```
-   Error: Project not initialized. Run /init-project first.
+   Error: Project not initialized. Run /init first.
    ```
 
 ### Step 2: Validate Chapter Exists
@@ -140,7 +140,7 @@ Files Updated:
 
 Chapter {N} now has {TOTAL_SECTIONS} sections ({TOTAL_PAGES}p)
 
-Next: Use /write-doc to start writing, or /add-section to add more sections.
+Next: Use /write to start writing, or /add-section to add more sections.
 ```
 
 ---
@@ -167,7 +167,7 @@ Available chapters:
 ### No Project Files
 
 ```
-Error: plan.md not found. Initialize project with /init-project first.
+Error: plan.md not found. Initialize project with /init first.
 ```
 
 ### Invalid Section Title

@@ -51,7 +51,7 @@ If `$ARGUMENTS` contains "--check":
 
 If `$ARGUMENTS` contains "--auto":
 
-- Suggest running `/init-project`
+- Suggest running `/init`
 
 Otherwise, use AskUserQuestion:
 
@@ -63,7 +63,7 @@ questions: [
     multiSelect: false,
     options: [
       {
-        label: "Run /init-project (Recommended)",
+        label: "Run /init (Recommended)",
         description: "Initialize complete project structure"
       },
       {
@@ -81,7 +81,7 @@ questions: [
 
 **Fix Actions:**
 
-- "Run /init-project": Output message suggesting user run `/init-project`
+- "Run /init": Output message suggesting user run `/init`
 - "Create empty template": Use Write tool to create minimal template
 
 ### For WARN level (persona.md, project-context.md, CLAUDE.md missing)

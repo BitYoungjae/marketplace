@@ -1,6 +1,6 @@
 ---
 name: project-interview
-description: "Resources for conversational interviews to create learner profiles. Used by project-interviewer agent during /init-project."
+description: "Resources for conversational interviews to create learner profiles. Used by project-interviewer agent during /init."
 allowed-tools: Read, Write, AskUserQuestion
 ---
 
