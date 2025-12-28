@@ -13,9 +13,19 @@ Interactive interview-based project initialization for learning resources.
 
 ## Phase 1: Project Interview
 
-Have a natural conversation with the learner to understand their needs.
+<communication_rules>
+CRITICAL: The interviewer agent communicates DIRECTLY with the user.
 
-### 1.1 Launch Project Interviewer
+- Do NOT add any introduction before launching the interviewer
+- Do NOT add transition messages like "Starting interview..." or "Let me start the interview"
+- Do NOT summarize or rephrase the agent's output after it completes
+- Let the conversation flow naturally as if the interviewer IS the main assistant
+- The user should feel they are talking to ONE entity, not being handed off to another
+
+When the interview completes, silently proceed to Phase 2 without announcing completion.
+</communication_rules>
+
+### Launch Project Interviewer
 
 ```
 Task(
@@ -23,45 +33,58 @@ Task(
   model="opus",
   description="Conduct project initialization interview",
   prompt="""
-    Conduct an interview for project initialization.
+    <role>
+    You are a learning experience designer having a direct conversation with the learner.
+    You ARE the main assistant - not a separate tool or delegated agent.
+    </role>
 
-    Following the project-interview skill guidelines:
-    1. Understand the learner through natural conversation
-    2. Generate persona.md and interview-data.md
-    3. Return results in project_metadata XML format
+    <task>
+    Conduct an interview for project initialization following the project-interview skill.
+    </task>
 
+    <instructions>
+    1. Start immediately with your multilingual greeting - no preamble
+    2. Have a natural conversation to understand the learner
+    3. Generate persona.md and interview-data.md
+    4. Return results in project_metadata XML format
+    </instructions>
+
+    <output_format>
     Use persona-template.md from project-scaffolder skill when creating persona.md.
+    </output_format>
   """
 )
 ```
 
-### 1.2 Interview Goals
+### Interview Goals
 
 Through natural conversation, understand:
 
-| What to Learn | How to Discover                                    |
-| ------------- | -------------------------------------------------- |
-| Topic         | Open question: "What would you like to learn?"     |
-| Domain        | Infer from topic, confirm if ambiguous             |
-| Motivation    | Ask why they want to learn this                    |
-| Level         | Ask about background and experience                |
-| Preferences   | Discuss desired style and volume                   |
-| Environment   | For technology: ask about OS/tools                 |
-
-### 1.3 Interview Completion
-
-When enough information is gathered:
-
-1. Summarize the profile conversationally
-2. Get learner confirmation
-3. Apply any corrections
-4. Generate outputs (persona.md, interview-data.md, project_metadata XML)
+| What to Learn | How to Discover                                |
+| ------------- | ---------------------------------------------- |
+| Topic         | Open question: "What would you like to learn?" |
+| Domain        | Infer from topic, confirm if ambiguous         |
+| Motivation    | Ask why they want to learn this                |
+| Level         | Ask about background and experience            |
+| Preferences   | Discuss desired style and volume               |
+| Environment   | For technology: ask about OS/tools             |
 
 Store the returned `project_metadata` XML for subsequent phases.
 
 ---
 
-## Phase 2: Research Collection
+## Phase 2-6: Background Processing
+
+<background_processing_rules>
+After the interview completes, execute Phases 2-6 silently in sequence.
+
+- Do NOT announce each phase to the user (e.g., "Now collecting research...")
+- Do NOT show progress updates between phases
+- Process all phases quietly, then show only the final Completion Report
+- If any phase fails, note it in the report rather than interrupting with error messages
+  </background_processing_rules>
+
+### Phase 2: Research Collection
 
 Use the research-collector subagent with domain-adaptive strategy.
 
@@ -84,7 +107,7 @@ Store the research result as `research_xml`.
 
 ---
 
-## Phase 3: Create plan.md
+### Phase 3: Create plan.md
 
 Use the structure-designer subagent to create plan.md.
 
@@ -105,7 +128,7 @@ Task(
 
 ---
 
-## Phase 4: Create task.md
+### Phase 4: Create task.md
 
 Use the structure-designer subagent to create task.md with session distribution.
 
@@ -123,7 +146,7 @@ Task(
 
 ---
 
-## Phase 5: Create project-context.md
+### Phase 5: Create project-context.md
 
 Create project-context.md with research results and domain-specific information.
 
@@ -141,7 +164,7 @@ Create project-context.md with:
 
 ---
 
-## Phase 6: Create CLAUDE.md
+### Phase 6: Create CLAUDE.md
 
 Create CLAUDE.md using claude-md-template.md from project-scaffolder skill as reference:
 
