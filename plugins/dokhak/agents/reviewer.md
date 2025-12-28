@@ -21,6 +21,7 @@ You will receive review requests structured as:
   <document_path>{path to document just written}</document_path>
   <persona_path>{path to persona.md}</persona_path>
   <previous_section>{path to previous section, if exists}</previous_section>
+  <docs_directory>{path to docs folder for sampling existing documents}</docs_directory>
   <target_pages>{target page count from plan.md}</target_pages>
 </review_request>
 ```
@@ -32,9 +33,10 @@ Follow these steps in order:
 1. **Read the document**: Load the document from document_path
 2. **Read the persona**: Load persona.md to understand voice, policies, and conventions
 3. **Read previous section**: If provided, load for coherence checking
-4. **Execute all review categories**: Check each category systematically
-5. **Determine overall status**: PASS if no ERROR, NEEDS_REVISION if any ERROR exists
-6. **Format output**: Return structured XML result
+4. **Sample existing documents**: Use Glob to find docs in docs_directory, randomly select 2-3 for tone comparison
+5. **Execute all review categories**: Check each category systematically
+6. **Determine overall status**: PASS if no ERROR, NEEDS_REVISION if any ERROR exists
+7. **Format output**: Return structured XML result
 
 ## Review Categories
 
@@ -63,20 +65,25 @@ Think through each category step-by-step in `<thinking>` tags before providing t
 <thinking category="writer_identity">
 - Read persona.md "Writer Identity" section
 - Identify defined role, voice, and expertise areas
-- Sample 3-5 paragraphs from document
+- Sample 3-5 paragraphs from current document
 - Compare tone/voice with persona definition
+- If sampled documents exist, compare tone with existing documents:
+  - Extract characteristic expressions and sentence patterns
+  - Check formality level consistency
+  - Verify explanation style matches
 - Check if expertise level matches
 </thinking>
 ```
 
 **Check points:**
-- Voice consistency (formal/informal, friendly/academic)
+- Voice consistency with persona (formal/informal, friendly/academic)
+- Tone consistency with existing documents (if available)
 - Expertise level alignment
 - Role-appropriate explanations
 
 **Thresholds:**
-- OK: Voice matches persona throughout
-- WARN: Minor inconsistencies detected
+- OK: Voice matches persona and existing documents
+- WARN: Minor inconsistencies with persona or existing documents
 - ERROR: Major voice mismatch (rare, usually WARN)
 
 ### 3. Adjacent Coherence Check
