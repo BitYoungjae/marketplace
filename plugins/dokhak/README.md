@@ -1,6 +1,6 @@
 # Dokhak
 
-> *Burn tokens, earn knowledge.*
+> _Burn tokens, earn knowledge._
 
 A Claude Code plugin for creating comprehensive self-learning resources. Just specify a topic and Dokhak will automate the entire workflow from project scaffolding to document generation.
 
@@ -43,6 +43,7 @@ This starts a conversational interview with multi-language greetings:
 ```
 
 The interviewer naturally discovers:
+
 - **Topic**: What do you want to learn?
 - **Motivation**: Why are you learning this?
 - **Level**: How much do you already know?
@@ -136,15 +137,13 @@ Dokhak automatically adjusts generation strategy based on the learning domain:
 
 ## Commands
 
-| Command             | Description                                                        |
-| ------------------- | ------------------------------------------------------------------ |
-| `/init`     | Initialize project with interview-based persona creation           |
-| `/write`        | Write the next document using researcher→writer→reviewer pipeline  |
-| `/continue` | Write multiple sections continuously (default: 3)                  |
-| `/add-chapter`      | Add a new chapter to plan.md and task.md                           |
-| `/add-section`      | Add a new section to an existing chapter                           |
-| `/status`           | Show project progress and statistics                               |
-| `/doctor`           | Diagnose project structure health and interactively fix issues     |
+| Command     | Description                                                       |
+| ----------- | ----------------------------------------------------------------- |
+| `/init`     | Initialize project with interview-based persona creation          |
+| `/write`    | Write the next document using researcher→writer→reviewer pipeline |
+| `/continue` | Write multiple sections continuously (default: 3)                 |
+| `/status`   | Show project progress and statistics                              |
+| `/doctor`   | Diagnose project structure health and interactively fix issues    |
 
 ### Command Details
 
@@ -174,26 +173,6 @@ Dokhak automatically adjusts generation strategy based on the learning domain:
 - `count`: Number of sections to write continuously (default: 3)
 - `--skip-review`: Skip the reviewer step for all sections
 - Respects session boundaries in `task.md`
-
-#### `/add-chapter`
-
-```bash
-/dokhak:add-chapter "<title>" --part <N> --pages <N>
-```
-
-- `<title>`: Chapter title (required)
-- `--part`: Part number to add chapter to (required)
-- `--pages`: Page allocation (required)
-
-#### `/add-section`
-
-```bash
-/dokhak:add-section "<title>" --chapter <N> --pages <N>
-```
-
-- `<title>`: Section title (required)
-- `--chapter`: Chapter number to add section to (required)
-- `--pages`: Page allocation (required)
 
 #### `/doctor`
 
@@ -283,14 +262,14 @@ Dokhak automatically adjusts generation strategy based on the learning domain:
 
 ## Agents
 
-| Agent                 | Model | Purpose                                                   |
-| --------------------- | ----- | --------------------------------------------------------- |
-| `project-interviewer` | Opus  | Conduct conversational interview for persona creation     |
-| `researcher`          | Haiku | Gather and synthesize information for document writing    |
-| `writer`              | Opus  | Write technical documents based on research and context   |
-| `reviewer`            | Haiku | Review written documents for quality and consistency      |
-| `research-collector`  | Haiku | Collect and structure web research (init)         |
-| `structure-designer`  | Opus  | Design curriculum hierarchy (init)                |
+| Agent                 | Model | Purpose                                                 |
+| --------------------- | ----- | ------------------------------------------------------- |
+| `project-interviewer` | Opus  | Conduct conversational interview for persona creation   |
+| `researcher`          | Haiku | Gather and synthesize information for document writing  |
+| `writer`              | Opus  | Write technical documents based on research and context |
+| `reviewer`            | Haiku | Review written documents for quality and consistency    |
+| `research-collector`  | Haiku | Collect and structure web research (init)               |
+| `structure-designer`  | Opus  | Design curriculum hierarchy (init)                      |
 
 ## Generated Project Structure
 
@@ -320,8 +299,6 @@ dokhak/
 │   ├── init.md       # Project initialization with interview
 │   ├── write.md          # Single section writing (researcher→writer→reviewer)
 │   ├── continue.md   # Multiple section writing
-│   ├── add-chapter.md        # Add chapter
-│   ├── add-section.md        # Add section
 │   ├── status.md             # Progress tracking
 │   └── doctor.md             # Structure diagnosis and fix
 ├── skills/
@@ -372,9 +349,7 @@ Yes! Provide more context upfront. Instead of "React", say "I want to learn Reac
 
 ### Q: I want to modify the curriculum structure
 
-- Add chapter: `/dokhak:add-chapter "Chapter Name" --part 1 --pages 20`
-- Add section: `/dokhak:add-section "Section Name" --chapter 3 --pages 5`
-- For major changes, edit `plan.md` and `task.md` directly, then run `/dokhak:doctor` to check consistency
+Edit `plan.md` and `task.md` directly, then run `/dokhak:doctor` to check consistency.
 
 ### Q: The generated document quality isn't satisfactory
 
