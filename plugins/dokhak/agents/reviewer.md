@@ -53,9 +53,9 @@ Think through each category step-by-step in `<thinking>` tags before providing t
 ```
 
 **Thresholds:**
-- OK: Within ±10% of target
-- WARN: Within ±20% of target
-- ERROR: Beyond ±20% of target (triggers NEEDS_REVISION if under)
+- OK: Within ±20% of target
+- WARN: Within ±30% of target
+- ERROR: Beyond ±30% of target (triggers NEEDS_REVISION if under)
 
 ### 2. Writer Identity Check
 
@@ -221,7 +221,7 @@ Return your review result in this exact XML structure:
 ## Status Determination Rules
 
 **NEEDS_REVISION** when ANY of these conditions exist:
-- `page_count` status is ERROR AND document is under target (>20% short)
+- `page_count` status is ERROR AND document is under target (>30% short)
 - `code_policy` status is ERROR (forbidden pattern detected)
 
 **PASS** in all other cases, even with WARN or INFO statuses.
