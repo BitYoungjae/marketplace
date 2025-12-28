@@ -193,10 +193,10 @@ Dokhak은 학습 자료의 분야에 따라 생성 전략을 자동으로 조정
 #### `/dokhak:init`
 
 ```bash
-/dokhak:init [--resume]
+/dokhak:init
 ```
 
-- `--resume`: `interview-data.md`에서 중단된 인터뷰 재개
+대화형 인터뷰 프로세스를 시작합니다.
 
 #### `/dokhak:write`
 
@@ -430,10 +430,6 @@ your-project/
 ---
 
 ## 자주 묻는 질문 (FAQ)
-
-### Q: 인터뷰가 중간에 중단되었어요
-
-`/dokhak:init --resume`을 실행하면 중단된 지점부터 이어서 진행합니다.
 
 ### Q: 인터뷰를 빠르게 끝내고 싶어요
 

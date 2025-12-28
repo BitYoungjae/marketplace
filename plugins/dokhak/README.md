@@ -150,10 +150,10 @@ Dokhak automatically adjusts generation strategy based on the learning domain:
 #### `/init`
 
 ```bash
-/dokhak:init [--resume]
+/dokhak:init
 ```
 
-- `--resume`: Resume interrupted interview from `interview-data.md`
+Starts the interactive interview process.
 
 #### `/write`
 
@@ -338,10 +338,6 @@ Key sections you can modify:
 - **Internet connection** required for web research
 
 ## FAQ
-
-### Q: The interview was interrupted. How do I continue?
-
-Run `/dokhak:init --resume` to continue from where you left off.
 
 ### Q: Can I speed up the interview?
 
