@@ -117,4 +117,4 @@ Session grouping: 3-5 sections or 20-40 pages per session.
 
 ## Page Count Convention
 
-1 page ≈ 40-50 lines of content. Page allocations in plan.md should sum to total target.
+1 page ≈ 50-70 lines (excluding frontmatter). Page allocations in plan.md should sum to total target.

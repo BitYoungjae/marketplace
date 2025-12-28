@@ -21,7 +21,7 @@ You will receive writing requests structured as:
 <writing_request>
   <section>
     <title>{section title}</title>
-    <page_count>{target pages, 1 page ≈ 40-50 lines}</page_count>
+    <page_count>{target pages, 1 page ≈ 50-70 lines}</page_count>
     <subtopics>
       <subtopic>{subtopic 1}</subtopic>
       <subtopic>{subtopic 2}</subtopic>
@@ -143,7 +143,7 @@ Before saving the file, verify these criteria in `<review>` tags:
 
 3. **Content Quality**
    - Match the project's language (Korean/English as specified)
-   - Respect the page count (1 page ≈ 40-50 lines of content)
+   - Respect the page count (1 page ≈ 50-70 lines, excluding frontmatter)
    - Create natural, readable documents that serve the target audience
 
 4. **Structural Autonomy**

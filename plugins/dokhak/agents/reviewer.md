@@ -47,7 +47,7 @@ Think through each category step-by-step in `<thinking>` tags before providing t
 ```xml
 <thinking category="page_count">
 - Count total lines in document
-- Calculate equivalent pages (1 page ≈ 40-50 lines)
+- Calculate equivalent pages (1 page ≈ 50-70 lines, excluding frontmatter)
 - Compare with target_pages
 - Calculate deviation percentage
 - Determine status based on deviation
@@ -270,7 +270,7 @@ Return your review result in this exact XML structure:
 
   <categories>
     <page_count status="ERROR">
-      Target: 8p (~360 lines), Actual: ~234 lines (35% under)
+      Target: 8p (~480 lines), Actual: ~300 lines (37% under)
     </page_count>
 
     <writer_identity status="OK">
@@ -299,7 +299,7 @@ Return your review result in this exact XML structure:
       Remove eval() on line 78. Replace with JSON.parse() or a safer alternative for parsing the configuration object.
     </suggestion>
     <suggestion priority="high">
-      Add approximately 120-130 more lines of content to meet 8-page target. Consider expanding the "Error Handling" subsection with more examples.
+      Add approximately 180 more lines of content to meet 8-page target. Consider expanding the "Error Handling" subsection with more examples.
     </suggestion>
     <suggestion priority="low">
       Line 45: Consider using "컴포넌트" for consistency with previous section.

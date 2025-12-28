@@ -120,7 +120,7 @@ Task(
     ## Instructions
     - Adopt the persona completely
     - Match the project's language
-    - Respect the page count (1 page ≈ 40-50 lines)
+    - Respect the page count (1 page ≈ 50-70 lines, excluding frontmatter)
     - Apply domain-specific writing style
     - Follow Domain Guidelines from persona.md
     - Structure is YOUR decision based on content
