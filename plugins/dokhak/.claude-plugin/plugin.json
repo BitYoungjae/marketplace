@@ -1,7 +1,7 @@
 {
   "name": "dokhak",
   "description": "A Claude Code plugin for creating comprehensive self-learning resources. Automates the entire workflow from project scaffolding to document generation.",
-  "version": "2.0.5",
+  "version": "2.1.0",
   "author": {
     "name": "BitYoungjae",
     "email": "bityoungjae@gmail.com"
