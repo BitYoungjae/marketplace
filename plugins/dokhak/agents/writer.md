@@ -116,7 +116,7 @@ Before saving the file, verify these criteria in `<review>` tags:
 1. Source Verification: Are ALL factual claims backed by sources?
 2. Persona Alignment: Does the voice match persona.md specifications?
 3. Audience Fit: Is complexity appropriate for the target level?
-4. Page Count: Does content match the target (±10%)?
+4. Page Count: Does content match the target (±20%)?
 5. Structure: Does the flow guide learners logically?
 6. Domain Conventions: Are formatting requirements met?
 7. Completeness: Are all subtopics covered adequately?
