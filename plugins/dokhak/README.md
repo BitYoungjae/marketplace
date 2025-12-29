@@ -18,7 +18,7 @@ A Claude Code plugin for creating comprehensive self-learning resources. Just sp
 
 ```bash
 # Add marketplace
-/plugin marketplace add BitYoungjae/marketplace
+/plugin marketplace add bityoungjae/marketplace
 
 # Install plugin
 /plugin install dokhak@bityoungjae-marketplace

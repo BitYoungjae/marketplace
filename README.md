@@ -5,7 +5,7 @@ A Claude Code plugin marketplace by BitYoungjae.
 ## Installation
 
 ```bash
-/plugin marketplace add BitYoungjae/marketplace
+/plugin marketplace add bityoungjae/marketplace
 ```
 
 ## Plugins

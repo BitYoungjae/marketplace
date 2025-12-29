@@ -27,7 +27,7 @@ Claude Code CLI에서 다음 명령어를 순서대로 실행하세요:
 
 ```bash
 # 1단계: 마켓플레이스 등록
-/plugin marketplace add BitYoungjae/marketplace
+/plugin marketplace add bityoungjae/marketplace
 
 # 2단계: 플러그인 설치
 /plugin install dokhak@bityoungjae-marketplace
