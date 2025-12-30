@@ -26,6 +26,23 @@ Self-learning resource creation plugin. Specify a topic and Dokhak automates the
 - Automated web research and curriculum design
 - Document generation with consistent structure
 
+### [nvim-doctor](./plugins/nvim-doctor/)
+
+> *Like `brew doctor` for your Neovim setup.*
+
+AI-powered Neovim configuration diagnostician. Troubleshoots plugin conflicts, keybinding problems, performance bottlenecks, and LSP issues.
+
+```bash
+/plugin install nvim-doctor@bityoungjae-marketplace
+```
+
+**Features:**
+- Error diagnosis with root cause analysis
+- Configuration audit with A-F grading
+- Plugin version compatibility investigation
+- Deprecated API detection (Neovim 0.9-0.12)
+- Support for LazyVim, NvChad, AstroNvim, and custom configs
+
 ## License
 
 MIT

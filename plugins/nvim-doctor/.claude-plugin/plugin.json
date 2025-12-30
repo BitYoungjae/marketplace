@@ -1,0 +1,11 @@
+{
+  "name": "nvim-doctor",
+  "description": "A Claude Code plugin for diagnosing and fixing Neovim configuration issues. Like 'brew doctor' for your Neovim setup - troubleshoots plugin conflicts, keybinding problems, performance bottlenecks, and LSP issues.",
+  "version": "0.1.0",
+  "author": {
+    "name": "BitYoungjae",
+    "email": "bityoungjae@gmail.com"
+  },
+  "license": "MIT",
+  "keywords": ["neovim", "nvim", "doctor", "diagnose", "configuration", "troubleshoot", "lazyvim", "lua"]
+}
