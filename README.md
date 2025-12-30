@@ -30,7 +30,7 @@ Self-learning resource creation plugin. Specify a topic and Dokhak automates the
 
 > *Like `brew doctor` for your Neovim setup.*
 
-AI-powered Neovim configuration diagnostician. Troubleshoots plugin conflicts, keybinding problems, performance bottlenecks, and LSP issues.
+Diagnose and fix your Neovim configuration issues with AI-powered analysis. Troubleshoots plugin conflicts, keybinding problems, performance bottlenecks, LSP issues, and configuration errors.
 
 ```bash
 /plugin install nvim-doctor@bityoungjae-marketplace

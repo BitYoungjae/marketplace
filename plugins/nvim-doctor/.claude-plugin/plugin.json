@@ -1,6 +1,6 @@
 {
   "name": "nvim-doctor",
-  "description": "A Claude Code plugin for diagnosing and fixing Neovim configuration issues. Like 'brew doctor' for your Neovim setup - troubleshoots plugin conflicts, keybinding problems, performance bottlenecks, and LSP issues.",
+  "description": "Diagnose and fix your Neovim configuration issues with AI-powered analysis. Like 'brew doctor' for your Neovim setup.",
   "version": "0.1.0",
   "author": {
     "name": "BitYoungjae",
