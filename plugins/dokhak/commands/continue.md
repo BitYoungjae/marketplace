@@ -51,6 +51,15 @@ Create a queue of sections to write:
 
 **CRITICAL**: Use multi-tier search to find existing research directories. This handles naming inconsistencies.
 
+> **⚠️ Glob Returns Files Only**
+>
+> Glob does NOT return directories. All patterns MUST end with `/research.md`.
+>
+> | Pattern | Result |
+> |---------|--------|
+> | `.research/sections/*9-1*` | ❌ Empty |
+> | `.research/sections/*9-1*/research.md` | ✅ Works |
+
 Define a helper function to resolve research directories:
 
 ```

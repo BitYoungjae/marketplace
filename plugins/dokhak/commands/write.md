@@ -75,6 +75,15 @@ canonical_path = ".research/sections/{canonical_chapter}-{canonical_section}-{ca
 
 #### 3.2 Multi-Tier Search
 
+> **⚠️ Glob Returns Files Only**
+>
+> Glob does NOT return directories. All patterns MUST end with `/research.md`.
+>
+> | Pattern | Result |
+> |---------|--------|
+> | `.research/sections/*9-1*` | ❌ Empty |
+> | `.research/sections/*9-1*/research.md` | ✅ Works |
+
 Execute searches in order. Stop at first match:
 
 ```

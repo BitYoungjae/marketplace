@@ -310,6 +310,16 @@ Research directories may have been created with inconsistent naming:
 
 ### Multi-Tier Search Algorithm
 
+> **⚠️ CRITICAL: Glob Returns Files Only**
+>
+> Glob does NOT return directories. All patterns MUST end with a filename (e.g., `/research.md`).
+>
+> | Pattern | Result |
+> |---------|--------|
+> | `.research/sections/*9-1*` | ❌ Empty (matches directory, not returned) |
+> | `.research/sections/*9-1*/research.md` | ✅ Returns file path |
+> | `.research/sections/*9-1*/*` | ✅ Returns all files in matching dirs |
+
 Execute tiers in order. Stop at first successful match.
 
 #### Tier 1: Canonical Exact Match (Primary)
