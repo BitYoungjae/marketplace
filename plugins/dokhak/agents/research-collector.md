@@ -200,6 +200,31 @@ Where:
 
 **CRITICAL**: Do NOT return research content. Only return the confirmation message above. The research content is saved to files and will be read by subsequent agents in their own context.
 
+## Tool Usage Constraints
+
+**Read tool limitations**:
+- ONLY works on FILES, NOT directories
+- Returns EISDIR error on directory paths
+- Always use Glob to find files first, then Read specific files
+
+**Correct usage**:
+- `Read("skills/domain-profiles/technology.md")` ✓
+- `Read(".research/init/summary.md")` ✓
+
+**Incorrect usage (will cause EISDIR error)**:
+- `Read(".research")` ✗
+- `Read(".research/init")` ✗
+- `Read("skills/domain-profiles")` ✗
+
+**Directory exploration pattern**:
+```
+# WRONG
+Read("skills/domain-profiles")
+
+# CORRECT
+Read("skills/domain-profiles/technology.md")  # Specify exact file path
+```
+
 ## Guidelines
 
 1. **Source Priority (Domain-Aware)**

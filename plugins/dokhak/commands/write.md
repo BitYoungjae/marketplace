@@ -46,24 +46,94 @@ Read persona.md and extract domain information:
 
 Domain values: technology, history, science, arts, general
 
-### 3. Check Existing Research
+### 3. Resolve Research Directory
 
-Check if research already exists for this section using Glob (existence check only).
+**CRITICAL**: Use multi-tier search to find existing research directories. This handles naming inconsistencies from different generation sources.
+
+#### 3.1 Normalize Identifiers
+
+Apply normalization functions from research-storage skill:
 
 ```
-research_dir = .research/sections/{chapter}-{section}-{slug}/
-existing_research = false
+# Extract chapter and section from section ID (e.g., "1.2" or "01-2")
+raw_chapter = extract_chapter(section_id)
+raw_section = extract_section(section_id)
 
-If Glob(".research/sections/{chapter}-{section}-{slug}/research.md") exists:
+# Normalize to canonical format
+canonical_chapter = normalizeChapter(raw_chapter)
+  # "1" → "01", "01" → "01", "10" → "10"
+
+canonical_section = normalizeSection(raw_section)
+  # "1" → "1", "01" → "1", "02" → "2"
+
+canonical_slug = generateSlug(section_title)
+  # "Core Concepts" → "core-concepts"
+  # "What is React?" → "what-is-react"
+
+canonical_path = ".research/sections/{canonical_chapter}-{canonical_section}-{canonical_slug}/"
+```
+
+#### 3.2 Multi-Tier Search
+
+Execute searches in order. Stop at first match:
+
+```
+# Tier 1: Exact canonical match
+tier1_result = Glob("{canonical_path}research.md")
+
+IF tier1_result is not empty:
+  resolved_dir = canonical_path
   existing_research = true
+  match_tier = 1
+ELSE:
+  # Tier 2: Canonical chapter-section, any slug
+  tier2_result = Glob(".research/sections/{canonical_chapter}-{canonical_section}-*/research.md")
+
+  IF tier2_result is not empty:
+    resolved_dir = parent_directory(tier2_result[0])
+    existing_research = true
+    match_tier = 2
+  ELSE:
+    # Tier 3: Non-padded chapter variation
+    raw_chapter_str = String(parseInt(raw_chapter, 10))  # "01" → "1"
+    tier3_result = Glob(".research/sections/{raw_chapter_str}-{canonical_section}-*/research.md")
+
+    IF tier3_result is not empty:
+      resolved_dir = parent_directory(tier3_result[0])
+      existing_research = true
+      match_tier = 3
+    ELSE:
+      # Tier 4: Flexible pattern with first keyword
+      first_keyword = canonical_slug.split('-')[0]  # "core-concepts" → "core"
+      tier4_result = Glob(".research/sections/*-{canonical_section}-*{first_keyword}*/research.md")
+
+      IF tier4_result is not empty:
+        resolved_dir = parent_directory(tier4_result[0])
+        existing_research = true
+        match_tier = 4
+      ELSE:
+        # No existing research found - use canonical path for new directory
+        resolved_dir = canonical_path
+        existing_research = false
+        match_tier = "new"
 ```
 
-**IMPORTANT**: Only check file existence. Do NOT Read the research files here.
+#### 3.3 Resolution Summary
+
+Store the resolution results for use in subsequent steps:
+
+```
+resolved_dir = {matched_directory OR canonical_path}
+existing_research = {true if any tier matched}
+match_tier = {1|2|3|4|new}
+```
+
+**IMPORTANT**: Use `resolved_dir` when invoking researcher and writer agents, NOT the originally generated path.
 
 ### 4. Research Phase
 
 Invoke the researcher agent to gather information.
-Research results are saved to `.research/sections/{chapter}-{section}-{slug}/` directory.
+Research results are saved to `{resolved_dir}` (from Step 3).
 
 ```
 Task(
@@ -73,8 +143,8 @@ Task(
   prompt="""
     <research_request>
       <section>
-        <id>{chapter}-{section}</id>
-        <slug>{slug}</slug>
+        <id>{canonical_chapter}-{canonical_section}</id>
+        <slug>{canonical_slug}</slug>
         <title>{section_title}</title>
       </section>
       <subtopics>
@@ -84,12 +154,13 @@ Task(
       </subtopics>
       <domain>{domain}</domain>
       <audience_level>{audience_level}</audience_level>
-      <output_dir>.research/sections/{chapter}-{section}-{slug}/</output_dir>
+      <output_dir>{resolved_dir}</output_dir>
       <existing_research>{existing_research}</existing_research>
     </research_request>
 
     Follow domain-specific search strategy using domain-profiles skill.
     Save results following research-storage skill conventions.
+    The researcher will perform its own directory resolution to validate the path.
     Return confirmation message only (not the research content).
   """
 )
@@ -97,19 +168,26 @@ Task(
 
 Agent returns confirmation like:
 ```
-research_saved:.research/sections/{chapter}-{section}-{slug}/
+research_saved:{resolved_path}
 sources:5
 subtopics_covered:4/4
+match_tier:1
 ```
 
-**IMPORTANT**: Do NOT store the research content. The confirmation message is sufficient.
+**IMPORTANT**: Do NOT store the research content. The confirmation message is sufficient. Parse `research_saved:` to get the actual path used by researcher (may differ if researcher resolved differently).
 
 ### 5. Writing Phase
 
 Invoke the writer agent with file PATHS only.
 Writer reads context files directly in its isolated context.
 
+**IMPORTANT**: Use the path from researcher's confirmation (`research_saved:`) to ensure consistency. If researcher resolved to a different path, use that path.
+
 ```
+# Parse researcher's confirmation to get actual research path
+actual_research_dir = parse_research_saved_path(researcher_confirmation)
+# e.g., "research_saved:.research/sections/01-2-core-concepts/" → ".research/sections/01-2-core-concepts/"
+
 Task(
   subagent_type="writer",
   model="opus",
@@ -118,21 +196,21 @@ Task(
     <writing_request>
       <section>
         <title>{section_title}</title>
-        <id>{section_id}</id>
+        <id>{canonical_chapter}-{canonical_section}</id>
         <page_count>{page_count}</page_count>
         <subtopics>{subtopics}</subtopics>
         <part_context>{part_title}</part_context>
         <chapter_context>{chapter_title}</chapter_context>
       </section>
       <domain>{domain}</domain>
-      <output_path>docs/{section_id}-{slugified_title}.md</output_path>
+      <output_path>docs/{canonical_chapter}-{canonical_section}-{canonical_slug}.md</output_path>
     </writing_request>
 
     <context_files>
       <persona_path>persona.md</persona_path>
       <project_context_path>project-context.md</project_context_path>
-      <research_path>.research/sections/{chapter}-{section}-{slug}/research.md</research_path>
-      <sources_path>.research/sections/{chapter}-{section}-{slug}/sources.md</sources_path>
+      <research_path>{actual_research_dir}research.md</research_path>
+      <sources_path>{actual_research_dir}sources.md</sources_path>
       <init_summary_path>.research/init/summary.md</init_summary_path>
     </context_files>
 
@@ -153,7 +231,7 @@ Task(
 
 Agent returns confirmation like:
 ```
-document_written:docs/{section_id}-{slugified_title}.md
+document_written:docs/{canonical_chapter}-{canonical_section}-{canonical_slug}.md
 lines:{line_count}
 ```
 

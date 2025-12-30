@@ -47,6 +47,53 @@ Create a queue of sections to write:
 1. Collect first `count` incomplete (`[ ]`) items from task.md
 2. Extract section IDs and titles for each queued item
 
+### 3.5 Directory Resolution Helper
+
+**CRITICAL**: Use multi-tier search to find existing research directories. This handles naming inconsistencies.
+
+Define a helper function to resolve research directories:
+
+```
+function resolveResearchDirectory(chapter, section, title):
+  # Normalize identifiers (from research-storage skill)
+  canonical_chapter = normalizeChapter(chapter)
+    # "1" → "01", "01" → "01", "10" → "10"
+
+  canonical_section = normalizeSection(section)
+    # "1" → "1", "01" → "1", "02" → "2"
+
+  canonical_slug = generateSlug(title)
+    # "Core Concepts" → "core-concepts"
+    # "What is React?" → "what-is-react"
+
+  canonical_path = ".research/sections/{canonical_chapter}-{canonical_section}-{canonical_slug}/"
+
+  # Tier 1: Exact canonical match
+  tier1 = Glob("{canonical_path}research.md")
+  if tier1 not empty:
+    return { path: canonical_path, existing: true, tier: 1 }
+
+  # Tier 2: Canonical chapter-section, any slug
+  tier2 = Glob(".research/sections/{canonical_chapter}-{canonical_section}-*/research.md")
+  if tier2 not empty:
+    return { path: parent(tier2[0]), existing: true, tier: 2 }
+
+  # Tier 3: Non-padded chapter variation
+  raw_chapter = String(parseInt(chapter, 10))  # "01" → "1"
+  tier3 = Glob(".research/sections/{raw_chapter}-{canonical_section}-*/research.md")
+  if tier3 not empty:
+    return { path: parent(tier3[0]), existing: true, tier: 3 }
+
+  # Tier 4: Flexible pattern with first keyword
+  keyword = canonical_slug.split('-')[0]
+  tier4 = Glob(".research/sections/*-{canonical_section}-*{keyword}*/research.md")
+  if tier4 not empty:
+    return { path: parent(tier4[0]), existing: true, tier: 4 }
+
+  # No match - use canonical for new directory
+  return { path: canonical_path, existing: false, tier: "new" }
+```
+
 ### 4. Execute Write Loop
 
 For each section in queue:
@@ -59,11 +106,20 @@ for (i = 1; i <= queue.length; i++) {
   // Progress report
   "📝 [{i}/{queue.length}] Starting: {section.title} (domain: {domain})"
 
-  // Generate paths
-  research_dir = ".research/sections/{section.id}-{slugified_title}/"
+  // Extract chapter and section numbers from section.id (e.g., "1.2" or "01-2")
+  raw_chapter = extract_chapter(section.id)
+  raw_section = extract_section(section.id)
 
-  // Check existing research (Glob for existence only)
-  existing_research = Glob("{research_dir}research.md") exists ? true : false
+  // Resolve research directory using multi-tier search
+  resolution = resolveResearchDirectory(raw_chapter, raw_section, section.title)
+  resolved_dir = resolution.path
+  existing_research = resolution.existing
+  match_tier = resolution.tier
+
+  // Generate canonical identifiers for output paths
+  canonical_chapter = normalizeChapter(raw_chapter)
+  canonical_section = normalizeSection(raw_section)
+  canonical_slug = generateSlug(section.title)
 
   // Research Phase
   Task(
@@ -73,8 +129,8 @@ for (i = 1; i <= queue.length; i++) {
     prompt="""
       <research_request>
         <section>
-          <id>{section.id}</id>
-          <slug>{slugified_title}</slug>
+          <id>{canonical_chapter}-{canonical_section}</id>
+          <slug>{canonical_slug}</slug>
           <title>{section.title}</title>
         </section>
         <subtopics>
@@ -82,12 +138,15 @@ for (i = 1; i <= queue.length; i++) {
           <subtopic>{subtopic 2}</subtopic>
         </subtopics>
         <domain>{domain}</domain>
-        <output_dir>{research_dir}</output_dir>
+        <output_dir>{resolved_dir}</output_dir>
         <existing_research>{existing_research}</existing_research>
       </research_request>
     """
   )
-  // Agent returns: "research_saved:{research_dir}\nsources:N\nsubtopics_covered:X/Y"
+  // Agent returns: "research_saved:{resolved_path}\nsources:N\nsubtopics_covered:X/Y\nmatch_tier:T"
+
+  // Parse researcher's confirmation to get actual research path
+  actual_research_dir = parse_research_saved_path(researcher_confirmation)
 
   // Writing Phase - Pass FILE PATHS only
   Task(
@@ -105,14 +164,14 @@ for (i = 1; i <= queue.length; i++) {
           </subtopics>
         </section>
         <domain>{domain}</domain>
-        <output_path>docs/{section.id}-{slugified_title}.md</output_path>
+        <output_path>docs/{canonical_chapter}-{canonical_section}-{canonical_slug}.md</output_path>
       </writing_request>
 
       <context_files>
         <persona_path>persona.md</persona_path>
         <project_context_path>project-context.md</project_context_path>
-        <research_path>{research_dir}research.md</research_path>
-        <sources_path>{research_dir}sources.md</sources_path>
+        <research_path>{actual_research_dir}research.md</research_path>
+        <sources_path>{actual_research_dir}sources.md</sources_path>
         <init_summary_path>.research/init/summary.md</init_summary_path>
       </context_files>
 
@@ -120,6 +179,9 @@ for (i = 1; i <= queue.length; i++) {
     """
   )
   // Agent returns: "document_written:{path}\nlines:{count}"
+
+  // Document path using canonical identifiers
+  document_path = "docs/{canonical_chapter}-{canonical_section}-{canonical_slug}.md"
 
   // Review Phase (if skip_review is false)
   if (!skip_review) {
@@ -129,7 +191,7 @@ for (i = 1; i <= queue.length; i++) {
       description="Review {section.title}",
       prompt="""
         <review_request>
-          <document_path>docs/{section.id}-{slugified_title}.md</document_path>
+          <document_path>{document_path}</document_path>
           <persona_path>persona.md</persona_path>
           <previous_section>{previous_section_path or "none"}</previous_section>
           <target_pages>{section.pages}</target_pages>
@@ -145,7 +207,7 @@ for (i = 1; i <= queue.length; i++) {
         description="Revise {section.title}",
         prompt="""
           <revision_request>
-            <document_path>docs/{section.id}-{slugified_title}.md</document_path>
+            <document_path>{document_path}</document_path>
             <domain>{domain}</domain>
             <review_feedback>
               {revision_suggestions from review_result}

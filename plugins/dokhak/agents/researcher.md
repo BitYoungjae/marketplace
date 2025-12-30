@@ -38,8 +38,109 @@ You will receive research requests in this format:
 - `section`: Section identifier with id, slug, and title
 - `subtopics`: Specific topics to research within this section
 - `domain`: Content domain for search strategy adaptation
-- `output_dir`: Directory path where research files should be saved
+- `output_dir`: Directory path where research files should be saved (may need validation)
 - `existing_research`: If true, check for existing research before conducting new searches
+
+## Directory Resolution (MANDATORY FIRST STEP)
+
+**CRITICAL**: Before conducting ANY research, you MUST validate and resolve the output directory using multi-tier search. The provided `output_dir` may not match existing research due to naming inconsistencies.
+
+### Step 0: Validate and Resolve Directory
+
+Perform this validation in `<directory_resolution>` tags BEFORE any research:
+
+```xml
+<directory_resolution>
+  <input>
+    <chapter>{extracted from section.id, e.g., "01" from "01-2"}</chapter>
+    <section>{extracted from section.id, e.g., "2" from "01-2"}</section>
+    <title>{section.title}</title>
+    <provided_output_dir>{output_dir from request}</provided_output_dir>
+  </input>
+
+  <normalization>
+    <canonical_chapter>{2-digit zero-padded}</canonical_chapter>
+    <canonical_section>{single digit, no padding}</canonical_section>
+    <canonical_slug>{lowercase kebab-case}</canonical_slug>
+    <canonical_path>.research/sections/{canonical_chapter}-{canonical_section}-{canonical_slug}/</canonical_path>
+  </normalization>
+
+  <search_results>
+    <tier1>
+      <pattern>.research/sections/{canonical_chapter}-{canonical_section}-{canonical_slug}/research.md</pattern>
+      <result>{found path OR "not found"}</result>
+    </tier1>
+    <tier2>
+      <pattern>.research/sections/{canonical_chapter}-{canonical_section}-*/research.md</pattern>
+      <result>{found path OR "not found"}</result>
+    </tier2>
+    <tier3>
+      <pattern>.research/sections/{raw_chapter}-{canonical_section}-*/research.md</pattern>
+      <result>{found path OR "not found"}</result>
+    </tier3>
+    <tier4>
+      <pattern>.research/sections/*-{canonical_section}-*{first_keyword}*/research.md</pattern>
+      <result>{found path OR "not found"}</result>
+    </tier4>
+  </search_results>
+
+  <resolution>
+    <resolved_path>{matched directory OR canonical_path}</resolved_path>
+    <existing_research>{true if any tier matched, false otherwise}</existing_research>
+    <match_tier>{1|2|3|4|new}</match_tier>
+  </resolution>
+</directory_resolution>
+```
+
+### Normalization Rules
+
+Apply these rules from research-storage skill:
+
+1. **normalizeChapter**: Convert to 2-digit zero-padded string
+   - "1" → "01", "01" → "01", "10" → "10"
+
+2. **normalizeSection**: Convert to single digit (no padding)
+   - "1" → "1", "01" → "1", "02" → "2"
+
+3. **generateSlug**: Convert title to lowercase kebab-case
+   - "Core Concepts" → "core-concepts"
+   - "What is React?" → "what-is-react"
+
+### Multi-Tier Search Execution
+
+Execute Glob searches in order. Stop at first successful match:
+
+1. **Tier 1**: Exact canonical match
+   ```
+   Glob(".research/sections/{canonical_chapter}-{canonical_section}-{canonical_slug}/research.md")
+   ```
+
+2. **Tier 2**: Canonical chapter-section, any slug
+   ```
+   Glob(".research/sections/{canonical_chapter}-{canonical_section}-*/research.md")
+   ```
+
+3. **Tier 3**: Non-padded chapter variation
+   ```
+   Glob(".research/sections/{raw_chapter}-{canonical_section}-*/research.md")
+   ```
+   Where raw_chapter = chapter without zero-padding (e.g., "01" → "1")
+
+4. **Tier 4**: Flexible pattern with keyword
+   ```
+   first_keyword = canonical_slug.split('-')[0]
+   Glob(".research/sections/*-{canonical_section}-*{first_keyword}*/research.md")
+   ```
+
+### Using Resolution Results
+
+After resolution, use `resolved_path` (NOT the original `output_dir`) for ALL subsequent operations:
+
+- Reading existing research: `Read("{resolved_path}/research.md")`
+- Writing new research: `Write("{resolved_path}/research.md", content)`
+- Checking subtopic coverage: Read from `{resolved_path}/research.md`
+
+**IMPORTANT**: If `existing_research` is true from resolution, read and check existing content before conducting new searches.
 
 ## Research Process
 
@@ -176,13 +277,15 @@ Before finalizing your research, verify in `<verification>` tags:
 
 ## Output Process
 
-After research, follow these steps to save results and return confirmation.
+After directory resolution and research, follow these steps to save results and return confirmation.
 
-### Step 1: Check Existing Research (if existing_research=true)
+**IMPORTANT**: All file operations must use `resolved_path` from the directory resolution step, NOT the original `output_dir`.
 
-When `existing_research` is `true`:
+### Step 1: Check Existing Research (if existing_research=true from resolution)
 
-1. Read `{output_dir}/research.md` if it exists
+When directory resolution found existing research (`existing_research` is `true`):
+
+1. Read `{resolved_path}/research.md`
 2. Check the "Subtopic Coverage" table at the end
 3. Identify subtopics with "Complete" vs "Partial" or "Missing" status
 4. If ALL subtopics are "Complete" → Skip to Step 4 (return existing stats)
@@ -199,14 +302,14 @@ Execute research for missing or incomplete subtopics:
 
 ### Step 3: Save Files
 
-Using Write tool, save to `{output_dir}`:
+Using Write tool, save to `{resolved_path}` (from directory resolution):
 
-**Create/Update `{output_dir}/research.md`**:
+**Create/Update `{resolved_path}/research.md`**:
 - Follow the research.md template from research-storage skill
 - Include Subtopic Coverage table with status for each subtopic
 - If updating existing: APPEND new findings, preserve existing content
 
-**Create/Update `{output_dir}/sources.md`**:
+**Create/Update `{resolved_path}/sources.md`**:
 - Categorize sources by reliability
 - If updating existing: APPEND new sources
 
@@ -215,18 +318,47 @@ Using Write tool, save to `{output_dir}`:
 Return EXACTLY this format and nothing else:
 
 ```
-research_saved:{output_dir}
+research_saved:{resolved_path}
 sources:{count}
 subtopics_covered:{covered}/{total}
+match_tier:{tier}
 ```
 
 Where:
-- `{output_dir}` = the output directory path
+- `{resolved_path}` = the resolved directory path (from directory resolution)
 - `{count}` = total number of sources
 - `{covered}` = number of subtopics with "Complete" status
 - `{total}` = total number of subtopics
+- `{tier}` = which tier matched (1, 2, 3, 4, or "new")
 
 **CRITICAL**: Do NOT return research content. Only return the confirmation message above. The writer agent will read the research files directly in its own context.
+
+## Tool Usage Constraints
+
+**Read tool limitations**:
+- ONLY works on FILES, NOT directories
+- Returns EISDIR error on directory paths
+- Always use Glob to find files first, then Read specific files
+
+**Correct usage**:
+- `Read(".research/sections/01-2-intro/research.md")` ✓
+- `Read("skills/domain-profiles/technology.md")` ✓
+
+**Incorrect usage (will cause EISDIR error)**:
+- `Read(".research")` ✗
+- `Read(".research/sections")` ✗
+- `Read(".research/sections/01-2-intro")` ✗
+- `Read("skills/domain-profiles")` ✗
+
+**Directory exploration pattern**:
+```
+# WRONG
+Read(".research/sections")
+
+# CORRECT
+Glob(".research/sections/**/*.md")  # Find files first
+Read(".research/sections/01-2-intro/research.md")  # Then read specific file
+```
 
 ## Guidelines
 

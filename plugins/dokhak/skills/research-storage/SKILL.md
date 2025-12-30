@@ -31,33 +31,111 @@ project-root/
 
 ## Naming Convention
 
-### Section Directory Pattern
+### Section Directory Pattern (CANONICAL)
 
 Format: `{chapter}-{section}-{slug}`
 
-| Component | Format                | Example                         |
-| --------- | --------------------- | ------------------------------- |
-| chapter   | Zero-padded 2 digits  | `01`, `02`, `10`                |
-| section   | Single digit          | `1`, `2`, `3`                   |
-| slug      | Kebab-case from title | `introduction`, `core-concepts` |
+| Component | Format                  | Canonical Example | Non-canonical (avoid) |
+| --------- | ----------------------- | ----------------- | --------------------- |
+| chapter   | Zero-padded 2 digits    | `01`, `02`, `10`  | `1`, `2`              |
+| section   | Single digit (NO padding) | `1`, `2`, `3`   | `01`, `02`            |
+| slug      | Kebab-case lowercase    | `core-concepts`   | `Core-Concepts`       |
 
-**Examples**:
+**Canonical Examples**:
 
-- Chapter 1, Section 2, "Core Concepts" → `01-2-core-concepts`
-- Chapter 3, Section 1, "Getting Started" → `03-1-getting-started`
-- Chapter 10, Section 3, "Advanced Patterns" → `10-3-advanced-patterns`
+- Chapter 1, Section 2, "Core Concepts" → `01-2-core-concepts` ✓
+- Chapter 3, Section 1, "Getting Started" → `03-1-getting-started` ✓
+- Chapter 10, Section 3, "Advanced Patterns" → `10-3-advanced-patterns` ✓
 
-### Slug Generation Rules
+**Non-canonical (may exist from legacy/inconsistency)**:
 
-1. Convert title to lowercase
-2. Replace spaces with hyphens
-3. Remove special characters (except hyphens)
-4. Collapse multiple hyphens to single hyphen
+- `1-2-core-concepts` (chapter not padded)
+- `01-02-core-concepts` (section padded)
+- `01-2-Core-Concepts` (slug not lowercase)
+
+## Normalization Functions
+
+**CRITICAL**: All agents MUST use these normalization functions to ensure consistency.
+
+### normalizeChapter(chapter)
+
+Converts any chapter format to canonical 2-digit zero-padded string.
 
 ```
-"Core Concepts" → "core-concepts"
-"What is React?" → "what-is-react"
-"Setup & Installation" → "setup-installation"
+Input: "1" or "01" or 1 or "001"
+Output: "01" (always 2-digit zero-padded string)
+
+Process:
+1. Convert to integer: parseInt(chapter, 10)
+2. Zero-pad to 2 digits: String(n).padStart(2, '0')
+
+Examples:
+- "1" → "01"
+- "01" → "01"
+- "10" → "10"
+- 1 → "01"
+- "001" → "01"
+```
+
+### normalizeSection(section)
+
+Converts any section format to canonical single-digit string (no padding).
+
+```
+Input: "1" or "01" or 1
+Output: "1" (single digit, no padding)
+
+Process:
+1. Convert to integer: parseInt(section, 10)
+2. Convert to string: String(n)
+
+Examples:
+- "1" → "1"
+- "01" → "1"
+- "3" → "3"
+- "03" → "3"
+```
+
+### generateSlug(title)
+
+Converts title to canonical kebab-case slug.
+
+```
+Input: Any title string
+Output: Lowercase kebab-case slug
+
+Process:
+1. Convert to lowercase: title.toLowerCase()
+2. Replace spaces with hyphens: replace(/\s+/g, '-')
+3. Remove special characters (keep a-z, 0-9, -): replace(/[^a-z0-9-]/g, '')
+4. Collapse multiple hyphens: replace(/-+/g, '-')
+5. Trim leading/trailing hyphens: replace(/^-|-$/g, '')
+
+Examples:
+- "Core Concepts" → "core-concepts"
+- "What is React?" → "what-is-react"
+- "Setup & Installation" → "setup-installation"
+- "  Multiple   Spaces  " → "multiple-spaces"
+- "C++ Programming" → "c-programming"
+```
+
+### buildCanonicalPath(chapter, section, title)
+
+Builds the canonical directory path.
+
+```
+Input: chapter, section, title
+Output: ".research/sections/{canonical_chapter}-{canonical_section}-{canonical_slug}/"
+
+Process:
+1. canonical_chapter = normalizeChapter(chapter)
+2. canonical_section = normalizeSection(section)
+3. canonical_slug = generateSlug(title)
+4. return ".research/sections/{canonical_chapter}-{canonical_section}-{canonical_slug}/"
+
+Example:
+- buildCanonicalPath("1", "02", "Core Concepts")
+- → ".research/sections/01-2-core-concepts/"
 ```
 
 ## File Path Generation
@@ -214,17 +292,150 @@ Format: `{chapter}-{section}-{slug}`
 | {name}   | Missing  | -                 |
 ````
 
+## Directory Resolution Strategy
+
+When locating research directories, use multi-tier search to handle naming inconsistencies from legacy data or different generation sources.
+
+### Why Multi-Tier Search?
+
+Research directories may have been created with inconsistent naming:
+
+| Inconsistency Type     | Example Mismatch                           |
+| ---------------------- | ------------------------------------------ |
+| Chapter padding        | `1-2-intro` vs `01-2-intro`                |
+| Section padding        | `01-02-intro` vs `01-2-intro`              |
+| Slug case              | `01-2-Core-Concepts` vs `01-2-core-concepts` |
+| Slug special chars     | `01-2-whats-new?` vs `01-2-whats-new`      |
+| Combined inconsistency | `1-02-What's New?` vs `01-2-whats-new`     |
+
+### Multi-Tier Search Algorithm
+
+Execute tiers in order. Stop at first successful match.
+
+#### Tier 1: Canonical Exact Match (Primary)
+
+Search using fully normalized canonical path.
+
+```
+canonical_chapter = normalizeChapter(chapter)  # "1" → "01"
+canonical_section = normalizeSection(section)  # "02" → "2"
+canonical_slug = generateSlug(title)           # "Core Concepts" → "core-concepts"
+
+Glob(".research/sections/{canonical_chapter}-{canonical_section}-{canonical_slug}/research.md")
+
+Example: Glob(".research/sections/01-2-core-concepts/research.md")
+```
+
+#### Tier 2: Canonical Chapter-Section, Any Slug
+
+If Tier 1 fails, search with canonical chapter-section but wildcard slug.
+
+```
+Glob(".research/sections/{canonical_chapter}-{canonical_section}-*/research.md")
+
+Example: Glob(".research/sections/01-2-*/research.md")
+```
+
+This catches slug variations like `Core-Concepts`, `core_concepts`, etc.
+
+#### Tier 3: Non-Padded Chapter Variation
+
+If Tier 2 fails, try without chapter zero-padding (legacy compatibility).
+
+```
+raw_chapter = String(parseInt(chapter, 10))  # "01" → "1"
+
+Glob(".research/sections/{raw_chapter}-{canonical_section}-*/research.md")
+
+Example: Glob(".research/sections/1-2-*/research.md")
+```
+
+#### Tier 4: Flexible Pattern Match (Last Resort)
+
+If all above fail, use section number and first slug keyword.
+
+```
+first_keyword = generateSlug(title).split('-')[0]  # "core-concepts" → "core"
+
+Glob(".research/sections/*-{canonical_section}-*{first_keyword}*/research.md")
+
+Example: Glob(".research/sections/*-2-*core*/research.md")
+```
+
+### Resolution Output Format
+
+Return resolution result in XML format:
+
+```xml
+<directory_resolution>
+  <input>
+    <chapter>{original_chapter}</chapter>
+    <section>{original_section}</section>
+    <title>{original_title}</title>
+  </input>
+  <canonical>
+    <chapter>{normalized_chapter}</chapter>
+    <section>{normalized_section}</section>
+    <slug>{normalized_slug}</slug>
+    <path>{canonical_path}</path>
+  </canonical>
+  <resolution>
+    <resolved_path>{matched_path OR canonical_path}</resolved_path>
+    <existing>{true|false}</existing>
+    <match_tier>{1|2|3|4|new}</match_tier>
+  </resolution>
+</directory_resolution>
+```
+
+### Resolution Logic Summary
+
+```
+function resolveResearchDirectory(chapter, section, title):
+  # Normalize inputs
+  c = normalizeChapter(chapter)
+  s = normalizeSection(section)
+  slug = generateSlug(title)
+  canonical = ".research/sections/{c}-{s}-{slug}/"
+
+  # Tier 1: Exact canonical
+  result = Glob("{canonical}research.md")
+  if result: return { path: canonical, existing: true, tier: 1 }
+
+  # Tier 2: Canonical chapter-section, any slug
+  result = Glob(".research/sections/{c}-{s}-*/research.md")
+  if result: return { path: parent(result[0]), existing: true, tier: 2 }
+
+  # Tier 3: Non-padded chapter
+  raw_c = String(parseInt(chapter, 10))
+  result = Glob(".research/sections/{raw_c}-{s}-*/research.md")
+  if result: return { path: parent(result[0]), existing: true, tier: 3 }
+
+  # Tier 4: Flexible pattern
+  keyword = slug.split('-')[0]
+  result = Glob(".research/sections/*-{s}-*{keyword}*/research.md")
+  if result: return { path: parent(result[0]), existing: true, tier: 4 }
+
+  # No match - use canonical for new directory
+  return { path: canonical, existing: false, tier: "new" }
+```
+
 ## Usage Patterns
 
-### Checking Existing Research
+### Checking Existing Research (UPDATED)
 
-Use Glob to check if research exists before conducting new research:
+**IMPORTANT**: Do NOT use simple Glob. Use the multi-tier resolution strategy above.
 
 ```
+# OLD (may miss existing research due to naming inconsistency)
 Glob(".research/sections/{chapter}-{section}-{slug}/research.md")
+
+# NEW (handles all variations)
+resolution = resolveResearchDirectory(chapter, section, title)
+existing_research = resolution.existing
+research_dir = resolution.resolved_path
 ```
 
-Returns file path if exists, empty if not.
+Returns resolved directory path and existence status.
 
 ### Reading Research Files
 
