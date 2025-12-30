@@ -7,10 +7,10 @@ argument-hint: <error-message-or-symptom>
 ## System Information
 
 <system_info>
-- Neovim version: !`nvim --version | head -3`
-- Config path: !`nvim --headless -c "lua print(vim.fn.stdpath('config'))" -c "qa" 2>&1`
-- Plugin count: !`ls ~/.local/share/nvim/lazy 2>/dev/null | wc -l || echo "N/A"`
-- Startup time: !`nvim --headless --startuptime /tmp/nvim-startup.log -c "qa" && tail -1 /tmp/nvim-startup.log`
+- Neovim version: !`nvim --version 2>&1 || echo "nvim not found"`
+- Config path: !`nvim --headless -c "lua print(vim.fn.stdpath('config'))" -c "qa" 2>&1 || echo "N/A"`
+- Plugin count: !`nvim --headless -c "lua local ok,l=pcall(require,'lazy');print(ok and #vim.tbl_keys(l.plugins()) or 'N/A')" -c "qa" 2>&1 || echo "N/A"`
+- Startup time: (measured by agent during diagnosis)
 </system_info>
 
 ## User Problem

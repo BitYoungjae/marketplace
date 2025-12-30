@@ -1,7 +1,7 @@
 {
   "name": "nvim-doctor",
   "description": "Diagnose and fix your Neovim configuration issues with AI-powered analysis. Like 'brew doctor' for your Neovim setup.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": {
     "name": "BitYoungjae",
     "email": "bityoungjae@gmail.com"
