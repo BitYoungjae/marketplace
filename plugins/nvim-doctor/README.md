@@ -139,7 +139,7 @@ nvim-doctor provides structured, evidence-based diagnoses:
 
 ## License
 
-MIT License - see [LICENSE](./LICENSE) for details.
+MIT
 
 ## Author
 
