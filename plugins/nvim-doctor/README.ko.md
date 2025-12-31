@@ -139,7 +139,7 @@ nvim-doctor는 구조화된 증거 기반 진단을 제공합니다:
 
 ## 라이선스
 
-MIT License - 자세한 내용은 [LICENSE](./LICENSE)를 참조하세요.
+MIT
 
 ## 저자
 
