@@ -14,7 +14,7 @@ The plugin uses **different parsers** for different parts:
 | Settings | mathjs | `pi` | - | `left=-2*pi+0.5` |
 | Equations | Desmos (LaTeX) | `\pi` | `\sqrt{x}` | `y=\sqrt{x}+\pi` |
 | Points | Desmos (LaTeX) | `\pi` | `\sqrt{x}` | `(\pi/2, 1)` |
-| **Restrictions** | plain math | `pi` | `x^0.5` | `x>-pi/2` |
+| **Restrictions** | plain math | numeric | `x^0.5` | `x>-1.5708` |
 
 ```markdown
 ✅ CORRECT
@@ -167,7 +167,7 @@ Limit where equations are drawn:
 y=x^2|0<x<5           # Only draw for 0 < x < 5
 y=\sin(x)|x>0|y>0     # Multiple restrictions
 y=2x|0<=x<=1          # <= and >= supported
-y=\tan(x)|x>-pi/2|x<pi/2   # Use pi (not \pi) in restrictions!
+y=\tan(x)|x>-1.5708|x<1.5708   # Use numeric values (π/2≈1.5708)
 ```
 
 **⚠️ CRITICAL: Use plain math, NOT LaTeX in restrictions!**
@@ -177,7 +177,7 @@ y=\tan(x)|x>-pi/2|x<pi/2   # Use pi (not \pi) in restrictions!
 | `x/2<y` | `\frac{x}{2}<y` | No LaTeX commands |
 | `x^0.5<2` | `\sqrt{x}<2` | Use `^0.5` not `\sqrt` |
 | `0<x<3^0.5` | `0<x<sqrt(3)` | `sqrt()` → s*q*r*t |
-| `x>-pi/2` | `x>-\pi/2` | Use `pi` not `\pi` |
+| `x>-1.5708` | `x>-pi/2` | `pi` → p*i, use numeric |
 | `0<x<1` | `\{0<x<1\}` | No braces needed |
 
 The plugin auto-wraps restrictions with `{}` - don't add them yourself.

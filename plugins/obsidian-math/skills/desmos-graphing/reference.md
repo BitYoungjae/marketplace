@@ -191,11 +191,11 @@ Restrictions use **plain math syntax**, NOT LaTeX:
 | `x/2<y` | `\frac{x}{2}<y` | Piecewise error |
 | `x^(1/2)<2` | `\sqrt{x}<2` | Piecewise error |
 | `0<x<1` | `\{0<x<1\}` | Plugin adds braces |
-| `x>-pi/2` | `x>-\pi/2` | Piecewise error |
+| `x>-1.5708` | `x>-pi/2` | `pi` → p*i error |
 
-**Why errors occur**: The plugin auto-wraps restrictions with `{}` and converts operators. LaTeX backslashes break this process and get misinterpreted.
+**Why errors occur**: The plugin auto-wraps restrictions with `{}` and converts operators. LaTeX backslashes break this process. Also, `pi` is interpreted as `p*i` (two variables).
 
-**Note**: Use `pi` (not `\pi`) in restrictions, just like in settings.
+**Note**: Use numeric values for pi in restrictions (π≈3.1416, π/2≈1.5708).
 
 ### Multiple Restrictions
 
@@ -582,14 +582,14 @@ y=x|#a52a2a     # brown
 | Feature | Settings (above ---) | Equations & Points (below ---) | Restrictions |
 |---------|---------------------|-------------------------------|--------------|
 | Parser | **mathjs** | **Desmos API (LaTeX)** | **plain math** |
-| Pi | `pi` | `\pi` | `pi` |
-| Tau | `tau` | `\tau` | `tau` |
+| Pi | `pi` | `\pi` | numeric (3.1416) |
+| Tau | `tau` | `\tau` | numeric (6.2832) |
 | Math | `2*pi`, `pi/2` | `\frac{\pi}{2}` | `x/2`, `x^2` |
-| Example | `left=-2*pi+0.5` | `y=\sin(x+\pi)` | `x>-pi/2` |
+| Example | `left=-2*pi+0.5` | `y=\sin(x+\pi)` | `x>-1.5708` |
 | **Points** | N/A | `(\pi/2, 0)` ← LaTeX required! | N/A |
 
 ⚠️ **Point coordinates are parsed by Desmos, NOT mathjs!**
-⚠️ **Restrictions use plain math - use `pi` not `\pi`!**
+⚠️ **Restrictions: use numeric values, NOT `pi` or `\pi`!**
 
 ```
 (pi/2, 0)      # ❌ Error: "Too many variables"
@@ -610,7 +610,7 @@ degreeMode=radians
 ---
 y=\sin(x)|red
 y=\cos(x)|blue|dashed
-y=\tan(x)|orange|x>-pi/2|x<pi/2
+y=\tan(x)|orange|x>-1.5708|x<1.5708
 ```
 ````
 

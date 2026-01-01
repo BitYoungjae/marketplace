@@ -32,7 +32,7 @@
       "name": "obsidian-math",
       "source": "./plugins/obsidian-math",
       "description": "Write perfect LaTeX formulas and Desmos graphs in Obsidian. Comprehensive skills for mathematical notation and function visualization.",
-      "version": "1.0.4",
+      "version": "1.0.5",
       "author": {
         "name": "BitYoungjae",
         "email": "bityoungjae@gmail.com"
