@@ -1,0 +1,16 @@
+{
+  "name": "obsidian-blocks",
+  "description": "Skills for writing visual content in Obsidian using code blocks. Formulas (LaTeX), graphs (Desmos), diagrams (Mermaid), and more.",
+  "version": "1.1.0",
+  "author": {
+    "name": "BitYoungjae",
+    "email": "bityoungjae@gmail.com"
+  },
+  "license": "MIT",
+  "keywords": ["obsidian", "latex", "mathjax", "desmos", "mermaid", "diagram", "graph"],
+  "skills": [
+    "./skills/mathjax-rendering",
+    "./skills/desmos-graphing",
+    "./skills/mermaid-diagramming"
+  ]
+}

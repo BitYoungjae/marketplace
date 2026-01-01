@@ -43,19 +43,20 @@ Diagnose and fix your Neovim configuration issues with AI-powered analysis. Trou
 - Deprecated API detection (Neovim 0.9-0.12)
 - Support for LazyVim, NvChad, AstroNvim, and custom configs
 
-### [obsidian-math](./plugins/obsidian-math/)
+### [obsidian-blocks](./plugins/obsidian-blocks/)
 
-> *Write perfect math in Obsidian.*
+> *Visual content through code blocks.*
 
-Skills for writing LaTeX formulas and Desmos graphs in Obsidian. Comprehensive reference for mathematical notation and function visualization.
+Skills for writing visual content in Obsidian using code blocks. Formulas, graphs, diagrams, and more beyond plain text.
 
 ```bash
-/plugin install obsidian-math@bityoungjae-marketplace
+/plugin install obsidian-blocks@bityoungjae-marketplace
 ```
 
 **Skills:**
 - `mathjax-rendering`: LaTeX formula syntax and MathJax rendering
-- `desmos-graphing`: Interactive graph creation with Desmos
+- `desmos-graphing`: Interactive graphs with Desmos
+- `mermaid-diagrams`: Mermaid diagrams (coming soon)
 
 ## License
 

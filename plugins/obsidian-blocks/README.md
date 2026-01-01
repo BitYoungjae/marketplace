@@ -1,12 +1,14 @@
-# obsidian-math
+# obsidian-blocks
 
-**Write perfect LaTeX formulas and Desmos graphs in Obsidian.**
+**Skills for writing visual content in Obsidian using code blocks.**
+
+Formulas (LaTeX), graphs (Desmos), diagrams (Mermaid), and more.
 
 ## Installation
 
 ```bash
 /plugin marketplace add bityoungjae/marketplace
-/plugin install obsidian-math@bityoungjae-marketplace
+/plugin install obsidian-blocks@bityoungjae-marketplace
 ```
 
 ## Skills
@@ -26,6 +28,14 @@ Interactive graph creation with Desmos plugin.
 - Function plotting, parametric curves, polar graphs
 - Points, labels, sliders, animations
 - Piecewise functions, inequalities, implicit curves
+
+### mermaid-diagramming
+
+Mermaid diagrams for visualizing processes and structures.
+
+- Flowcharts, sequence diagrams, class diagrams
+- Gantt charts, state diagrams, gitgraph
+- Mindmaps, pie charts, custom styling
 
 ## License
 

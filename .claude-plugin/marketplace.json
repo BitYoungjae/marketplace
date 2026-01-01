@@ -29,15 +29,15 @@
       "keywords": ["neovim", "nvim", "doctor", "diagnose", "configuration", "troubleshoot", "lazyvim"]
     },
     {
-      "name": "obsidian-math",
-      "source": "./plugins/obsidian-math",
-      "description": "Write perfect LaTeX formulas and Desmos graphs in Obsidian. Comprehensive skills for mathematical notation and function visualization.",
-      "version": "1.0.5",
+      "name": "obsidian-blocks",
+      "source": "./plugins/obsidian-blocks",
+      "description": "Skills for writing visual content in Obsidian using code blocks. Formulas (LaTeX), graphs (Desmos), diagrams (Mermaid), and more.",
+      "version": "1.1.0",
       "author": {
         "name": "BitYoungjae",
         "email": "bityoungjae@gmail.com"
       },
-      "keywords": ["obsidian", "latex", "mathjax", "desmos", "math", "graph", "수식", "그래프"]
+      "keywords": ["obsidian", "latex", "mathjax", "desmos", "mermaid", "diagram", "graph"]
     }
   ]
 }
