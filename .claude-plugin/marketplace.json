@@ -32,7 +32,7 @@
       "name": "obsidian-blocks",
       "source": "./plugins/obsidian-blocks",
       "description": "Skills for writing visual content in Obsidian using code blocks. Formulas (LaTeX), graphs (Desmos), diagrams (Mermaid), and more.",
-      "version": "1.4.0",
+      "version": "1.4.1",
       "author": {
         "name": "BitYoungjae",
         "email": "bityoungjae@gmail.com"
