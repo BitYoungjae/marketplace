@@ -11,6 +11,22 @@ Formulas (LaTeX), graphs (Desmos), diagrams (Mermaid), and more.
 /plugin install obsidian-blocks@bityoungjae-marketplace
 ```
 
+## Commands
+
+### /enhance
+
+Analyze and enhance Obsidian documents with visual elements.
+
+```bash
+/enhance path/to/document.md
+```
+
+The command delegates to the `doc-enhancer` agent, which:
+- Reads and analyzes your document
+- Identifies opportunities for visual enhancement
+- Adds Mermaid diagrams, Desmos graphs, or MathJax formulas
+- Applies restraint: only enhances where it genuinely improves clarity
+
 ## Skills
 
 ### mathjax-rendering

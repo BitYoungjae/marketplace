@@ -53,10 +53,13 @@ Skills for writing visual content in Obsidian using code blocks. Formulas, graph
 /plugin install obsidian-blocks@bityoungjae-marketplace
 ```
 
+**Commands:**
+- `/enhance <file-path>`: Analyze and enhance documents with visual elements
+
 **Skills:**
 - `mathjax-rendering`: LaTeX formula syntax and MathJax rendering
 - `desmos-graphing`: Interactive graphs with Desmos
-- `mermaid-diagrams`: Mermaid diagrams (coming soon)
+- `mermaid-diagramming`: 16 types of Mermaid diagrams
 
 ## License
 
