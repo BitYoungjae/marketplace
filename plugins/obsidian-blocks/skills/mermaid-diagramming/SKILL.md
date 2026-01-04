@@ -39,8 +39,10 @@ For common syntax (styling, comments, themes), see [reference.md](reference.md).
 | User experience steps, satisfaction | User Journey | `journey` |
 | Historical events, milestones | Timeline | `timeline` |
 | Priority matrix, 2D positioning | Quadrant Chart | `quadrantChart` |
-| Flow visualization, proportional bands | Sankey Diagram | `sankey` |
+| Flow visualization, proportional bands | Sankey Diagram | `sankey-beta` |
 | Numerical data visualization | XY Chart | `xychart-beta` |
+| Precise element positioning, layouts | Block Diagram | `block-beta` |
+| Cloud services, service relationships | Architecture | `architecture-beta` |
 
 ---
 
@@ -327,9 +329,8 @@ For details: [quadrant-chart.md](quadrant-chart.md)
 ### Sankey Diagram
 
 ```mermaid
-sankey
+sankey-beta
 
-Source,Target,Value
 A,B,10
 A,C,15
 B,D,8
@@ -350,7 +351,7 @@ For details: [sankey.md](sankey.md)
 
 ```mermaid
 xychart-beta
-    title Sales Data
+    title "Sales Data"
     x-axis [Jan, Feb, Mar, Apr, May]
     y-axis "Revenue" 0 --> 100
     line [30, 45, 55, 70, 85]
@@ -365,6 +366,55 @@ xychart-beta
 For details: [xychart.md](xychart.md)
 
 ---
+
+### Block Diagram
+
+```mermaid
+block-beta
+    columns 2
+    A["Frontend"]:1
+    B["Backend"]:1
+    C["Database"]:2
+
+    style A fill:#e3f2fd,stroke:#1565c0,color:#0d47a1
+    style B fill:#f3e5f5,stroke:#7b1fa2,color:#4a148c
+    style C fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20
+```
+
+**Key syntax:**
+- Blocks: `ID["Label"]:SPAN` - Each block on new line
+- Columns: `columns N` - Define layout width
+- Styling: `style ID fill:#hex,stroke:#hex,color:#hex`
+- Spans: `:N` suffix - How many columns block occupies
+
+For details: [block.md](block.md)
+
+---
+
+### Architecture Diagram
+
+```mermaid
+architecture-beta
+    group Cloud(cloud)[Cloud Infrastructure]
+    service web(server)[Web Server] in Cloud
+    service api(server)[API Server] in Cloud
+    service db(database)[Database]
+
+    web:R --> L:api
+    api:R --> L:db
+```
+
+**Key syntax:**
+- Groups: `group {id}({icon})[{label}]` - Organize services
+- Services: `service {id}({icon})[{label}] (in {parent})?` - Available icons: server, database, cloud, disk, internet
+- Nesting: `in {parent_id}` - Place service/group inside parent group
+- Connections: `{id1}:{pos} {arrow} {pos}:{id2}` - Position: L(eft), R(ight), T(op), B(ottom)
+- Arrows: `-->` (right), `<--` (left), `--` (both)
+
+For details: [architecture.md](architecture.md)
+
+---
+
 
 ## Common Patterns
 
@@ -414,3 +464,5 @@ For diagram-specific guides:
 - [quadrant-chart.md](quadrant-chart.md) - Priority matrix, 2D positioning (Session 2)
 - [sankey.md](sankey.md) - Flow visualization, proportional bands (Session 2)
 - [xychart.md](xychart.md) - Numerical data visualization (Session 2)
+- [block.md](block.md) - Element positioning, multi-column layouts (Session 3)
+- [architecture.md](architecture.md) - Cloud services, service relationships (Session 3)

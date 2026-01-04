@@ -25,8 +25,10 @@ quadrantChart
 | Component | Syntax | Example |
 |-----------|--------|---------|
 | Chart type | `quadrantChart` | Start of diagram |
+| Title | `title text` | `title My Chart` |
 | X-axis | `x-axis Label --> Label` | `x-axis Low --> High` |
 | Y-axis | `y-axis Label --> Label` | `y-axis Poor --> Good` |
+| Quadrant label | `quadrant-N text` | `quadrant-1 Expand` |
 | Point | `Name: [x, y]` | `Point A: [0.5, 0.7]` |
 | Coordinates | `[x, y]` | Range 0.0 to 1.0 |
 
@@ -78,6 +80,32 @@ quadrantChart
     Q3 Low-Low: [0.3, 0.2]
     Q4 High-Low: [0.7, 0.2]
 ```
+
+### Quadrant Labels
+
+You can add descriptive labels to each quadrant using `quadrant-1` through `quadrant-4`:
+
+```mermaid
+quadrantChart
+    title Reach and Engagement
+    x-axis Low Reach --> High Reach
+    y-axis Low Engagement --> High Engagement
+    quadrant-1 We should expand
+    quadrant-2 Need to promote
+    quadrant-3 Re-evaluate
+    quadrant-4 May be improved
+    Campaign A: [0.3, 0.6]
+    Campaign B: [0.45, 0.23]
+    Campaign C: [0.57, 0.69]
+    Campaign D: [0.78, 0.34]
+```
+
+| Syntax | Description |
+|--------|-------------|
+| `quadrant-1 Label` | Top-right quadrant label |
+| `quadrant-2 Label` | Top-left quadrant label |
+| `quadrant-3 Label` | Bottom-left quadrant label |
+| `quadrant-4 Label` | Bottom-right quadrant label |
 
 ---
 
@@ -230,6 +258,70 @@ quadrantChart
     Ruby: [0.25, 0.65]
 ```
 
+### Point Styling
+
+Points can have inline styling properties for visual customization:
+
+```mermaid
+quadrantChart
+    title Styled Points Example
+    x-axis Low --> High
+    y-axis Low --> High
+    Point A: [0.3, 0.7] radius: 12
+    Point B: [0.5, 0.5] color: #ff3300, radius: 10
+    Point C: [0.7, 0.3] radius: 25, color: #00ff33, stroke-color: #10f0f0
+    Point D: [0.8, 0.8] radius: 15, stroke-color: #00ff0f, stroke-width: 5px, color: #ff33f0
+```
+
+| Property | Description | Example |
+|----------|-------------|---------|
+| `radius` | Point size | `radius: 12` |
+| `color` | Fill color (hex) | `color: #ff3300` |
+| `stroke-color` | Border color (hex) | `stroke-color: #00ff0f` |
+| `stroke-width` | Border width | `stroke-width: 5px` |
+
+### Class-based Styling
+
+Define reusable styles with `classDef` and apply using `:::className`:
+
+```mermaid
+quadrantChart
+    title Class-based Styling
+    x-axis Low --> High
+    y-axis Low --> High
+    Point A:::urgent: [0.8, 0.9]
+    Point B:::normal: [0.5, 0.5]
+    Point C:::low: [0.2, 0.3]
+    classDef urgent color: #ff0000, radius: 15
+    classDef normal color: #00ff00, radius: 10
+    classDef low color: #0000ff, radius: 8
+```
+
+### Chart Configuration
+
+Use frontmatter config block for chart dimensions and theme settings:
+
+```mermaid
+---
+config:
+  quadrantChart:
+    chartWidth: 400
+    chartHeight: 400
+  themeVariables:
+    quadrant1TextFill: "#ff0000"
+---
+quadrantChart
+    title Configured Chart
+    x-axis Urgent --> Not Urgent
+    y-axis Not Important --> Important
+    quadrant-1 Plan
+    quadrant-2 Do
+    quadrant-3 Delegate
+    quadrant-4 Delete
+    Task A: [0.3, 0.8]
+    Task B: [0.7, 0.2]
+```
+
 ---
 
 ## Obsidian Notes
@@ -264,7 +356,11 @@ quadrantChart
 | Title | `title text` | `title My Chart` |
 | X-axis | `x-axis left --> right` | `x-axis Low --> High` |
 | Y-axis | `y-axis bottom --> top` | `y-axis Poor --> Good` |
+| Quadrant label | `quadrant-N text` | `quadrant-1 Expand` |
 | Data point | `Name: [x, y]` | `Point A: [0.5, 0.7]` |
+| Styled point | `Name: [x, y] props` | `Point: [0.5, 0.7] radius: 10` |
+| Class point | `Name:::class: [x, y]` | `Point:::urgent: [0.5, 0.7]` |
+| Class definition | `classDef name props` | `classDef urgent color: #f00` |
 | X coordinate | Number 0.0-1.0 | `[0.5, y]` |
 | Y coordinate | Number 0.0-1.0 | `[x, 0.5]` |
 | Spacing | Empty lines allowed | Between sections |

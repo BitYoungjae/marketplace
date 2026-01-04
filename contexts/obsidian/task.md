@@ -25,14 +25,14 @@
 ---
 
 ## Session 3: Medium Priority (Architecture)
-<!-- Status: pending -->
+<!-- Status: completed -->
 
-- [ ] Create `block.md` (Block Diagram)
-- [ ] Create `architecture.md` (Architecture Diagram)
-- [ ] Create `c4.md` (C4 Context Diagram)
-- [ ] Update SKILL.md: add 3 diagrams to selection guide
-- [ ] Update SKILL.md: add quick start examples
-- [ ] Update SKILL.md: add file references
+- [x] Create `block.md` (Block Diagram - block-beta)
+- [x] Create `architecture.md` (Architecture Diagram)
+- [x] Update SKILL.md: add 2 diagrams to selection guide
+- [x] Update SKILL.md: add quick start examples
+- [x] Update SKILL.md: add file references
+- [x] Note: C4 Diagram not supported in Obsidian's Mermaid version
 
 ---
 
@@ -55,7 +55,7 @@
 |---------|--------|----------------|
 | 1 | ✅ Completed | 3/3 |
 | 2 | ✅ Completed | 3/3 |
-| 3 | ⏳ Pending | 0/3 |
+| 3 | ✅ Completed | 2/3 (C4 not supported) |
 | 4 | ⏳ Pending | 0/3 |
 
-**Total**: 6/12 diagrams complete
+**Total**: 8/12 diagrams complete
