@@ -60,6 +60,7 @@ Skills for writing visual content in Obsidian using code blocks. Formulas, graph
 - `mathjax-rendering`: LaTeX formula syntax and MathJax rendering
 - `desmos-graphing`: Interactive graphs with Desmos
 - `mermaid-diagramming`: 16 types of Mermaid diagrams
+- `tikzjax-diagramming`: TikZ diagrams (geometry, circuits, chemistry, 3D plots)
 
 ## License
 
