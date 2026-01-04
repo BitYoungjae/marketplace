@@ -35,6 +35,12 @@ For common syntax (styling, comments, themes), see [reference.md](reference.md).
 | Git branching strategy | Gitgraph | `gitGraph` |
 | Brainstorming, hierarchies | Mindmap | `mindmap` |
 | Proportions, percentages | Pie Chart | `pie` |
+| Database schema, entities | ER Diagram | `erDiagram` |
+| User experience steps, satisfaction | User Journey | `journey` |
+| Historical events, milestones | Timeline | `timeline` |
+| Priority matrix, 2D positioning | Quadrant Chart | `quadrantChart` |
+| Flow visualization, proportional bands | Sankey Diagram | `sankey` |
+| Numerical data visualization | XY Chart | `xychart-beta` |
 
 ---
 
@@ -227,6 +233,139 @@ For details: [pie.md](pie.md)
 
 ---
 
+### ER Diagram
+
+```mermaid
+erDiagram
+    CUSTOMER ||--o{ ORDER : places
+    ORDER ||--|{ LINE-ITEM : contains
+    CUSTOMER {
+        int id PK
+        string email UK
+        string name
+    }
+```
+
+**Key syntax:**
+- Entities: `ENTITY_NAME`
+- Attributes: `type name [PK/FK/UK]`
+- Cardinality: `||--o{` (one to many), `||--||` (one to one)
+- Relationship: `ENTITY1 REL ENTITY2 : label`
+
+For details: [er-diagram.md](er-diagram.md)
+
+---
+
+### User Journey
+
+```mermaid
+journey
+    title Customer Support
+    section Contact
+      Submit ticket: 2: Customer
+      Receive notice: 4: Agent
+    section Resolution
+      Troubleshoot issue: 3: Agent
+      Confirm solution: 5: Customer
+```
+
+**Key syntax:**
+- Sections: `section name`
+- Tasks: `Task name: score: actor`
+- Score: 1-5 (1 = unsatisfied, 5 = satisfied)
+- Actors: User roles involved
+
+For details: [journey.md](journey.md)
+
+---
+
+### Timeline
+
+```mermaid
+timeline
+    title Product Roadmap
+    section 2023
+        Q1 2023 : MVP launch
+        Q4 2023 : v1.0 release
+    section 2024
+        Q2 2024 : Major features
+        Q4 2024 : v2.0
+```
+
+**Key syntax:**
+- Time periods: `period : event`
+- Sections: Group related periods
+- Multiple events: `period : event1 : event2`
+- Flexible format: Years, months, quarters, or custom text
+
+For details: [timeline.md](timeline.md)
+
+---
+
+### Quadrant Chart
+
+```mermaid
+quadrantChart
+    title Feature Prioritization
+    x-axis Effort --> Value
+    y-axis Complexity --> Impact
+    Dark Mode: [0.4, 0.7]
+    Search: [0.6, 0.8]
+    Export PDF: [0.7, 0.6]
+    Fix UI Bug: [0.2, 0.3]
+```
+
+**Key syntax:**
+- Axes: `x-axis label --> label` and `y-axis label --> label`
+- Points: `Name: [x, y]` (coordinates 0.0-1.0)
+- Quadrants: Auto-divided at 0.5 on both axes
+
+For details: [quadrant-chart.md](quadrant-chart.md)
+
+---
+
+### Sankey Diagram
+
+```mermaid
+sankey
+
+Source,Target,Value
+A,B,10
+A,C,15
+B,D,8
+C,D,22
+```
+
+**Key syntax:**
+- CSV format: `source, target, value`
+- Three columns required
+- Values are numeric (flow magnitude)
+- Nodes auto-created from sources/targets
+
+For details: [sankey.md](sankey.md)
+
+---
+
+### XY Chart
+
+```mermaid
+xychart-beta
+    title Sales Data
+    x-axis [Jan, Feb, Mar, Apr, May]
+    y-axis "Revenue" 0 --> 100
+    line [30, 45, 55, 70, 85]
+```
+
+**Key syntax:**
+- Chart type: `xychart-beta` or `xychart-beta horizontal`
+- X-axis: `[categories]` or `min --> max`
+- Y-axis: `"label" min --> max`
+- Series: `line [values]` or `bar [values]`
+
+For details: [xychart.md](xychart.md)
+
+---
+
 ## Common Patterns
 
 ### Adding Styles
@@ -260,7 +399,7 @@ flowchart TD
 For complete documentation on common features:
 - [reference.md](reference.md) - Styling, themes, comments, directives
 
-For diagram-specific guides (Session 2-4):
+For diagram-specific guides:
 - [flowchart.md](flowchart.md) - Node shapes, links, subgraphs
 - [sequence.md](sequence.md) - Messages, activation, control flow
 - [class-diagram.md](class-diagram.md) - Classes, relationships
@@ -269,3 +408,9 @@ For diagram-specific guides (Session 2-4):
 - [gitgraph.md](gitgraph.md) - Commits, branches, merges
 - [mindmap.md](mindmap.md) - Hierarchies, node shapes
 - [pie.md](pie.md) - Proportional data
+- [er-diagram.md](er-diagram.md) - Entities, attributes, relationships (Session 1)
+- [journey.md](journey.md) - User journeys, satisfaction scores (Session 1)
+- [timeline.md](timeline.md) - Events, milestones, time periods (Session 1)
+- [quadrant-chart.md](quadrant-chart.md) - Priority matrix, 2D positioning (Session 2)
+- [sankey.md](sankey.md) - Flow visualization, proportional bands (Session 2)
+- [xychart.md](xychart.md) - Numerical data visualization (Session 2)
