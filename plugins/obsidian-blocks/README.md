@@ -35,7 +35,10 @@ Mermaid diagrams for visualizing processes and structures.
 
 - Flowcharts, sequence diagrams, class diagrams
 - Gantt charts, state diagrams, gitgraph
-- Mindmaps, pie charts, custom styling
+- Mindmaps, pie charts, ER diagrams
+- User journeys, timelines, quadrant charts
+- Sankey diagrams, XY charts
+- Block diagrams, architecture diagrams
 
 ## License
 
