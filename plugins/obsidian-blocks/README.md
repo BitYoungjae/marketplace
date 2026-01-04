@@ -2,7 +2,7 @@
 
 **Skills for writing visual content in Obsidian using code blocks.**
 
-Formulas (LaTeX), graphs (Desmos), diagrams (Mermaid), and more.
+Formulas (LaTeX), graphs (Desmos), diagrams (Mermaid, TikZ), and more.
 
 ## Installation
 
@@ -24,7 +24,7 @@ Analyze and enhance Obsidian documents with visual elements.
 The command delegates to the `doc-enhancer` agent, which:
 - Reads and analyzes your document
 - Identifies opportunities for visual enhancement
-- Adds Mermaid diagrams, Desmos graphs, or MathJax formulas
+- Adds Mermaid diagrams, Desmos graphs, MathJax formulas, or TikZJax drawings
 - Applies restraint: only enhances where it genuinely improves clarity
 
 ## Skills
@@ -55,6 +55,19 @@ Mermaid diagrams for visualizing processes and structures.
 - User journeys, timelines, quadrant charts
 - Sankey diagrams, XY charts
 - Block diagrams, architecture diagrams
+
+### tikzjax-diagramming
+
+TikZ diagrams via TikZJax plugin for complex technical drawings.
+
+- Geometric shapes with precise coordinates
+- Circuit diagrams (circuitikz)
+- Chemical structures (chemfig)
+- 3D plots (tikz-3dplot, pgfplots)
+- Commutative diagrams (tikz-cd)
+- Game scenes, coordinate systems
+
+**Note:** Requires [Obsidian TikZJax plugin](https://github.com/artisticat1/obsidian-tikzjax). English text only (Korean not supported).
 
 ## License
 

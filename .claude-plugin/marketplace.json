@@ -31,13 +31,13 @@
     {
       "name": "obsidian-blocks",
       "source": "./plugins/obsidian-blocks",
-      "description": "Skills for writing visual content in Obsidian using code blocks. Formulas (LaTeX), graphs (Desmos), diagrams (Mermaid), and more.",
-      "version": "1.4.1",
+      "description": "Skills for writing visual content in Obsidian using code blocks. Formulas (LaTeX), graphs (Desmos), diagrams (Mermaid, TikZ), and more.",
+      "version": "1.5.0",
       "author": {
         "name": "BitYoungjae",
         "email": "bityoungjae@gmail.com"
       },
-      "keywords": ["obsidian", "latex", "mathjax", "desmos", "mermaid", "diagram", "graph"]
+      "keywords": ["obsidian", "latex", "mathjax", "desmos", "mermaid", "tikz", "tikzjax", "diagram", "graph"]
     }
   ]
 }
