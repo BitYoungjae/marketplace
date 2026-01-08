@@ -1,0 +1,14 @@
+{
+  "name": "omarchy",
+  "description": "Skills for creating and managing themes in Omarchy, a Hyprland-based Linux desktop environment.",
+  "version": "1.0.0",
+  "author": {
+    "name": "BitYoungjae",
+    "email": "bityoungjae@gmail.com"
+  },
+  "license": "MIT",
+  "keywords": ["omarchy", "hyprland", "theme", "linux", "desktop", "colors", "waybar", "alacritty", "kitty", "ghostty"],
+  "skills": [
+    "./skills/omarchy-theming"
+  ]
+}

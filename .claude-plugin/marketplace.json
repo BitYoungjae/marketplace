@@ -38,6 +38,17 @@
         "email": "bityoungjae@gmail.com"
       },
       "keywords": ["obsidian", "latex", "mathjax", "desmos", "mermaid", "tikz", "tikzjax", "diagram", "graph"]
+    },
+    {
+      "name": "omarchy",
+      "source": "./plugins/omarchy",
+      "description": "Skills for creating and managing themes in Omarchy, a Hyprland-based Linux desktop environment.",
+      "version": "1.0.0",
+      "author": {
+        "name": "BitYoungjae",
+        "email": "bityoungjae@gmail.com"
+      },
+      "keywords": ["omarchy", "hyprland", "theme", "linux", "desktop", "colors", "waybar", "alacritty", "kitty", "ghostty"]
     }
   ]
 }

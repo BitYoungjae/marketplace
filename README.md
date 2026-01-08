@@ -62,6 +62,25 @@ Skills for writing visual content in Obsidian using code blocks. Formulas, graph
 - `mermaid-diagramming`: 16 types of Mermaid diagrams
 - `tikzjax-diagramming`: TikZ diagrams (geometry, circuits, chemistry, 3D plots)
 
+### [omarchy](./plugins/omarchy/)
+
+> *Theme once, apply everywhere.*
+
+Skills for creating and managing themes in Omarchy, a Hyprland-based Linux desktop environment. Define colors once in a TOML file, automatically generate configs for 13+ applications.
+
+```bash
+/plugin install omarchy@bityoungjae-marketplace
+```
+
+**Features:**
+- 22 color variables with automatic config generation
+- Support for terminals (Alacritty, Kitty, Ghostty)
+- Hyprland, Waybar, Walker, Mako integration
+- Dark and light theme support
+
+**Skills:**
+- `omarchy-theming`: Template-based theme creation with colors.toml
+
 ## License
 
 MIT
