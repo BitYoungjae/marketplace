@@ -254,6 +254,58 @@ For general/mixed topics:
 
 ---
 
+## Review Criteria
+
+Review criteria for the reviewer agent when evaluating language/general domain documents.
+
+### Critical Checks (ERROR if failed)
+
+These issues trigger `NEEDS_REVISION` status:
+
+| Check | Detection | Example |
+|-------|-----------|---------|
+| Undefined jargon | Technical terms without explanation | Using "화용론" without defining it |
+| Missing practice exercises | Concept without application | Theory-only sections |
+| Factual errors | Incorrect definitions or rules | Wrong grammar explanations |
+| Ambiguous examples | Examples that don't illustrate concept | Confusing or edge-case examples |
+
+### Quality Checks (WARN if issues)
+
+These issues are noted but don't block publication:
+
+| Check | Expectation | Notes |
+|-------|-------------|-------|
+| Theory-practice balance | ~50% each | Not purely theoretical |
+| Everyday examples | Relatable scenarios | 일상적 상황 사용 |
+| Self-check activities | 자가 점검 provided | Quiz or reflection questions |
+| Progressive difficulty | Simple to complex | Clear difficulty escalation |
+
+### Style Checks (INFO)
+
+Minor issues for optional improvement:
+
+| Check | Expectation | Notes |
+|-------|-------------|-------|
+| Bilingual glosses | Original + translation | zeitgeist (시대정신) |
+| Abbreviation expansion | Spell out first use | CEFR (Common European...) |
+| Cross-domain connections | Related fields noted | 심리학적/경제학적 관점 |
+| Recommendation format | Next steps provided | 추천 자료, 다음 단계 |
+
+### Accessibility Checklist
+
+```markdown
+# Accessibility requirements for general education:
+
+□ No assumed prior knowledge beyond stated prerequisites
+□ Technical terms defined on first use
+□ Abstract concepts have concrete examples
+□ Multiple learning modalities (text, examples, exercises)
+□ Self-study friendly structure (summaries, checkpoints)
+□ Clear learning objectives stated upfront
+```
+
+---
+
 ## Domain-Specific Sections for persona.md
 
 ```markdown

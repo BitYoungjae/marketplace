@@ -146,7 +146,7 @@ Research results are saved to `{resolved_dir}` (from Step 3).
 
 ```
 Task(
-  subagent_type="researcher",
+  subagent_type="dokhak:researcher",
   model="haiku",
   description="Research for {section_title}",
   prompt="""
@@ -198,7 +198,7 @@ actual_research_dir = parse_research_saved_path(researcher_confirmation)
 # e.g., "research_saved:.research/sections/01-2-core-concepts/" → ".research/sections/01-2-core-concepts/"
 
 Task(
-  subagent_type="writer",
+  subagent_type="dokhak:writer",
   model="opus",
   description="Write {section_title}",
   prompt="""
@@ -246,6 +246,40 @@ lines:{line_count}
 
 **IMPORTANT**: Do NOT Read the context files in this command. The writer reads them directly in its isolated context.
 
+### 5.5 Determine Previous Section
+
+Calculate the previous section path for coherence review:
+
+1. Parse `canonical_section` to get section number (S)
+2. Parse `canonical_chapter` to get chapter number (C)
+
+**Resolution logic**:
+
+```
+IF S > 1:
+  # Previous section is in same chapter
+  prev_section = S - 1
+  prev_chapter = canonical_chapter
+  previous_section_path = Glob("docs/{prev_chapter}-{prev_section}-*.md")[0] OR "none"
+
+ELSE IF S == 1 AND parseInt(canonical_chapter) > 1:
+  # First section of chapter - get last section of previous chapter
+  prev_chapter = normalizeChapter(parseInt(canonical_chapter) - 1)
+  # Find all sections in previous chapter, get the last one
+  prev_chapter_files = Glob("docs/{prev_chapter}-*-*.md")
+  IF prev_chapter_files not empty:
+    # Sort by section number and get last
+    previous_section_path = prev_chapter_files[last]
+  ELSE:
+    previous_section_path = "none"
+
+ELSE:
+  # First section of first chapter
+  previous_section_path = "none"
+```
+
+Store `previous_section_path` for use in review phase.
+
 ### 6. Review Phase (if --skip-review not set)
 
 If $ARGUMENTS contains "--skip-review":
@@ -255,15 +289,17 @@ Otherwise, invoke the reviewer agent:
 
 ```
 Task(
-  subagent_type="reviewer",
+  subagent_type="dokhak:reviewer",
   model="haiku",
   description="Review {section_title}",
   prompt="""
     <review_request>
-      <document_path>docs/{section_id}-{slugified_title}.md</document_path>
+      <document_path>docs/{canonical_chapter}-{canonical_section}-{canonical_slug}.md</document_path>
       <persona_path>persona.md</persona_path>
-      <previous_section>{previous_section_path or "none"}</previous_section>
+      <previous_section>{previous_section_path}</previous_section>
+      <docs_directory>docs/</docs_directory>
       <target_pages>{page_count}</target_pages>
+      <domain>{domain}</domain>
     </review_request>
   """
 )
@@ -281,7 +317,7 @@ Extract `<revision_suggestions>` and invoke writer agent for revision:
 
 ```
 Task(
-  subagent_type="writer",
+  subagent_type="dokhak:writer",
   model="opus",
   description="Revise {section_title}",
   prompt="""

@@ -202,6 +202,56 @@ When presenting controversial topics:
 
 ---
 
+## Review Criteria
+
+Review criteria for the reviewer agent when evaluating history domain documents.
+
+### Critical Checks (ERROR if failed)
+
+These issues trigger `NEEDS_REVISION` status:
+
+| Check | Detection | Example |
+|-------|-----------|---------|
+| Missing citations | Factual claims without source | "1592년에 발생" without citation |
+| Unsupported interpretations | Opinions presented as facts | Subjective claims without "~라는 견해가 있다" |
+| Anachronistic errors | Modern concepts imposed on past | Using modern political terms for historical contexts |
+| Single-perspective bias | Only one viewpoint presented | Only Japanese or Korean view of colonial period |
+
+### Quality Checks (WARN if issues)
+
+These issues are noted but don't block publication:
+
+| Check | Expectation | Notes |
+|-------|-------------|-------|
+| Primary source inclusion | 1차 사료 인용 권장 | 실록, 문집 등 원전 참조 |
+| Timeline accuracy | Dates should be verified | Cross-reference with established chronologies |
+| Multiple perspectives | 2+ viewpoints for contested topics | 역사적 논쟁 시 다양한 관점 |
+| Historiographical context | Major debates acknowledged | 학계 논쟁 소개 |
+
+### Style Checks (INFO)
+
+Minor issues for optional improvement:
+
+| Check | Expectation | Notes |
+|-------|-------------|-------|
+| Era notation consistency | 서기 + 연호 병기 | 1592년 (선조 25년) |
+| Name format | 한국 독음 + 한자 | 정약용(丁若鏞) |
+| Citation format | Consistent style | 『서명』 권, 편 형식 |
+| Terminology glosses | Original + modern | 봉건제(封建制) |
+
+### Content Balance Guidelines
+
+```markdown
+# Perspective balance checklist for controversial topics:
+
+□ 당대의 시각 - How contemporaries viewed the event
+□ 다른 당사자 시각 - Perspectives of other involved parties
+□ 후대 평가 변화 - How interpretations changed over time
+□ 현대 역사학 관점 - Current scholarly consensus and debates
+```
+
+---
+
 ## Domain-Specific Sections for persona.md
 
 ```markdown

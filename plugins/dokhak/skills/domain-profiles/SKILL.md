@@ -23,7 +23,9 @@ This skill provides domain-specific configurations for learning resource creatio
 | History    | [history.md](history.md)       | Historical events, periods, civilizations      |
 | Science    | [science.md](science.md)       | Physics, chemistry, biology, mathematics       |
 | Arts       | [arts.md](arts.md)             | Visual arts, music, performing arts            |
-| Language   | [language.md](language.md)     | General topics, linguistics, language learning |
+| General    | [language.md](language.md)     | General topics, linguistics, language learning |
+
+**Note**: The "general" domain uses `language.md` profile, which contains broadly applicable patterns for educational content.
 
 ## Profile Structure
 
@@ -45,14 +47,45 @@ How to handle technical terms, translations, and citations.
 
 Recommended document organization and pedagogical approach.
 
+## Standard Loading Pattern
+
+All agents should load domain profiles using this standardized pattern:
+
+```
+Read("skills/domain-profiles/{domain}.md")
+```
+
+**Domain to File Mapping**:
+
+| Input Domain | File to Read |
+|--------------|--------------|
+| technology | technology.md |
+| history | history.md |
+| science | science.md |
+| arts | arts.md |
+| general | language.md |
+
+**IMPORTANT**: When domain is "general", agents MUST read `language.md`, not "general.md" (which doesn't exist).
+
+### Agent-Specific Usage
+
+| Agent | Sections to Extract |
+|-------|---------------------|
+| researcher | Search Strategy, Special Fields, Quality Indicators |
+| research-collector | Search Strategy, Special Fields |
+| writer | Content Structure, Terminology Policy |
+| reviewer | Review Criteria (Critical Checks, Quality Checks, Style Checks) |
+
 ## Usage Example
 
 ```
 # In researcher agent prompt
-Use {domain}.md from domain-profiles skill for domain-appropriate search strategy
+Read("skills/domain-profiles/technology.md")
+# Extract Search Strategy section for domain-appropriate queries
 
 # In writer agent prompt
-Reference Content Structure in {domain}.md from domain-profiles skill for document organization
+Read("skills/domain-profiles/technology.md")
+# Apply Content Structure and Terminology Policy to document
 ```
 
 ## Domain Detection

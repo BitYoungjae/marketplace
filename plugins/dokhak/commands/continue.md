@@ -108,9 +108,15 @@ function resolveResearchDirectory(chapter, section, title):
 For each section in queue:
 
 ```
+// Initialize previous section tracker
+previous_document_path = "none"
+
 for (i = 1; i <= queue.length; i++) {
   section = queue[i]
   review_status = "SKIPPED"
+
+  // Track previous section for coherence review
+  previous_section_path = previous_document_path
 
   // Progress report
   "📝 [{i}/{queue.length}] Starting: {section.title} (domain: {domain})"
@@ -192,6 +198,9 @@ for (i = 1; i <= queue.length; i++) {
   // Document path using canonical identifiers
   document_path = "docs/{canonical_chapter}-{canonical_section}-{canonical_slug}.md"
 
+  // Store for next iteration's previous_section tracking
+  previous_document_path = document_path
+
   // Review Phase (if skip_review is false)
   if (!skip_review) {
     Task(
@@ -202,8 +211,10 @@ for (i = 1; i <= queue.length; i++) {
         <review_request>
           <document_path>{document_path}</document_path>
           <persona_path>persona.md</persona_path>
-          <previous_section>{previous_section_path or "none"}</previous_section>
+          <previous_section>{previous_section_path}</previous_section>
+          <docs_directory>docs/</docs_directory>
           <target_pages>{section.pages}</target_pages>
+          <domain>{domain}</domain>
         </review_request>
       """
     )

@@ -235,6 +235,57 @@ For laboratory-related content:
 
 ---
 
+## Review Criteria
+
+Review criteria for the reviewer agent when evaluating science domain documents.
+
+### Critical Checks (ERROR if failed)
+
+These issues trigger `NEEDS_REVISION` status:
+
+| Check | Detection | Example |
+|-------|-----------|---------|
+| Equation format errors | Malformed LaTeX | Unbalanced `$$`, missing `\` for commands |
+| Unit inconsistency | Mixed SI/CGS without conversion | Using both N and dyne without relationship |
+| Mathematical errors | Incorrect derivations | Wrong integration/differentiation steps |
+| Safety omissions | Missing lab safety notes | Dangerous procedures without warnings |
+
+### Quality Checks (WARN if issues)
+
+These issues are noted but don't block publication:
+
+| Check | Expectation | Notes |
+|-------|-------------|-------|
+| Variable definitions | All symbols defined on first use | $\Psi$ is wave function |
+| Step-by-step derivations | Key steps shown, not skipped | Major algebraic steps included |
+| Worked examples | 2+ examples per concept | Increasing difficulty progression |
+| Prerequisite references | Prior knowledge stated | "미적분 기초 필요" |
+
+### Style Checks (INFO)
+
+Minor issues for optional improvement:
+
+| Check | Expectation | Notes |
+|-------|-------------|-------|
+| Bilingual terminology | 한국어(English) format | 운동량(momentum) |
+| SI unit preference | SI primary, others secondary | 10 N (= 10⁶ dyne) |
+| Greek letter spelling | First use spelled out | 람다(λ, lambda) |
+| Equation numbering | Numbered for reference | Eq. (1), (2) style |
+
+### Equation Format Validation
+
+```markdown
+# LaTeX format checklist:
+
+□ Inline math: Single $ delimiters - $E = mc^2$
+□ Block math: Double $$ or equation environment
+□ Aligned equations: \begin{align} for multi-line
+□ Units: \text{} for unit names - $v = 10\,\text{m/s}$
+□ Vectors: \vec{} notation - $\vec{F} = m\vec{a}$
+```
+
+---
+
 ## Domain-Specific Sections for persona.md
 
 ```markdown

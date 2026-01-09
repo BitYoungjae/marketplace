@@ -209,6 +209,64 @@ def process(data: str | int) -> None:
 
 ---
 
+## Review Criteria
+
+Review criteria for the reviewer agent when evaluating technology domain documents.
+
+### Critical Checks (ERROR if failed)
+
+These issues trigger `NEEDS_REVISION` status:
+
+| Check | Detection | Example |
+|-------|-----------|---------|
+| Forbidden patterns | `eval()`, `exec()` without sandboxing | `eval(userInput)` |
+| Hardcoded secrets | API keys, passwords in code | `apiKey = "sk-..."` |
+| Missing language specifier | Code blocks without language | ` ```\ncode\n``` ` |
+| Unvalidated user input | Direct use of user input in dangerous contexts | SQL injection patterns |
+
+### Quality Checks (WARN if issues)
+
+These issues are noted but don't block publication:
+
+| Check | Expectation | Notes |
+|-------|-------------|-------|
+| Runnable examples | Code should be copy-paste executable | Check for missing imports, context |
+| Error handling | Examples should show error cases | At least one try/catch or error check |
+| Type annotations | Type hints present where applicable | Python type hints, TypeScript types |
+| Version notes | Multi-version topics need compatibility notes | When syntax differs by version |
+
+### Style Checks (INFO)
+
+Minor issues for optional improvement:
+
+| Check | Expectation | Notes |
+|-------|-------------|-------|
+| Terminology consistency | Same term throughout document | 컴포넌트 vs 구성요소 |
+| Bilingual first-occurrence | 한국어(English) format | 콜백 함수(callback function) |
+| Code comments | Comments in appropriate language | Per persona.md guidelines |
+| Docstrings | Function documentation present | For complex examples |
+
+### Automated Patterns
+
+Regex patterns for automated detection:
+
+```
+# Forbidden patterns (ERROR)
+/eval\s*\(/
+/exec\s*\(/
+/password\s*=\s*['"]/
+/api[_-]?key\s*=\s*['"]/
+/secret\s*=\s*['"]/
+
+# Missing language specifier (ERROR)
+/```\n[^`]/  # Code block without language
+
+# Version note check (WARN for multi-version topics)
+/버전|version|Python\s+\d|Node\.?js\s+\d/i  # If found, check for compatibility notes
+```
+
+---
+
 ## Domain-Specific Sections for persona.md
 
 ```markdown

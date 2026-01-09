@@ -247,6 +247,58 @@ When recommending materials:
 
 ---
 
+## Review Criteria
+
+Review criteria for the reviewer agent when evaluating arts domain documents.
+
+### Critical Checks (ERROR if failed)
+
+These issues trigger `NEEDS_REVISION` status:
+
+| Check | Detection | Example |
+|-------|-----------|---------|
+| Missing visual references | Technique explained without images | Text-only color theory explanation |
+| Incomplete materials list | Practice without supplies list | Exercise without required tools |
+| Unsafe techniques | Dangerous methods without warnings | Solvent use without ventilation notes |
+| Copyright violations | Unlicensed artwork reproduction | Using images without attribution |
+
+### Quality Checks (WARN if issues)
+
+These issues are noted but don't block publication:
+
+| Check | Expectation | Notes |
+|-------|-------------|-------|
+| Step-by-step breakdown | Complex techniques decomposed | 5+ steps for advanced techniques |
+| Alternative materials | Budget options provided | 학생용 대체재 suggestions |
+| Time estimates | Practice duration noted | "30분", "2시간" |
+| Difficulty levels | Progression indicated | 초급/중급/고급 markers |
+
+### Style Checks (INFO)
+
+Minor issues for optional improvement:
+
+| Check | Expectation | Notes |
+|-------|-------------|-------|
+| Technique term format | 원어 + 한국어 | 키아로스쿠로(chiaroscuro, 명암법) |
+| Artwork citation | Full attribution | 작가, 제목, 연도, 매체, 크기, 소장처 |
+| Color terminology | Standard names | Munsell, Pantone references |
+| Brand recommendations | Specific products noted | Winsor & Newton, Holbein |
+
+### Visual Content Checklist
+
+```markdown
+# Visual reference requirements:
+
+□ Each technique has reference image(s)
+□ Step-by-step images for complex processes
+□ Before/after comparisons where applicable
+□ Color palette examples (if color-related)
+□ Material/tool photographs
+□ Historical examples with proper attribution
+```
+
+---
+
 ## Domain-Specific Sections for persona.md
 
 ```markdown

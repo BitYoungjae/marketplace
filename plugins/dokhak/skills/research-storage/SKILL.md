@@ -8,6 +8,26 @@ allowed-tools: Read, Write, Glob
 
 This skill defines conventions for storing and retrieving research data collected by dokhak agents. Research files are cached to enable reuse and reduce redundant web searches.
 
+## Quick Reference for Agents
+
+| Agent | Uses This Skill For |
+|-------|---------------------|
+| researcher | Directory resolution, research.md writing, multi-tier lookup |
+| research-collector | summary.md, sources.md writing to `.research/init/` |
+| writer | Reading research files (read-only) |
+| structure-designer | Reading init research (read-only) |
+
+### Standard Loading Pattern
+
+All agents should reference this skill for:
+- **Normalization functions**: normalizeChapter, normalizeSection, generateSlug
+- **Multi-tier directory resolution**: Handling legacy naming inconsistencies
+- **File format templates**: research.md, sources.md, summary.md
+
+```
+Read("skills/research-storage/SKILL.md")
+```
+
 ## Directory Structure
 
 ```
@@ -485,6 +505,91 @@ Write(".research/sections/01-2-core-concepts/research.md", content)
 - Receive file paths in prompt
 - Read files directly in their own context
 - Do not modify research files
+
+## XML Output Schemas
+
+Standardized XML schemas for agent communication. All agents should use these formats for consistency.
+
+### Research Result Schema
+
+Used by `research-collector` and `researcher` agents:
+
+```xml
+<research_result domain="{technology|history|science|arts|general}" status="OK|PARTIAL|ERROR">
+  <summary>
+    <sources_count>{N}</sources_count>
+    <concepts_count>{N}</concepts_count>
+    <output_path>{path}</output_path>
+    <generated>{YYYY-MM-DD}</generated>
+  </summary>
+
+  <authoritative_sources>
+    - [Source Name](url) - {reliability: high|medium}
+  </authoritative_sources>
+
+  <key_concepts>
+    - **{Term}**: {Definition}
+  </key_concepts>
+
+  <learning_path>
+    1. Prerequisites: {list}
+    2. Fundamentals: {list}
+    3. Core Skills: {list}
+    4. Advanced: {list}
+  </learning_path>
+
+  <!-- Domain-specific sections as per domain-profiles -->
+</research_result>
+```
+
+### Directory Resolution Schema
+
+Used by `researcher` agent for path resolution:
+
+```xml
+<directory_resolution>
+  <input>
+    <chapter>{original_chapter}</chapter>
+    <section>{original_section}</section>
+    <title>{original_title}</title>
+  </input>
+  <canonical>
+    <chapter>{normalized_chapter}</chapter>
+    <section>{normalized_section}</section>
+    <slug>{normalized_slug}</slug>
+    <path>{canonical_path}</path>
+  </canonical>
+  <resolution status="FOUND|NEW">
+    <resolved_path>{matched_path OR canonical_path}</resolved_path>
+    <existing>{true|false}</existing>
+    <match_tier>{1|2|3|4|new}</match_tier>
+  </resolution>
+</directory_resolution>
+```
+
+### Subtopic Coverage Schema
+
+Used within research files to track coverage:
+
+```xml
+<subtopic_coverage>
+  <subtopic name="{name}" status="Complete|Partial|Missing">
+    <source>{url or "pending"}</source>
+  </subtopic>
+</subtopic_coverage>
+```
+
+### Status Values Reference
+
+| Status | Context | Meaning |
+|--------|---------|---------|
+| OK | research_result | All subtopics covered, sufficient sources |
+| PARTIAL | research_result | Some subtopics missing or incomplete |
+| ERROR | research_result | Critical failure (e.g., no sources found) |
+| FOUND | directory_resolution | Existing research directory located |
+| NEW | directory_resolution | No existing research, use canonical path |
+
+---
 
 ## Error Handling
 
