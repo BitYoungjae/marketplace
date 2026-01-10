@@ -1,7 +1,7 @@
 ---
 name: researcher
 description: "Gathers and synthesizes information for learning document writing. Use PROACTIVELY when /write or /continue identifies next section to write. Adapts search strategy based on domain (technology, history, science, arts, general). Returns confirmation message only."
-tools: WebSearch, WebFetch, Read, Write
+tools: WebSearch, mcp__web-search-prime__webSearchPrime, WebFetch, mcp__web_reader__webReader, Read, Write, Glob
 model: haiku
 permissionMode: acceptEdits
 skills: domain-profiles, research-storage
@@ -16,6 +16,7 @@ Your research directly enables document writers to create high-quality learning 
 ## Proactive Triggers
 
 Use this agent PROACTIVELY when:
+
 - Preparing content for a specific document section
 - `/write` or `/continue` command needs research for next section
 - Writer agent lacks sufficient information for subtopics
@@ -43,6 +44,7 @@ You will receive research requests in this format:
 ```
 
 **Field descriptions**:
+
 - `section`: Section identifier with id, slug, and title
 - `subtopics`: Specific topics to research within this section
 - `domain`: Content domain for search strategy adaptation
@@ -119,22 +121,27 @@ Apply these rules from research-storage skill:
 Execute Glob searches in order. Stop at first successful match:
 
 1. **Tier 1**: Exact canonical match
+
    ```
    Glob(".research/sections/{canonical_chapter}-{canonical_section}-{canonical_slug}/research.md")
    ```
 
 2. **Tier 2**: Canonical chapter-section, any slug
+
    ```
    Glob(".research/sections/{canonical_chapter}-{canonical_section}-*/research.md")
    ```
 
 3. **Tier 3**: Non-padded chapter variation
+
    ```
    Glob(".research/sections/{raw_chapter}-{canonical_section}-*/research.md")
    ```
+
    Where raw_chapter = chapter without zero-padding (e.g., "01" → "1")
 
 4. **Tier 4**: Flexible pattern with keyword
+
    ```
    first_keyword = canonical_slug.split('-')[0]
    Glob(".research/sections/*-{canonical_section}-*{first_keyword}*/research.md")
@@ -154,12 +161,67 @@ After resolution, use `resolved_path` (NOT the original `output_dir`) for ALL su
 
 Follow these steps in order:
 
-1. **Analyze the request**: Identify the core topic, scope boundaries, and audience needs
-2. **Plan search strategy**: Based on domain, determine primary sources and search patterns
-3. **Execute searches**: Use WebSearch for discovery, WebFetch for deep content extraction
-4. **Evaluate sources**: Assess authority, recency, and relevance of each source
-5. **Synthesize findings**: Organize information into the structured output format
-6. **Verify completeness**: Check all subtopics are covered before finalizing
+1. **Determine model and tools**: Check which model you're running as, select appropriate search/web tools
+2. **Analyze the request**: Identify the core topic, scope boundaries, and audience needs
+3. **Plan search strategy**: Based on domain, determine primary sources and search patterns
+4. **Execute searches**: Use appropriate search tool for discovery, web reader for deep content extraction
+5. **Evaluate sources**: Assess authority, recency, and relevance of each source
+6. **Synthesize findings**: Organize information into the structured output format
+7. **Verify completeness**: Check all subtopics are covered before finalizing
+
+## Model-Aware Tool Selection
+
+**CRITICAL**: Before performing ANY web search or content extraction, determine which model you are running as by checking the system message for "You are powered by the model...".
+
+### Tool Selection Matrix
+
+| Running Model | Search Tool                             | Web Reader Tool              |
+| ------------- | --------------------------------------- | ---------------------------- |
+| `glm-*`       | `mcp__web-search-prime__webSearchPrime` | `mcp__web_reader__webReader` |
+| `claude-*`    | `WebSearch`                             | `WebFetch`                   |
+
+### Tool Parameter Mapping
+
+When executing searches, use the correct parameters for the selected tool:
+
+**For glm models (MCP tools)**:
+
+```xml
+<search>
+  <tool>mcp__web-search-prime__webSearchPrime</tool>
+  <parameter>search_query</parameter>
+  <example>"React state management official docs 2025"</example>
+</search>
+
+<content_extraction>
+  <tool>mcp__web_reader__webReader</tool>
+  <parameter>url</parameter>
+  <example>https://react.dev/reference/react/useState</example>
+</content_extraction>
+```
+
+**For claude models (built-in tools)**:
+
+```xml
+<search>
+  <tool>WebSearch</tool>
+  <parameter>query</parameter>
+  <example>"React state management official docs 2025"</example>
+</search>
+
+<content_extraction>
+  <tool>WebFetch</tool>
+  <parameter>url</parameter>
+  <example>https://react.dev/reference/react/useState</example>
+</content_extraction>
+```
+
+### Implementation Guidelines
+
+- **Always check model first**: The system message contains "You are powered by the model..."
+- **Use consistent naming**: When referring to search tools in this document, "WebSearch" means the appropriate search tool based on your model
+- **Use consistent naming**: When referring to web readers, "WebFetch" means the appropriate web reader based on your model
+- **Do NOT mix tools**: Never use `WebSearch` with `mcp__web_reader__webReader` or vice versa - always use matching pairs
 
 ## Domain Profile Loading
 
@@ -172,6 +234,7 @@ Read("skills/domain-profiles/{domain}.md")
 **Note**: For domain="general", use "language.md".
 
 Extract from loaded profile:
+
 - **Search Strategy**: Primary sources and search patterns
 - **Special Fields**: Domain-specific metadata to gather
 - **Quality Indicators**: What makes a source authoritative
@@ -328,11 +391,13 @@ Execute research for missing or incomplete subtopics:
 Using Write tool, save to `{resolved_path}` (from directory resolution):
 
 **Create/Update `{resolved_path}/research.md`**:
+
 - Follow the research.md template from research-storage skill
 - Include Subtopic Coverage table with status for each subtopic
 - If updating existing: APPEND new findings, preserve existing content
 
 **Create/Update `{resolved_path}/sources.md`**:
+
 - Categorize sources by reliability
 - If updating existing: APPEND new sources
 
@@ -348,6 +413,7 @@ match_tier:{tier}
 ```
 
 Where:
+
 - `{resolved_path}` = the resolved directory path (from directory resolution)
 - `{count}` = total number of sources
 - `{covered}` = number of subtopics with "Complete" status
@@ -359,21 +425,25 @@ Where:
 ## Tool Usage Constraints
 
 **Read tool limitations**:
+
 - ONLY works on FILES, NOT directories
 - Returns EISDIR error on directory paths
 - Always use Glob to find files first, then Read specific files
 
 **Correct usage**:
+
 - `Read(".research/sections/01-2-intro/research.md")` ✓
 - `Read("skills/domain-profiles/technology.md")` ✓
 
 **Incorrect usage (will cause EISDIR error)**:
+
 - `Read(".research")` ✗
 - `Read(".research/sections")` ✗
 - `Read(".research/sections/01-2-intro")` ✗
 - `Read("skills/domain-profiles")` ✗
 
 **Directory exploration pattern**:
+
 ```
 # WRONG
 Read(".research/sections")
@@ -407,22 +477,22 @@ Read(".research/sections/01-2-intro/research.md")  # Then read specific file
 
 ## Error Handling
 
-| Error Type | Detection | Recovery |
-|------------|-----------|----------|
-| WebSearch failure | Empty or error response | Retry with alternative query terms |
-| URL inaccessible | WebFetch returns error | Log and skip to next source |
-| Insufficient sources | < 2 primary sources found | Broaden search terms, note limitation |
-| Directory resolution failed | All tiers return no match | Use canonical path for new directory |
-| Subtopic not covered | No relevant results found | Note as "Missing" in coverage table |
-| Read failure on research | EISDIR or file not found | Conduct fresh research |
+| Error Type                  | Detection                 | Recovery                              |
+| --------------------------- | ------------------------- | ------------------------------------- |
+| WebSearch failure           | Empty or error response   | Retry with alternative query terms    |
+| URL inaccessible            | WebFetch returns error    | Log and skip to next source           |
+| Insufficient sources        | < 2 primary sources found | Broaden search terms, note limitation |
+| Directory resolution failed | All tiers return no match | Use canonical path for new directory  |
+| Subtopic not covered        | No relevant results found | Note as "Missing" in coverage table   |
+| Read failure on research    | EISDIR or file not found  | Conduct fresh research                |
 
 ### Status Determination
 
-| Status | Condition |
-|--------|-----------|
-| OK | All subtopics covered with ≥2 sources each |
-| PARTIAL | Some subtopics missing or only 1 source |
-| ERROR | Critical failure (no sources found, write failed) |
+| Status  | Condition                                         |
+| ------- | ------------------------------------------------- |
+| OK      | All subtopics covered with ≥2 sources each        |
+| PARTIAL | Some subtopics missing or only 1 source           |
+| ERROR   | Critical failure (no sources found, write failed) |
 
 ## Tool Selection Hierarchy
 
@@ -439,6 +509,7 @@ Read(".research/sections/01-2-intro/research.md")  # Then read specific file
 This agent is typically the first in the write pipeline. No upstream errors expected from other agents.
 
 However, input validation may fail:
+
 - Invalid section ID format → Return ERROR with message
 - Invalid domain value → Default to "general"
 - Missing subtopics → Return ERROR, cannot proceed
@@ -446,14 +517,17 @@ However, input validation may fail:
 ### Downstream Communication
 
 When returning ERROR status:
+
 - Writer should use WebSearch for gap filling, proceed with PARTIAL
 - Pipeline should log the failure for investigation
 
 When returning PARTIAL status:
+
 - Writer can proceed, will need to supplement missing subtopics
 - `subtopics_covered` ratio indicates coverage gaps
 
 When returning OK status:
+
 - Writer can proceed with full confidence
 - All subtopics have sufficient coverage
 
@@ -514,7 +588,7 @@ When returning OK status:
 
 ### Research Result (saved to files)
 
-```xml
+````xml
 <research_result domain="technology" status="OK">
 
 <authoritative_sources>
@@ -553,22 +627,29 @@ When returning OK status:
 ```jsx
 const [count, setCount] = useState(0);
 const increment = () => setCount(prev => prev + 1);
-```
+````
+
 </code_examples>
 
 <version_info>
+
 - Current stable: React 18.2+
 - Minimum required: React 16.8+ (Hooks support)
-</version_info>
+  </version_info>
 
 </research_result>
+
 ```
 
 ### Confirmation Output
 
 ```
+
 research_saved:.research/sections/01-2-core-concepts/
 sources:5
 subtopics_covered:3/3
 match_tier:new
+
+```
+
 ```

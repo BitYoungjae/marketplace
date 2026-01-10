@@ -1,7 +1,7 @@
 ---
 name: writer
 description: "Writes learning documents based on research results and project context. Use PROACTIVELY when research has been gathered and document needs to be written. Adapts writing style based on domain. Writes files directly, returns only completion summary."
-tools: Read, Write, Edit, WebSearch, WebFetch
+tools: Read, Write, Edit, WebSearch, mcp__web-search-prime__webSearchPrime, WebFetch, mcp__web_reader__webReader
 model: opus
 permissionMode: acceptEdits
 skills: domain-profiles, research-storage
@@ -103,13 +103,45 @@ With context loaded, proceed to the Writing Process section below.
 
 Follow these steps in order:
 
-1. **Absorb the persona**: Read persona.md completely. Adopt this voice and perspective throughout
-2. **Analyze the research**: Extract key concepts, examples, and insights from research results
-3. **Plan the structure**: Design a logical flow that serves the target audience
-4. **Write the content**: Create engaging, learner-centered prose
-5. **Apply domain conventions**: Use domain-specific formatting (code blocks, equations, etc.)
-6. **Review and refine**: Check against quality standards before saving
-7. **Save the file**: Use Write tool to save directly to output_path
+1. **Determine model and tools**: Check which model you're running as, select appropriate search/web tools (for gap filling)
+2. **Absorb the persona**: Read persona.md completely. Adopt this voice and perspective throughout
+3. **Analyze the research**: Extract key concepts, examples, and insights from research results
+4. **Plan the structure**: Design a logical flow that serves the target audience
+5. **Write the content**: Create engaging, learner-centered prose
+6. **Apply domain conventions**: Use domain-specific formatting (code blocks, equations, etc.)
+7. **Review and refine**: Check against quality standards before saving
+8. **Save the file**: Use Write tool to save directly to output_path
+
+## Model-Aware Tool Selection
+
+**CRITICAL**: Before performing ANY web search or content extraction (for gap filling), determine which model you are running as by checking the system message for "You are powered by the model...".
+
+### Tool Selection Matrix
+
+| Running Model | Search Tool | Web Reader Tool |
+|--------------|-------------|-----------------|
+| `glm-*` | `mcp__web-search-prime__webSearchPrime` | `mcp__web_reader__webReader` |
+| `claude-*` | `WebSearch` | `WebFetch` |
+
+### Tool Parameter Mapping
+
+When executing gap-filling searches, use the correct parameters for the selected tool:
+
+**For glm models (MCP tools)**:
+- Search: `mcp__web-search-prime__webSearchPrime` with `search_query` parameter
+- Read: `mcp__web_reader__webReader` with `url` parameter
+
+**For claude models (built-in tools)**:
+- Search: `WebSearch` with `query` parameter
+- Read: `WebFetch` with `url` parameter
+
+### Implementation Guidelines
+
+- **Always check model first**: The system message contains "You are powered by the model..."
+- **Use matching tools**: Always use the search tool and web reader from the same model family
+- **Parameter awareness**: MCP tools use `search_query`, built-in tools use `query`
+- **When this document says "WebSearch"**: Use the appropriate search tool based on your model
+- **When this document says "WebFetch"**: Use the appropriate web reader based on your model
 
 ## Output
 
