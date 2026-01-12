@@ -14,7 +14,7 @@
 | `/compact [instructions]` | Compact conversation with optional focus instructions                                                                       |
 | `/config`                 | Open the Settings interface (Config tab)                                                                                    |
 | `/context`                | Visualize current context usage as a colored grid                                                                           |
-| `/cost`                   | Show token usage statistics                                                                                                 |
+| `/cost`                   | Show token usage statistics. See [cost tracking guide](/en/costs#using-the-cost-command) for subscription-specific details. |
 | `/doctor`                 | Checks the health of your Claude Code installation                                                                          |
 | `/exit`                   | Exit the REPL                                                                                                               |
 | `/export [filename]`      | Export the current conversation to a file or clipboard                                                                      |
@@ -29,12 +29,14 @@
 | `/memory`                 | Edit `CLAUDE.md` memory files                                                                                               |
 | `/model`                  | Select or change the AI model                                                                                               |
 | `/output-style [style]`   | Set the output style directly or from a selection menu                                                                      |
-| `/permissions`            | View or update permissions                                                                                                  |
+| `/permissions`            | View or update [permissions](/en/iam#configuring-permissions)                                                               |
+| `/plan`                   | Enter plan mode directly from the prompt                                                                                    |
 | `/plugin`                 | Manage Claude Code plugins                                                                                                  |
 | `/pr-comments`            | View pull request comments                                                                                                  |
 | `/privacy-settings`       | View and update your privacy settings                                                                                       |
 | `/release-notes`          | View release notes                                                                                                          |
 | `/rename <name>`          | Rename the current session for easier identification                                                                        |
+| `/remote-env`             | Configure remote session environment (claude.ai subscribers)                                                                |
 | `/resume [session]`       | Resume a conversation by ID or name, or open the session picker                                                             |
 | `/review`                 | Request code review                                                                                                         |
 | `/rewind`                 | Rewind the conversation and/or code                                                                                         |
@@ -43,7 +45,9 @@
 | `/stats`                  | Visualize daily usage, session history, streaks, and model preferences                                                      |
 | `/status`                 | Open the Settings interface (Status tab) showing version, model, account, and connectivity                                  |
 | `/statusline`             | Set up Claude Code's status line UI                                                                                         |
-| `/terminal-setup`         | Install Shift+Enter key binding for newlines (iTerm2 and VSCode only)                                                       |
+| `/teleport`               | Resume a remote session from claude.ai by session ID, or open a picker (claude.ai subscribers)                              |
+| `/terminal-setup`         | Install Shift+Enter key binding for newlines (VS Code, Alacritty, Zed, Warp)                                                |
+| `/theme`                  | Change the color theme                                                                                                      |
 | `/todos`                  | List current TODO items                                                                                                     |
 | `/usage`                  | For subscription plans only: show plan usage limits and rate limit status                                                   |
 | `/vim`                    | Enter vim mode for alternating insert and command modes                                                                     |
@@ -51,6 +55,10 @@
 ## Custom slash commands
 
 Custom slash commands allow you to define frequently used prompts as Markdown files that Claude Code can execute. Commands are organized by scope (project-specific or personal) and support namespacing through directory structures.
+
+<Tip>
+  Slash command autocomplete works anywhere in your input, not just at the beginning. Type `/` at any position to see available commands.
+</Tip>
 
 ### Syntax
 
@@ -75,7 +83,7 @@ Commands stored in your repository and shared with your team. When listed in `/h
 
 The following example creates the `/optimize` command:
 
-```bash
+```bash  theme={null}
 # Create a project command
 mkdir -p .claude/commands
 echo "Analyze this code for performance issues and suggest optimizations:" > .claude/commands/optimize.md
@@ -89,7 +97,7 @@ Commands available across all your projects. When listed in `/help`, these comma
 
 The following example creates the `/security-review` command:
 
-```bash
+```bash  theme={null}
 # Create a personal command
 mkdir -p ~/.claude/commands
 echo "Review this code for security vulnerabilities:" > ~/.claude/commands/security-review.md
@@ -106,7 +114,9 @@ For example:
 * `.claude/commands/frontend/component.md` creates `/component` with description "(project:frontend)"
 * `~/.claude/commands/component.md` creates `/component` with description "(user)"
 
-If a project command and user command share the same name, the project command takes precedence and the user command is silently ignored.
+If a project command and user command share the same name, the project command takes precedence and the user command is silently ignored. For example, if both `.claude/commands/deploy.md` and `~/.claude/commands/deploy.md` exist, `/deploy` runs the project version.
+
+Commands in different subdirectories can share names since the subdirectory appears in the description to distinguish them. For example, `.claude/commands/frontend/test.md` and `.claude/commands/backend/test.md` both create `/test`, but show as "(project:frontend)" and "(project:backend)" respectively.
 
 #### Arguments
 
@@ -116,7 +126,7 @@ Pass dynamic values to commands using argument placeholders:
 
 The `$ARGUMENTS` placeholder captures all arguments passed to the command:
 
-```bash
+```bash  theme={null}
 # Command definition
 echo 'Fix issue #$ARGUMENTS following our coding standards' > .claude/commands/fix-issue.md
 
@@ -129,8 +139,8 @@ echo 'Fix issue #$ARGUMENTS following our coding standards' > .claude/commands/f
 
 Access specific arguments individually using positional parameters (similar to shell scripts):
 
-```bash
-# Command definition
+```bash  theme={null}
+# Command definition  
 echo 'Review PR #$1 with priority $2 and assign to $3' > .claude/commands/review-pr.md
 
 # Usage
@@ -138,13 +148,19 @@ echo 'Review PR #$1 with priority $2 and assign to $3' > .claude/commands/review
 # $1 becomes "456", $2 becomes "high", $3 becomes "alice"
 ```
 
+Use positional arguments when you need to:
+
+* Access arguments individually in different parts of your command
+* Provide defaults for missing arguments
+* Build more structured commands with specific parameter roles
+
 #### Bash command execution
 
 Execute bash commands before the slash command runs using the `!` prefix. The output is included in the command context. You *must* include `allowed-tools` with the `Bash` tool, but you can choose the specific bash commands to allow.
 
 For example:
 
-```markdown
+```markdown  theme={null}
 ---
 allowed-tools: Bash(git add:*), Bash(git status:*), Bash(git commit:*)
 description: Create a git commit
@@ -164,11 +180,11 @@ Based on the above changes, create a single git commit.
 
 #### File references
 
-Include file contents in commands using the `@` prefix to reference files.
+Include file contents in commands using the `@` prefix to [reference files](/en/common-workflows#reference-files-and-directories).
 
 For example:
 
-```markdown
+```markdown  theme={null}
 # Reference a specific file
 
 Review the implementation in @src/utils/helpers.js
@@ -180,7 +196,7 @@ Compare @src/old-version.js with @src/new-version.js
 
 #### Thinking mode
 
-Slash commands can trigger extended thinking by including extended thinking keywords.
+Slash commands can trigger extended thinking by including [extended thinking keywords](/en/common-workflows#use-extended-thinking).
 
 ### Frontmatter
 
@@ -190,13 +206,16 @@ Command files support frontmatter, useful for specifying metadata about the comm
 | :------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :---------------------------------- |
 | `allowed-tools`            | List of tools the command can use                                                                                                                                                     | Inherits from the conversation      |
 | `argument-hint`            | The arguments expected for the slash command. Example: `argument-hint: add [tagId] \| remove [tagId] \| list`. This hint is shown to the user when auto-completing the slash command. | None                                |
+| `context`                  | Set to `fork` to run the command in a forked sub-agent context with its own conversation history.                                                                                     | Inline (no fork)                    |
+| `agent`                    | Specify which [agent type](/en/sub-agents#built-in-subagents) to use when `context: fork` is set. Only applicable when combined with `context: fork`.                                 | `general-purpose`                   |
 | `description`              | Brief description of the command                                                                                                                                                      | Uses the first line from the prompt |
-| `model`                    | Specific model string                                                                                                                                                                 | Inherits from the conversation      |
-| `disable-model-invocation` | Whether to prevent `SlashCommand` tool from calling this command                                                                                                                      | false                               |
+| `model`                    | Specific model string (see [Models overview](https://docs.claude.com/en/docs/about-claude/models/overview))                                                                           | Inherits from the conversation      |
+| `disable-model-invocation` | Whether to prevent the `Skill` tool from calling this command                                                                                                                         | false                               |
+| `hooks`                    | Define hooks scoped to this command's execution. See [Define hooks for commands](#define-hooks-for-commands).                                                                         | None                                |
 
 For example:
 
-```markdown
+```markdown  theme={null}
 ---
 allowed-tools: Bash(git add:*), Bash(git status:*), Bash(git commit:*)
 argument-hint: [message]
@@ -209,7 +228,7 @@ Create a git commit with message: $ARGUMENTS
 
 Example using positional arguments:
 
-```markdown
+```markdown  theme={null}
 ---
 argument-hint: [pr-number] [priority] [assignee]
 description: Review pull request
@@ -219,9 +238,34 @@ Review PR #$1 with priority $2 and assign to $3.
 Focus on security, performance, and code style.
 ```
 
+#### Define hooks for commands
+
+Slash commands can define hooks that run during the command's execution. Use the `hooks` field to specify `PreToolUse`, `PostToolUse`, or `Stop` handlers:
+
+```markdown  theme={null}
+---
+description: Deploy to staging with validation
+hooks:
+  PreToolUse:
+    - matcher: "Bash"
+      hooks:
+        - type: command
+          command: "./scripts/validate-deploy.sh"
+          once: true
+---
+
+Deploy the current branch to staging environment.
+```
+
+The `once: true` option runs the hook only once per session. After the first successful execution, the hook is removed.
+
+Hooks defined in a command are scoped to that command's execution and are automatically cleaned up when the command finishes.
+
+See [Hooks](/en/hooks) for the complete hook configuration format.
+
 ## Plugin commands
 
-Plugins can provide custom slash commands that integrate seamlessly with Claude Code. Plugin commands work exactly like user-defined commands but are distributed through plugin marketplaces.
+[Plugins](/en/plugins) can provide custom slash commands that integrate seamlessly with Claude Code. Plugin commands work exactly like user-defined commands but are distributed through [plugin marketplaces](/en/plugin-marketplaces).
 
 ### How plugin commands work
 
@@ -239,7 +283,7 @@ Plugin commands are:
 
 **Basic command structure**:
 
-```markdown
+```markdown  theme={null}
 ---
 description: Brief description of what the command does
 ---
@@ -250,16 +294,24 @@ Detailed instructions for Claude on how to execute this command.
 Include specific guidance on parameters, expected outcomes, and any special considerations.
 ```
 
+**Advanced command features**:
+
+* **Arguments**: Use placeholders like `{arg1}` in command descriptions
+* **Subdirectories**: Organize commands in subdirectories for namespacing
+* **Bash integration**: Commands can execute shell scripts and programs
+* **File references**: Commands can reference and modify project files
+
 ### Invocation patterns
 
-```shell
-# Direct command (when no conflicts)
+```shell Direct command (when no conflicts) theme={null}
 /command-name
+```
 
-# Plugin-prefixed (when needed for disambiguation)
+```shell Plugin-prefixed (when needed for disambiguation) theme={null}
 /plugin-name:command-name
+```
 
-# With arguments (if command supports them)
+```shell With arguments (if command supports them) theme={null}
 /command-name arg1 arg2
 ```
 
@@ -298,6 +350,13 @@ MCP prompts can accept arguments defined by the server:
 > /mcp__jira__create_issue "Bug title" high
 ```
 
+#### Naming conventions
+
+Server and prompt names are normalized:
+
+* Spaces and special characters become underscores
+* Names are lowercase for consistency
+
 ### Managing MCP connections
 
 Use the `/mcp` command to:
@@ -320,53 +379,75 @@ To approve specific tools, list each one explicitly:
 * `mcp__github__get_issue`
 * `mcp__github__list_issues`
 
-## `SlashCommand` tool
+See [MCP permission rules](/en/iam#tool-specific-permission-rules) for more details.
 
-The `SlashCommand` tool allows Claude to execute custom slash commands programmatically during a conversation. This gives Claude the ability to invoke custom commands on your behalf when appropriate.
+## `Skill` tool
 
-To encourage Claude to use the `SlashCommand` tool, reference the command by name, including the slash, in your prompts or `CLAUDE.md` file. For example:
+<Note>
+  In earlier versions of Claude Code, slash command invocation was provided by a separate `SlashCommand` tool. This has been merged into the `Skill` tool.
+</Note>
+
+The `Skill` tool allows Claude to programmatically invoke both [custom slash commands](/en/slash-commands#custom-slash-commands) and [Agent Skills](/en/skills) during a conversation. This gives Claude the ability to use these capabilities on your behalf when appropriate.
+
+### What the `Skill` tool can invoke
+
+The `Skill` tool provides access to:
+
+| Type                  | Location                                     | Requirements                                   |
+| :-------------------- | :------------------------------------------- | :--------------------------------------------- |
+| Custom slash commands | `.claude/commands/` or `~/.claude/commands/` | Must have `description` frontmatter            |
+| Agent Skills          | `.claude/skills/` or `~/.claude/skills/`     | Must not have `disable-model-invocation: true` |
+
+Built-in commands like `/compact` and `/init` are *not* available through this tool.
+
+### Encourage Claude to use specific commands
+
+To encourage Claude to use the `Skill` tool, reference the command by name, including the slash, in your prompts or `CLAUDE.md` file:
 
 ```
 > Run /write-unit-test when you are about to start writing tests.
 ```
 
-### `SlashCommand` tool supported commands
+This tool puts each available command's metadata into context up to the character budget limit. Use `/context` to monitor token usage.
 
-`SlashCommand` tool only supports custom slash commands that:
+To see which commands and Skills are available to the `Skill` tool, run `claude --debug` and trigger a query.
 
-* Are user-defined. Built-in commands like `/compact` and `/init` are *not* supported.
-* Have the `description` frontmatter field populated. The description is used in the context.
+### Disable the `Skill` tool
 
-### Disable `SlashCommand` tool
+To prevent Claude from programmatically invoking any commands or Skills:
 
-To prevent Claude from executing any slash commands via the tool:
-
-```bash
+```bash  theme={null}
 /permissions
-# Add to deny rules: SlashCommand
+# Add to deny rules: Skill
 ```
 
-This also removes the SlashCommand tool and command descriptions from context.
+This removes the `Skill` tool and all command/Skill descriptions from context.
 
-### Disable specific commands only
+### Disable specific commands or Skills
 
-To prevent a specific slash command from becoming available, add `disable-model-invocation: true` to the slash command's frontmatter.
+To prevent a specific command or Skill from being invoked programmatically via the `Skill` tool, add `disable-model-invocation: true` to its frontmatter. This also removes the item's metadata from context.
 
-### `SlashCommand` permission rules
+<Note>
+  The `user-invocable` field in Skills only controls menu visibility, not `Skill` tool access. Use `disable-model-invocation: true` to block programmatic invocation. See [Control Skill visibility](/en/skills#control-skill-visibility) for details.
+</Note>
+
+### `Skill` permission rules
 
 The permission rules support:
 
-* **Exact match**: `SlashCommand:/commit` (allows only `/commit` with no arguments)
-* **Prefix match**: `SlashCommand:/review-pr:*` (allows `/review-pr` with any arguments)
+* **Exact match**: `Skill(commit)` (allows only `commit` with no arguments)
+* **Prefix match**: `Skill(review-pr:*)` (allows `review-pr` with any arguments)
 
 ### Character budget limit
 
-The `SlashCommand` tool includes a character budget to limit the size of command descriptions shown to Claude.
+The `Skill` tool includes a character budget to limit context usage. This prevents token overflow when many commands and Skills are available.
+
+The budget includes each item's name, arguments, and description.
 
 * **Default limit**: 15,000 characters
-* **Custom limit**: Set via `SLASH_COMMAND_TOOL_CHAR_BUDGET` environment variable
+* **Custom limit**: Set via `SLASH_COMMAND_TOOL_CHAR_BUDGET` environment variable. The name is retained for backwards compatibility.
 
-When the character budget is exceeded, Claude sees only a subset of the available commands.
+When the budget is exceeded, Claude sees only a subset of available items. In `/context`, a warning shows how many are included.
 
 ## Skills vs slash commands
 
@@ -412,6 +493,36 @@ When the character budget is exceeded, Claude sees only a subset of the availabl
 | **Scope**      | Project or personal              | Project or personal                 |
 | **Sharing**    | Via git                          | Via git                             |
 
+### Example comparison
+
+**As a slash command**:
+
+```markdown  theme={null}
+# .claude/commands/review.md
+Review this code for:
+- Security vulnerabilities
+- Performance issues
+- Code style violations
+```
+
+Usage: `/review` (manual invocation)
+
+**As a Skill**:
+
+```
+.claude/skills/code-review/
+├── SKILL.md (overview and workflows)
+├── SECURITY.md (security checklist)
+├── PERFORMANCE.md (performance patterns)
+├── STYLE.md (style guide reference)
+└── scripts/
+    └── run-linters.sh
+```
+
+Usage: "Can you review this code?" (automatic discovery)
+
+The Skill provides richer context, validation scripts, and organized reference material.
+
 ### When to use each
 
 **Use slash commands**:
@@ -429,6 +540,18 @@ When the character budget is exceeded, Claude sees only a subset of the availabl
 
 Both slash commands and Skills can coexist. Use the approach that fits your needs.
 
+Learn more about [Agent Skills](/en/skills).
+
+## See also
+
+* [Plugins](/en/plugins) - Extend Claude Code with custom commands through plugins
+* [Identity and Access Management](/en/iam) - Complete guide to permissions, including MCP tool permissions
+* [Interactive mode](/en/interactive-mode) - Shortcuts, input modes, and interactive features
+* [CLI reference](/en/cli-reference) - Command-line flags and options
+* [Settings](/en/settings) - Configuration options
+* [Memory management](/en/memory) - Managing Claude's memory across sessions
+
+
 ---
 
-> Source: https://code.claude.com/docs/en/slash-commands.md
+> To find navigation and other pages in this documentation, fetch the llms.txt file at: https://code.claude.com/docs/llms.txt
