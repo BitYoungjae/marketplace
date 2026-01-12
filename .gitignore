@@ -1,5 +1,5 @@
 # Claude Code local settings
-.claude/
+.claude/settings.local.json
 
 # Generated projects (user-created learning materials)
 projects/
