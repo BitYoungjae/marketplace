@@ -1,7 +1,7 @@
 ---
 description: "Write the next document section using researcher->writer->reviewer pipeline. Identifies next incomplete task, gathers research, writes document, and reviews quality. Supports domain-adaptive content generation (technology, history, science, arts, general)."
 allowed-tools: Read, Grep, Glob, Task, Edit
-argument-hint: "[section-id] [--skip-review]"
+argument-hint: "[section-id] [--skip-review] [--glm]"
 model: opus
 ---
 
@@ -20,10 +20,17 @@ Write the next incomplete section from task.md, or a specific section if provide
 
 ## Process
 
-### 1. Identify Target Section
+### 1. Identify Target Section and Parse Flags
 
-If $ARGUMENTS is provided, use it as the section ID.
-Otherwise, parse task.md for the first `[ ]` item.
+**CRITICAL**: Parse flags from $ARGUMENTS first:
+
+```
+skip_review = $ARGUMENTS.includes("--skip-review")
+use_glm_tools = $ARGUMENTS.includes("--glm") ? "true" : "false"
+section_id = $ARGUMENTS.replace("--skip-review", "").replace("--glm", "").trim()
+```
+
+If section_id is empty after flag removal, parse task.md for the first `[ ]` item.
 
 Extract:
 
@@ -165,6 +172,7 @@ Task(
       <audience_level>{audience_level}</audience_level>
       <output_dir>{resolved_dir}</output_dir>
       <existing_research>{existing_research}</existing_research>
+      <use_glm_tools>{use_glm_tools}</use_glm_tools>
     </research_request>
 
     Follow domain-specific search strategy using domain-profiles skill.
@@ -213,6 +221,7 @@ Task(
       </section>
       <domain>{domain}</domain>
       <output_path>docs/{canonical_chapter}-{canonical_section}-{canonical_slug}.md</output_path>
+      <use_glm_tools>{use_glm_tools}</use_glm_tools>
     </writing_request>
 
     <context_files>

@@ -1,7 +1,7 @@
 ---
 description: "Continue writing multiple sections. Uses researcher->writer->reviewer pipeline for each section. Supports domain-adaptive content generation (technology, history, science, arts, general)."
 allowed-tools: Read, Grep, Glob, Task, Edit
-argument-hint: "[count] [--skip-review]"
+argument-hint: "[count] [--skip-review] [--glm]"
 model: opus
 ---
 
@@ -22,12 +22,15 @@ Write the next N incomplete sections (default: 3).
 
 ### 1. Parse Arguments
 
-Extract count and skip_review flag from $ARGUMENTS.
+**CRITICAL**: Extract count, skip_review, and use_glm_tools flags from $ARGUMENTS.
 
 ```
-count = parseInt($ARGUMENTS.replace("--skip-review", "").trim()) || 3
 skip_review = $ARGUMENTS.includes("--skip-review")
+use_glm_tools = $ARGUMENTS.includes("--glm") ? "true" : "false"
+count = parseInt($ARGUMENTS.replace("--skip-review", "").replace("--glm", "").trim()) || 3
 ```
+
+The `use_glm_tools` value MUST be the string `"true"` or `"false"` for XML.
 
 ### 2. Read task.md and Extract Domain
 
@@ -155,6 +158,7 @@ for (i = 1; i <= queue.length; i++) {
         <domain>{domain}</domain>
         <output_dir>{resolved_dir}</output_dir>
         <existing_research>{existing_research}</existing_research>
+        <use_glm_tools>{use_glm_tools}</use_glm_tools>
       </research_request>
     """
   )
@@ -180,6 +184,7 @@ for (i = 1; i <= queue.length; i++) {
         </section>
         <domain>{domain}</domain>
         <output_path>docs/{canonical_chapter}-{canonical_section}-{canonical_slug}.md</output_path>
+        <use_glm_tools>{use_glm_tools}</use_glm_tools>
       </writing_request>
 
       <context_files>

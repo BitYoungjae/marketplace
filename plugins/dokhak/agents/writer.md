@@ -59,6 +59,7 @@ You will receive writing requests in one of two formats:
   </section>
   <domain>{technology|history|science|arts|general}</domain>
   <output_path>{file path to write}</output_path>
+  <use_glm_tools>{true|false|omitted}</use_glm_tools>
 </writing_request>
 
 <context_files>
@@ -69,6 +70,10 @@ You will receive writing requests in one of two formats:
   <init_summary_path>.research/init/summary.md</init_summary_path>
 </context_files>
 ```
+
+**Field descriptions**:
+
+- `use_glm_tools`: If true, use GLM tools for gap filling. If false or omitted, use default tools (WebSearch, WebFetch)
 
 ## Input Processing
 
@@ -103,7 +108,7 @@ With context loaded, proceed to the Writing Process section below.
 
 Follow these steps in order:
 
-1. **Determine model and tools**: Check which model you're running as, select appropriate search/web tools (for gap filling)
+1. **Check tool selection**: Check `<use_glm_tools>` in input to select appropriate search/web tools (for gap filling)
 2. **Absorb the persona**: Read persona.md completely. Adopt this voice and perspective throughout
 3. **Analyze the research**: Extract key concepts, examples, and insights from research results
 4. **Plan the structure**: Design a logical flow that serves the target audience
@@ -112,36 +117,39 @@ Follow these steps in order:
 7. **Review and refine**: Check against quality standards before saving
 8. **Save the file**: Use Write tool to save directly to output_path
 
-## Model-Aware Tool Selection
+## Tool Selection (MANDATORY FIRST STEP)
 
-**CRITICAL**: Before performing ANY web search or content extraction (for gap filling), determine which model you are running as by checking the system message for "You are powered by the model...".
+**CRITICAL - READ THIS BEFORE ANY GAP FILLING SEARCH**:
+
+Check the input for `<use_glm_tools>true</use_glm_tools>`:
+
+- If `<use_glm_tools>true</use_glm_tools>` → **MUST use GLM tools**
+- If `<use_glm_tools>false</use_glm_tools>` or omitted → Use default tools
 
 ### Tool Selection Matrix
 
-| Running Model | Search Tool | Web Reader Tool |
-|--------------|-------------|-----------------|
-| `glm-*` | `mcp__web-search-prime__webSearchPrime` | `mcp__web_reader__webReader` |
-| `claude-*` | `WebSearch` | `WebFetch` |
+| If `<use_glm_tools>` is... | Search Tool                             | Web Reader Tool              |
+| -------------------------- | --------------------------------------- | ---------------------------- |
+| `true`                     | `mcp__web-search-prime__webSearchPrime` | `mcp__web_reader__webReader` |
+| `false` or omitted         | `WebSearch`                             | `WebFetch`                   |
 
 ### Tool Parameter Mapping
 
-When executing gap-filling searches, use the correct parameters for the selected tool:
+**When use_glm_tools=true (GLM Tools)**:
 
-**For glm models (MCP tools)**:
 - Search: `mcp__web-search-prime__webSearchPrime` with `search_query` parameter
 - Read: `mcp__web_reader__webReader` with `url` parameter
 
-**For claude models (built-in tools)**:
+**When use_glm_tools=false or omitted (Default Tools)**:
+
 - Search: `WebSearch` with `query` parameter
-- Read: `WebFetch` with `url` parameter
+- Read: `WebFetch` with `url` and `prompt` parameters
 
-### Implementation Guidelines
+### IMPORTANT
 
-- **Always check model first**: The system message contains "You are powered by the model..."
-- **Use matching tools**: Always use the search tool and web reader from the same model family
-- **Parameter awareness**: MCP tools use `search_query`, built-in tools use `query`
-- **When this document says "WebSearch"**: Use the appropriate search tool based on your model
-- **When this document says "WebFetch"**: Use the appropriate web reader based on your model
+- **NEVER use WebSearch when use_glm_tools=true**
+- **NEVER use WebFetch when use_glm_tools=true**
+- Check the XML input BEFORE performing any search
 
 ## Output
 

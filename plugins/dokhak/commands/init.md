@@ -1,7 +1,7 @@
 ---
 description: "Initialize a new learning resource project through interactive interview. Creates plan.md, task.md, persona.md, project-context.md, interview-data.md, and CLAUDE.md. Supports multiple domains: technology, history, science, arts, and general."
 allowed-tools: Read, Write, Edit, Bash, Glob, WebSearch, WebFetch, Task, AskUserQuestion
-argument-hint: ""
+argument-hint: "[--glm]"
 model: opus
 ---
 
@@ -73,6 +73,18 @@ Store the returned `project_metadata` XML for subsequent phases.
 
 ---
 
+## Argument Parsing
+
+**CRITICAL**: Parse the `--glm` flag from $ARGUMENTS:
+
+```
+use_glm_tools = $ARGUMENTS.includes("--glm") ? "true" : "false"
+```
+
+The `use_glm_tools` value MUST be the string `"true"` or `"false"` for XML.
+
+---
+
 ## Phase 2-6: Background Processing
 
 <background_processing_rules>
@@ -99,6 +111,7 @@ Task(
       <topic>{topic}</topic>
       <domain>{domain}</domain>
       <audience_level>{audience}</audience_level>
+      <use_glm_tools>{use_glm_tools}</use_glm_tools>
     </research_request>
 
     Conduct research appropriate for this domain using the domain-profiles skill.

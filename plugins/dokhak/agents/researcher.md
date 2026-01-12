@@ -40,6 +40,7 @@ You will receive research requests in this format:
   <domain>{technology|history|science|arts|general}</domain>
   <output_dir>.research/sections/{chapter}-{section}-{slug}/</output_dir>
   <existing_research>{true|false}</existing_research>
+  <use_glm_tools>{true|false|omitted}</use_glm_tools>
 </research_request>
 ```
 
@@ -50,6 +51,7 @@ You will receive research requests in this format:
 - `domain`: Content domain for search strategy adaptation
 - `output_dir`: Directory path where research files should be saved (may need validation)
 - `existing_research`: If true, check for existing research before conducting new searches
+- `use_glm_tools`: If true, force use of GLM tools regardless of detected model. If false or omitted, use model detection logic
 
 ## Directory Resolution (MANDATORY FIRST STEP)
 
@@ -169,59 +171,39 @@ Follow these steps in order:
 6. **Synthesize findings**: Organize information into the structured output format
 7. **Verify completeness**: Check all subtopics are covered before finalizing
 
-## Model-Aware Tool Selection
+## Tool Selection (MANDATORY FIRST STEP)
 
-**CRITICAL**: Before performing ANY web search or content extraction, determine which model you are running as by checking the system message for "You are powered by the model...".
+**CRITICAL - READ THIS BEFORE ANY SEARCH**:
+
+Check the input XML for `<use_glm_tools>true</use_glm_tools>`:
+
+- If `<use_glm_tools>true</use_glm_tools>` → **MUST use GLM tools**
+- If `<use_glm_tools>false</use_glm_tools>` or omitted → Use default tools
 
 ### Tool Selection Matrix
 
-| Running Model | Search Tool                             | Web Reader Tool              |
-| ------------- | --------------------------------------- | ---------------------------- |
-| `glm-*`       | `mcp__web-search-prime__webSearchPrime` | `mcp__web_reader__webReader` |
-| `claude-*`    | `WebSearch`                             | `WebFetch`                   |
+| If `<use_glm_tools>` is... | Search Tool                             | Web Reader Tool              |
+| -------------------------- | --------------------------------------- | ---------------------------- |
+| `true`                     | `mcp__web-search-prime__webSearchPrime` | `mcp__web_reader__webReader` |
+| `false` or omitted         | `WebSearch`                             | `WebFetch`                   |
 
 ### Tool Parameter Mapping
 
-When executing searches, use the correct parameters for the selected tool:
+**When use_glm_tools=true (GLM Tools)**:
 
-**For glm models (MCP tools)**:
+- Search: `mcp__web-search-prime__webSearchPrime` with `search_query` parameter
+- Read: `mcp__web_reader__webReader` with `url` parameter
 
-```xml
-<search>
-  <tool>mcp__web-search-prime__webSearchPrime</tool>
-  <parameter>search_query</parameter>
-  <example>"React state management official docs 2025"</example>
-</search>
+**When use_glm_tools=false or omitted (Default Tools)**:
 
-<content_extraction>
-  <tool>mcp__web_reader__webReader</tool>
-  <parameter>url</parameter>
-  <example>https://react.dev/reference/react/useState</example>
-</content_extraction>
-```
+- Search: `WebSearch` with `query` parameter
+- Read: `WebFetch` with `url` and `prompt` parameters
 
-**For claude models (built-in tools)**:
+### IMPORTANT
 
-```xml
-<search>
-  <tool>WebSearch</tool>
-  <parameter>query</parameter>
-  <example>"React state management official docs 2025"</example>
-</search>
-
-<content_extraction>
-  <tool>WebFetch</tool>
-  <parameter>url</parameter>
-  <example>https://react.dev/reference/react/useState</example>
-</content_extraction>
-```
-
-### Implementation Guidelines
-
-- **Always check model first**: The system message contains "You are powered by the model..."
-- **Use consistent naming**: When referring to search tools in this document, "WebSearch" means the appropriate search tool based on your model
-- **Use consistent naming**: When referring to web readers, "WebFetch" means the appropriate web reader based on your model
-- **Do NOT mix tools**: Never use `WebSearch` with `mcp__web_reader__webReader` or vice versa - always use matching pairs
+- **NEVER use WebSearch when use_glm_tools=true**
+- **NEVER use WebFetch when use_glm_tools=true**
+- Check the XML input BEFORE performing any search
 
 ## Domain Profile Loading
 
