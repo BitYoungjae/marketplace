@@ -10,7 +10,7 @@
       "name": "dokhak",
       "source": "./plugins/dokhak",
       "description": "A Claude Code plugin for creating comprehensive self-learning resources. Automates the entire workflow from project scaffolding to document generation.",
-      "version": "2.3.0",
+      "version": "2.3.1",
       "author": {
         "name": "BitYoungjae",
         "email": "bityoungjae@gmail.com"
@@ -21,7 +21,7 @@
       "name": "nvim-doctor",
       "source": "./plugins/nvim-doctor",
       "description": "Diagnose and fix your Neovim configuration issues with AI-powered analysis. Like 'brew doctor' for your Neovim setup.",
-      "version": "0.2.0",
+      "version": "0.2.1",
       "author": {
         "name": "BitYoungjae",
         "email": "bityoungjae@gmail.com"
@@ -32,7 +32,7 @@
       "name": "obsidian-blocks",
       "source": "./plugins/obsidian-blocks",
       "description": "Skills for writing visual content in Obsidian using code blocks. Formulas (LaTeX), graphs (Desmos), diagrams (Mermaid, TikZ), and more.",
-      "version": "1.5.0",
+      "version": "1.5.1",
       "author": {
         "name": "BitYoungjae",
         "email": "bityoungjae@gmail.com"
