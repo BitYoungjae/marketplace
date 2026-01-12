@@ -2,6 +2,8 @@
 name: plugin-research
 description: "Neovim plugin ecosystem research. Use for: version compatibility, GitHub issues, breaking changes, plugin alternatives. Provides systematic investigation patterns for plugin-related problems."
 allowed-tools: Read, Bash, Grep, Glob, WebSearch, WebFetch
+context: fork
+user-invocable: false
 ---
 
 # Plugin Research Skill
