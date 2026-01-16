@@ -255,6 +255,22 @@ flowchart LR
     A --> B
 ```
 
+### Markdown Parsing Pitfalls
+
+Mermaid may interpret certain patterns as Markdown syntax, causing "Unsupported markdown" errors:
+
+| Pattern | Problem | Solution |
+|---------|---------|----------|
+| `1. text` | Parsed as numbered list | Use `1: text` or `1) text` |
+| `- text` | Parsed as bullet list | Use `· text` or other delimiter |
+| `# text` | Parsed as heading | Use `No. text` or avoid `#` |
+
+```mermaid
+flowchart LR
+    A["1: Step One"] --> B["2: Step Two"]
+    B --> C["3: Step Three"]
+```
+
 ### Comments
 
 ```mermaid
