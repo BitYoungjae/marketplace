@@ -256,6 +256,34 @@ flowchart LR
     A --> B
 ```
 
+### Quotes Inside Labels
+
+When node labels need to contain quotes (e.g., function calls, paths), use single quotes inside or avoid nested double quotes entirely:
+
+```mermaid
+%% ❌ WRONG - Escaped double quotes cause parse errors in Obsidian
+flowchart LR
+    A["read(\"/etc/passwd\")"]
+```
+
+```mermaid
+%% ✅ CORRECT - Use single quotes inside
+flowchart LR
+    A["read('/etc/passwd')"]
+    B["config['key']"]
+    A --> B
+```
+
+```mermaid
+%% ✅ ALTERNATIVE - Omit quotes for simple paths
+flowchart LR
+    A["read: /etc/passwd"]
+    B["path: /home/user"]
+    A --> B
+```
+
+**Why this happens:** Obsidian's Mermaid parser does not reliably handle escaped double quotes (`\"`) inside node labels. The backslash escape sequence may work in some Mermaid environments but fails in Obsidian.
+
 ### HTML Entities
 
 ```mermaid

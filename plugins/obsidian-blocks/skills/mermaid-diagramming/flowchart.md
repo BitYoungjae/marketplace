@@ -255,6 +255,26 @@ flowchart LR
     A --> B
 ```
 
+### Quotes Inside Labels
+
+When labels need to contain quotes (common in function calls or file paths):
+
+```mermaid
+%% ❌ WRONG - Escaped quotes fail in Obsidian
+flowchart LR
+    A["func(\"/path\")"]
+```
+
+```mermaid
+%% ✅ CORRECT - Use single quotes inside
+flowchart LR
+    A["func('/path')"]
+    B["dict['key']"]
+    A --> B
+```
+
+Obsidian's Mermaid parser cannot handle escaped double quotes (`\"`). Always use single quotes for nested quoting.
+
 ### Markdown Parsing Pitfalls
 
 Mermaid may interpret certain patterns as Markdown syntax, causing "Unsupported markdown" errors:
