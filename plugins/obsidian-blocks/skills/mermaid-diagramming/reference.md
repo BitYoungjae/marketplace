@@ -304,11 +304,93 @@ flowchart LR
 
 ## 10. Multiline Text
 
-Use `<br/>` or actual line breaks within quotes:
+### Method 1: HTML Break Tags (Recommended)
+
+The most reliable method across all diagram types. Both `<br>` and `<br/>` work identically:
 
 ```mermaid
 flowchart TD
-    A["Line 1<br/>Line 2<br/>Line 3"]
+    A["Line 1<br>Line 2<br>Line 3"]
+    B["First<br/>Second<br/>Third"]
+    A --> B
+```
+
+### Method 2: Markdown String (Backticks)
+
+Modern Mermaid supports backtick-quoted strings with actual line breaks:
+
+```mermaid
+flowchart TD
+    A["`Line 1
+Line 2
+Line 3`"]
+    B["`This is
+a multiline
+node`"]
+    A --> B
+```
+
+> **Note**: Backtick syntax requires Mermaid v10.0+. Obsidian's built-in Mermaid supports this.
+
+### Common Mistake: Using `\n`
+
+The `\n` escape sequence does NOT create line breaks in Mermaid:
+
+```
+%% ❌ WRONG: \n is printed literally
+flowchart TD
+    A["Line 1\nLine 2\nLine 3"]
+```
+
+This will display the literal text `Line 1\nLine 2\nLine 3` instead of creating line breaks.
+
+```mermaid
+%% ✅ CORRECT: Use <br> instead
+flowchart TD
+    A["Line 1<br>Line 2<br>Line 3"]
+```
+
+### Diagram Type Support
+
+| Diagram Type | `<br>` / `<br/>` | Backtick (`` ` ``) |
+|--------------|------------------|---------------------|
+| Flowchart    | ✅ Full support   | ✅ Full support      |
+| Sequence     | ✅ Full support   | ⚠️ Limited          |
+| Class        | ✅ Full support   | ⚠️ Limited          |
+| State        | ✅ Full support   | ⚠️ Limited          |
+| ER Diagram   | ✅ Full support   | ❌ Not supported     |
+| Gantt        | ⚠️ In titles only | ❌ Not supported     |
+| Pie          | ⚠️ In title only  | ❌ Not supported     |
+
+### Examples by Diagram Type
+
+#### Sequence Diagram
+
+```mermaid
+sequenceDiagram
+    participant A as User<br/>Interface
+    participant B as Backend<br/>Server
+    A->>B: Request with<br/>multiline label
+```
+
+#### Class Diagram
+
+```mermaid
+classDiagram
+    class UserService {
+        +getName()<br/>Returns user name
+        +getEmail()<br/>Returns email
+    }
+```
+
+#### State Diagram
+
+```mermaid
+stateDiagram-v2
+    state "Loading<br/>Please wait..." as loading
+    state "Ready<br/>All systems go" as ready
+    [*] --> loading
+    loading --> ready
 ```
 
 ---
