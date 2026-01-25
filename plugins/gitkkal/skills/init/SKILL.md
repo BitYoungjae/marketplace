@@ -57,8 +57,8 @@ AskUserQuestion 도구로 다음 항목들을 수집합니다. 한 번에 최대
    - `en`: 영어
 
 2. **commitPattern**: 커밋 메시지 스타일
-   - `conventional`: `type(scope): subject` 형식
-   - `gitmoji`: 유니코드 이모지로 시작 (예: `✨ Add feature`)
+   - `conventional`: `<type>[(scope)]: <description>` 형식 (예: `feat(api): add user endpoint`, `fix: resolve null pointer`)
+   - `gitmoji`: 이모지로 시작하는 형식 `<emoji> [(scope)][:] <message>` (예: `✨ Add feature`, `🐛 (auth): Fix login bug`)
    - `simple`: 단순 메시지 (예: `Add feature`)
 
 3. **branchPattern**: 브랜치 명명 스타일

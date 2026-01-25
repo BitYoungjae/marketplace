@@ -21,7 +21,9 @@ Pull Request를 생성하거나 업데이트합니다.
 
 ### 설정 파일 확인
 
-`.gitkkal/config.json` 파일이 존재하는지 확인합니다.
+`{project_root}/.gitkkal/config.json` 파일이 존재하는지 확인합니다.
+
+프로젝트 루트는 Git 저장소의 최상위 디렉터리입니다 (`git rev-parse --show-toplevel`로 확인).
 
 <if_not_exists>
 설정 파일이 없습니다. `/gitkkal:init`을 먼저 실행하여 설정을 완료해주세요.
@@ -184,7 +186,7 @@ EOF
 
 ## PR 템플릿 활용
 
-`.github/PULL_REQUEST_TEMPLATE.md`가 존재하면 해당 템플릿의 구조를 따릅니다.
+`{project_root}/.github/PULL_REQUEST_TEMPLATE.md`가 존재하면 해당 템플릿의 구조를 따릅니다.
 
 <template_usage>
 1. 템플릿 파일 읽기

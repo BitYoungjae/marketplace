@@ -62,6 +62,22 @@ Skills for writing visual content in Obsidian using code blocks. Formulas, graph
 - `mermaid-diagramming`: 16 types of Mermaid diagrams
 - `tikzjax-diagramming`: TikZ diagrams (geometry, circuits, chemistry, 3D plots)
 
+### [gitkkal](./plugins/gitkkal/)
+
+> *Commit smarter, not harder.*
+
+Automate Git workflows—smart branch naming, flexible commit styles, and PR generation.
+
+```bash
+/plugin install gitkkal@bityoungjae-marketplace
+```
+
+**Commands:**
+- `/gitkkal:init`: Configure commit style and preferences
+- `/gitkkal:branch`: Create a branch based on your changes
+- `/gitkkal:commit`: Generate commits in your preferred style
+- `/gitkkal:pr`: Create or update a pull request
+
 ### [omarchy](./plugins/omarchy/)
 
 > *Theme once, apply everywhere.*

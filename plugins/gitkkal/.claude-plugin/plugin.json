@@ -1,6 +1,6 @@
 {
   "name": "gitkkal",
-  "description": "Git workflow automation - create commits and pull requests with style.",
+  "description": "Automate Git workflows—smart branch naming, flexible commit styles, and PR generation.",
   "version": "0.1.0",
   "author": {
     "name": "BitYoungjae",

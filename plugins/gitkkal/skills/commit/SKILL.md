@@ -13,7 +13,9 @@ disable-model-invocation: true
 
 ### 설정 파일 확인
 
-`.gitkkal/config.json` 파일이 존재하는지 확인합니다.
+`{project_root}/.gitkkal/config.json` 파일이 존재하는지 확인합니다.
+
+프로젝트 루트는 Git 저장소의 최상위 디렉터리입니다 (`git rev-parse --show-toplevel`로 확인).
 
 <if_not_exists>
 설정 파일이 없습니다. `/gitkkal:init`을 먼저 실행하여 설정을 완료해주세요.
@@ -26,8 +28,10 @@ disable-model-invocation: true
 {
   "language": "ko" | "en",
   "commitPattern": "conventional" | "gitmoji" | "simple",
+  "branchPattern": "type/description" | "description-only",
   "splitCommits": boolean,
-  "askOnAmbiguity": boolean
+  "askOnAmbiguity": boolean,
+  "createPrTemplate": boolean
 }
 ```
 </config_schema>
@@ -37,10 +41,14 @@ disable-model-invocation: true
 <commit_patterns>
 | 패턴 | 형식 | 예시 |
 |------|------|------|
-| `conventional` | `type(scope): subject` | `feat(auth): 로그인 기능 추가` |
-| `gitmoji` | `emoji subject` | `✨ 로그인 기능 추가` |
-| `simple` | `subject` | `로그인 기능 추가` |
+| `conventional` | `<type>[(scope)]: <description>` | `feat(auth): 로그인 기능 추가`, `fix: null 참조 오류 수정` |
+| `gitmoji` | `<emoji> [(scope)][:] <message>` | `✨ 로그인 기능 추가`, `🐛 (auth): 로그인 버그 수정` |
+| `simple` | `<message>` | `로그인 기능 추가` |
 </commit_patterns>
+
+**Conventional Commits**: scope는 선택사항이며, 괄호로 감싸서 표기합니다. [공식 사양](https://www.conventionalcommits.org/en/v1.0.0/)
+
+**Gitmoji**: 이모지는 unicode(`✨`) 또는 shortcode(`:sparkles:`) 형식 모두 가능. scope는 선택사항. [공식 사양](https://gitmoji.dev/specification)
 
 ### Conventional Commit Types
 
@@ -64,7 +72,7 @@ disable-model-invocation: true
 
 ### 1단계: 설정 로드
 
-`.gitkkal/config.json`을 읽어 설정을 로드합니다.
+`{project_root}/.gitkkal/config.json`을 읽어 설정을 로드합니다.
 
 ### 2단계: 변경사항 분석
 
