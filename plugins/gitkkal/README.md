@@ -24,7 +24,7 @@ Then install the plugin:
 
 | Command | Description |
 |---------|-------------|
-| `/gitkkal:init` | Configure commit style and preferences |
+| `/gitkkal:init-gitkkal` | Configure commit style and preferences |
 | `/gitkkal:branch` | Create a branch based on your changes |
 | `/gitkkal:commit` | Generate commits in your preferred style |
 | `/gitkkal:pr` | Create or update a pull request |
@@ -37,7 +37,7 @@ Then install the plugin:
 
 ## Configuration
 
-Stored in `.gitkkal/config.json` (created via `/gitkkal:init`):
+Stored in `.gitkkal/config.json` (created via `/gitkkal:init-gitkkal`):
 
 ```json
 {
