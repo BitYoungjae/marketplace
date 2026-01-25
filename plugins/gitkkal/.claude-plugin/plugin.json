@@ -1,0 +1,11 @@
+{
+  "name": "gitkkal",
+  "description": "Automate Git workflows—smart branch naming, flexible commit styles, and PR generation.",
+  "version": "0.1.0",
+  "author": {
+    "name": "BitYoungjae",
+    "email": "bityoungjae@gmail.com"
+  },
+  "license": "MIT",
+  "keywords": ["git", "commit", "pr", "pull-request", "workflow"]
+}

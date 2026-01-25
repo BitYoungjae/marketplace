@@ -49,6 +49,17 @@
         "email": "bityoungjae@gmail.com"
       },
       "keywords": ["omarchy", "hyprland", "theme", "linux", "desktop", "colors", "waybar", "alacritty", "kitty", "ghostty"]
+    },
+    {
+      "name": "gitkkal",
+      "source": "./plugins/gitkkal",
+      "description": "Automate Git workflows—smart branch naming, flexible commit styles, and PR generation.",
+      "version": "0.1.0",
+      "author": {
+        "name": "BitYoungjae",
+        "email": "bityoungjae@gmail.com"
+      },
+      "keywords": ["git", "commit", "pr", "pull-request", "workflow", "conventional-commits", "gitmoji"]
     }
   ]
 }
