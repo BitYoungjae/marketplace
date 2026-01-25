@@ -2,6 +2,7 @@
 name: pr
 description: "Creates or updates a PR. No arguments creates new PR, PR number updates existing PR."
 allowed-tools: Read, Write, Bash, Glob, Grep, AskUserQuestion
+user-invocable: true
 disable-model-invocation: true
 argument-hint: "[pr-number]"
 ---

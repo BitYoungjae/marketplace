@@ -2,6 +2,7 @@
 name: branch
 description: "Analyzes changes and creates an appropriate branch."
 allowed-tools: Read, Bash, Glob, Grep, AskUserQuestion
+user-invocable: true
 disable-model-invocation: true
 argument-hint: "[description]"
 ---
