@@ -25,16 +25,29 @@ A Claude Code plugin that automates Git workflows—branch naming, commit messag
 
 ## Configuration
 
-Stored in `.gitkkal/config.json`:
+Stored in `.gitkkal/config.json` (created via `/gitkkal:init`):
 
 ```json
 {
   "language": "en",
   "commitPattern": "conventional",
   "branchPattern": "type/description",
-  "splitCommits": true
+  "splitCommits": true,
+  "askOnAmbiguity": true,
+  "createPrTemplate": false
 }
 ```
+
+| Option | Values | Description |
+|--------|--------|-------------|
+| `language` | `"en"`, `"ko"` | Commit message language |
+| `commitPattern` | `"conventional"`, `"gitmoji"`, `"simple"` | Commit message format |
+| `branchPattern` | `"type/description"`, `"description-only"` | Branch naming style |
+| `splitCommits` | `true`, `false` | Split changes into semantic commits |
+| `askOnAmbiguity` | `true`, `false` | Ask user when commit classification is unclear |
+| `createPrTemplate` | `true`, `false` | Create `.github/PULL_REQUEST_TEMPLATE.md` on init |
+
+If no config file exists, default settings are used automatically.
 
 ## Requirements
 

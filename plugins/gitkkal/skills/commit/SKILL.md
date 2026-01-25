@@ -1,24 +1,24 @@
 ---
 name: commit
-description: "변경사항을 분석하여 설정에 맞는 커밋을 생성합니다. Git 워크플로우 자동화."
+description: "Analyzes changes and creates commits following configured style. Git workflow automation."
 allowed-tools: Read, Write, Bash, Glob, Grep, AskUserQuestion
 disable-model-invocation: true
 ---
 
-# gitkkal 커밋 스킬
+# gitkkal Commit Skill
 
-변경사항을 분석하고 설정된 스타일에 맞는 커밋을 생성합니다.
+Analyzes changes and creates commits following the configured style.
 
-## 선행 조건 확인
+## Prerequisites
 
-### 설정 파일 확인
+### Load Configuration
 
-`{project_root}/.gitkkal/config.json` 파일을 읽어 설정을 확인합니다.
+Read `{project_root}/.gitkkal/config.json` to load settings.
 
-프로젝트 루트는 Git 저장소의 최상위 디렉터리입니다 (`git rev-parse --show-toplevel`로 확인).
+The project root is the top-level directory of the Git repository (use `git rev-parse --show-toplevel` to find it).
 
-- **존재하면**: 파일에서 설정을 로드합니다.
-- **존재하지 않으면**: 기본 설정을 사용합니다.
+- **If exists**: Load settings from the file.
+- **If not exists**: Use default settings.
 
 <default_config>
 
@@ -35,9 +35,9 @@ disable-model-invocation: true
 
 </default_config>
 
-설정 파일이 없을 때는 "기본 설정을 사용합니다. 커스터마이즈하려면 `/gitkkal:init`을 실행하세요." 메시지를 한 번 표시합니다.
+When no config file exists, display once: "Using default settings. Run `/gitkkal:init` to customize."
 
-## 설정 스키마
+## Configuration Schema
 
 <config_schema>
 ```json
@@ -52,145 +52,145 @@ disable-model-invocation: true
 ```
 </config_schema>
 
-## 커밋 패턴 형식
+## Commit Pattern Formats
 
 <commit_patterns>
-| 패턴 | 형식 | 예시 |
-|------|------|------|
-| `conventional` | `<type>[(scope)]: <description>` | `feat(auth): 로그인 기능 추가`, `fix: null 참조 오류 수정` |
-| `gitmoji` | `<emoji> [(scope)][:] <message>` | `✨ 로그인 기능 추가`, `🐛 (auth): 로그인 버그 수정` |
-| `simple` | `<message>` | `로그인 기능 추가` |
+| Pattern | Format | Example |
+|---------|--------|---------|
+| `conventional` | `<type>[(scope)]: <description>` | `feat(auth): add login feature`, `fix: resolve null reference error` |
+| `gitmoji` | `<emoji> [(scope)][:] <message>` | `✨ Add login feature`, `🐛 (auth): Fix login bug` |
+| `simple` | `<message>` | `Add login feature` |
 </commit_patterns>
 
-**Conventional Commits**: scope는 선택사항이며, 괄호로 감싸서 표기합니다. [공식 사양](https://www.conventionalcommits.org/en/v1.0.0/)
+**Conventional Commits**: Scope is optional and enclosed in parentheses. [Official spec](https://www.conventionalcommits.org/en/v1.0.0/)
 
-**Gitmoji**: 이모지는 unicode(`✨`) 또는 shortcode(`:sparkles:`) 형식 모두 가능. scope는 선택사항. [공식 사양](https://gitmoji.dev/specification)
+**Gitmoji**: Emoji can be unicode (`✨`) or shortcode (`:sparkles:`). Scope is optional. [Official spec](https://gitmoji.dev/specification)
 
 ### Conventional Commit Types
 
 <conventional_types>
-| Type | 용도 | Gitmoji |
-|------|------|---------|
-| `feat` | 새로운 기능 | ✨ |
-| `fix` | 버그 수정 | 🐛 |
-| `docs` | 문서 변경 | 📝 |
-| `style` | 코드 포맷팅 (기능 변경 없음) | 🎨 |
-| `refactor` | 리팩토링 | ♻️ |
-| `perf` | 성능 개선 | ⚡ |
-| `test` | 테스트 추가/수정 | ✅ |
-| `build` | 빌드 시스템/의존성 | 📦 |
-| `ci` | CI 설정 변경 | 👷 |
-| `chore` | 기타 변경 | 🔧 |
-| `revert` | 커밋 되돌리기 | ⏪ |
+| Type | Purpose | Gitmoji |
+|------|---------|---------|
+| `feat` | New feature | ✨ |
+| `fix` | Bug fix | 🐛 |
+| `docs` | Documentation changes | 📝 |
+| `style` | Code formatting (no functional changes) | 🎨 |
+| `refactor` | Refactoring | ♻️ |
+| `perf` | Performance improvement | ⚡ |
+| `test` | Add/modify tests | ✅ |
+| `build` | Build system/dependencies | 📦 |
+| `ci` | CI configuration changes | 👷 |
+| `chore` | Other changes | 🔧 |
+| `revert` | Revert commit | ⏪ |
 </conventional_types>
 
-## 실행 절차
+## Execution Steps
 
-### 1단계: 설정 로드
+### Step 1: Load Configuration
 
-`{project_root}/.gitkkal/config.json`을 읽어 설정을 로드합니다.
+Read `{project_root}/.gitkkal/config.json` to load settings.
 
-### 2단계: 변경사항 분석
+### Step 2: Analyze Changes
 
-다음 Git 명령을 실행하여 변경사항을 파악합니다:
+Run the following Git commands to understand changes:
 
 <git_commands>
 ```bash
-# Staged 변경사항 확인
+# Check staged changes
 git diff --cached --stat
 git diff --cached
 
-# Unstaged 변경사항 확인
+# Check unstaged changes
 git diff --stat
 git diff
 
-# Untracked 파일 확인
+# Check untracked files
 git status --porcelain
 
-# 최근 커밋 메시지 스타일 참고
+# Reference recent commit message style
 git log --oneline -10
 ```
 </git_commands>
 
-### 3단계: 커밋 분할 결정
+### Step 3: Decide on Commit Splitting
 
-`splitCommits`가 `true`인 경우:
+If `splitCommits` is `true`:
 
 <split_criteria>
-**분할 원칙**:
-1. 각 커밋은 **실행 가능한 단위**여야 함 (빌드/테스트 통과 가능)
-2. **의미적으로 응집된 변경**만 하나의 커밋으로 묶음
+**Splitting Principles**:
+1. Each commit must be an **executable unit** (able to pass build/tests)
+2. Only **semantically cohesive changes** should be grouped in one commit
 
-**분할 예시**:
-- 새 기능 + 관련 테스트 → 하나의 커밋
-- 버그 수정 + 새 기능 → 별도 커밋
-- 포맷팅 변경 + 로직 변경 → 별도 커밋
-- 관련 없는 여러 파일 수정 → 의미 단위로 분할
+**Splitting Examples**:
+- New feature + related tests → One commit
+- Bug fix + new feature → Separate commits
+- Formatting changes + logic changes → Separate commits
+- Unrelated file modifications → Split by semantic units
 </split_criteria>
 
-`askOnAmbiguity`가 `true`이고 분할이 모호한 경우:
-- AskUserQuestion으로 사용자에게 확인
+If `askOnAmbiguity` is `true` and splitting is ambiguous:
+- Use AskUserQuestion to confirm with user
 
-### 4단계: 커밋 메시지 작성
+### Step 4: Write Commit Message
 
-설정된 패턴에 맞게 커밋 메시지를 작성합니다.
+Write commit message according to configured pattern.
 
 <message_guidelines>
-**좋은 커밋 메시지 원칙**:
-- "what"이 아닌 "why"에 초점
-- 명령형 현재 시제 사용 (영어: "Add", 한국어: "추가")
-- 첫 줄은 50자 이내 권장
-- 필요시 본문에 상세 설명 추가
+**Good Commit Message Principles**:
+- Focus on "why" not "what"
+- Use imperative present tense (e.g., "Add", "Fix", not "Added", "Fixed")
+- First line recommended under 50 characters
+- Add detailed explanation in body if needed
 
-**언어별 예시**:
+**Language Examples**:
 - `ko`: `feat(auth): 소셜 로그인 기능 추가`
 - `en`: `feat(auth): add social login feature`
 </message_guidelines>
 
-### 5단계: 커밋 실행
+### Step 5: Execute Commit
 
 <commit_execution>
 ```bash
-# 파일 스테이징 (splitCommits인 경우 선별적으로)
+# Stage files (selectively if splitCommits)
 git add <files>
 
-# 커밋 생성 (HEREDOC으로 메시지 전달)
+# Create commit (pass message via HEREDOC)
 git commit -m "$(cat <<'EOF'
-커밋 메시지
+Commit message
 EOF
 )"
 ```
 </commit_execution>
 
-## 금지 사항
+## Prohibited Actions
 
 <prohibited>
-- 커밋 메시지에 `Co-Authored-By` 라인 **절대 포함 금지**
-- `git commit --amend` 사용 금지 (새 커밋 생성)
-- `git add -A` 또는 `git add .` 대신 개별 파일 지정
-- 민감한 파일 (.env, credentials 등) 커밋 금지
+- **Never** include `Co-Authored-By` lines in commit messages
+- **Never** use `git commit --amend` (always create new commits)
+- Use individual file names instead of `git add -A` or `git add .`
+- **Never** commit sensitive files (.env, credentials, etc.)
 </prohibited>
 
-## 오류 처리
+## Error Handling
 
 <error_handling>
-**스테이징할 변경사항이 없는 경우**:
-- "커밋할 변경사항이 없습니다." 안내
+**No changes to stage**:
+- Display "No changes to commit."
 
-**pre-commit hook 실패 시**:
-- 문제 수정 후 **새 커밋 생성** (amend 금지)
-- 실패 원인을 사용자에게 설명
+**Pre-commit hook failure**:
+- Fix the issue and create a **new commit** (no amend)
+- Explain the failure cause to user
 
-**충돌 상태인 경우**:
-- 먼저 충돌 해결 필요함을 안내
+**Conflict state**:
+- Inform that conflicts must be resolved first
 </error_handling>
 
-## 출력 예시
+## Output Example
 
 <output_example>
-커밋이 완료되면 다음 정보를 표시합니다:
-- 생성된 커밋 해시
-- 커밋 메시지
-- 변경된 파일 목록
-- (splitCommits인 경우) 생성된 커밋 수
+Display the following information upon commit completion:
+- Created commit hash
+- Commit message
+- List of changed files
+- (If splitCommits) Number of commits created
 </output_example>

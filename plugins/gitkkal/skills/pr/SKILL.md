@@ -1,32 +1,32 @@
 ---
 name: pr
-description: "PR을 생성하거나 업데이트합니다. 인자 없으면 새 PR 생성, PR 번호가 있으면 기존 PR 업데이트."
+description: "Creates or updates a PR. No arguments creates new PR, PR number updates existing PR."
 allowed-tools: Read, Write, Bash, Glob, Grep, AskUserQuestion
 disable-model-invocation: true
 argument-hint: "[pr-number]"
 ---
 
-# gitkkal PR 스킬
+# gitkkal PR Skill
 
-Pull Request를 생성하거나 업데이트합니다.
+Creates or updates a Pull Request.
 
-## 사용법
+## Usage
 
 <usage>
-- `/gitkkal:pr` - 새 PR 생성
-- `/gitkkal:pr 123` - PR #123 업데이트
+- `/gitkkal:pr` - Create new PR
+- `/gitkkal:pr 123` - Update PR #123
 </usage>
 
-## 선행 조건 확인
+## Prerequisites
 
-### 설정 파일 확인
+### Load Configuration
 
-`{project_root}/.gitkkal/config.json` 파일을 읽어 설정을 확인합니다.
+Read `{project_root}/.gitkkal/config.json` to load settings.
 
-프로젝트 루트는 Git 저장소의 최상위 디렉터리입니다 (`git rev-parse --show-toplevel`로 확인).
+The project root is the top-level directory of the Git repository (use `git rev-parse --show-toplevel` to find it).
 
-- **존재하면**: 파일에서 설정을 로드합니다.
-- **존재하지 않으면**: 기본 설정을 사용합니다.
+- **If exists**: Load settings from the file.
+- **If not exists**: Use default settings.
 
 <default_config>
 
@@ -43,100 +43,100 @@ Pull Request를 생성하거나 업데이트합니다.
 
 </default_config>
 
-설정 파일이 없을 때는 "기본 설정을 사용합니다. 커스터마이즈하려면 `/gitkkal:init`을 실행하세요." 메시지를 한 번 표시합니다.
+When no config file exists, display once: "Using default settings. Run `/gitkkal:init` to customize."
 
-### GitHub CLI 확인
+### Check GitHub CLI
 
-`gh` CLI가 설치되어 있고 인증되어 있는지 확인합니다:
+Verify that `gh` CLI is installed and authenticated:
 
 ```bash
 gh auth status
 ```
 
-## 실행 모드 결정
+## Determine Execution Mode
 
-`$ARGUMENTS`를 확인하여 모드를 결정합니다:
+Check `$ARGUMENTS` to determine mode:
 
 <mode_decision>
-- **인자가 없거나 빈 문자열**: PR 생성 모드
-- **숫자가 있음**: PR 업데이트 모드 (해당 PR 번호 업데이트)
+- **No arguments or empty string**: PR creation mode
+- **Number present**: PR update mode (update that PR number)
 </mode_decision>
 
 ---
 
-## PR 생성 모드
+## PR Creation Mode
 
-### 1단계: 브랜치 상태 확인
+### Step 1: Check Branch Status
 
 <branch_check>
 ```bash
-# 현재 브랜치 확인
+# Check current branch
 git branch --show-current
 
-# 메인 브랜치 확인 (main 또는 master)
+# Check main branch (main or master)
 git remote show origin | grep 'HEAD branch'
 
-# 리모트 트래킹 상태 확인
+# Check remote tracking status
 git status -sb
 
-# 푸시 필요 여부 확인
+# Check if push needed
 git log origin/$(git branch --show-current)..HEAD --oneline 2>/dev/null || echo "no-remote"
 ```
 </branch_check>
 
-### 2단계: 커밋 분석
+### Step 2: Analyze Commits
 
-베이스 브랜치로부터의 모든 커밋을 분석합니다:
+Analyze all commits from the base branch:
 
 <commit_analysis>
 ```bash
-# 베이스 브랜치 대비 커밋 목록
+# List commits compared to base branch
 git log main..HEAD --oneline
 
-# 전체 diff 확인
+# Check full diff
 git diff main...HEAD --stat
 
-# 상세 diff (필요시)
+# Detailed diff (if needed)
 git diff main...HEAD
 ```
 </commit_analysis>
 
-### 3단계: PR 내용 작성
+### Step 3: Write PR Content
 
-설정의 `language`에 맞게 PR 제목과 본문을 작성합니다.
+Write PR title and body according to the `language` setting.
 
 <pr_content_guidelines>
-**제목 (Title)**:
-- 변경사항의 핵심을 간결하게 요약
-- 50자 이내 권장
-- 언어 설정에 따라 한국어/영어로 작성
+**Title**:
+- Concisely summarize the core changes
+- Recommended under 50 characters
+- Write in Korean/English based on language setting
 
-**본문 (Body)** 구조:
+**Body** structure:
 ```markdown
 ## Summary
-<!-- 1-3개의 불릿 포인트로 변경 요약 -->
+<!-- 1-3 bullet points summarizing changes -->
 
 ## Test plan
-<!-- 테스트 방법 체크리스트 -->
+<!-- Testing method checklist -->
 ```
 </pr_content_guidelines>
 
-### 4단계: 푸시 및 PR 생성
+### Step 4: Push and Create PR
 
 <pr_creation>
 ```bash
-# 리모트에 푸시 (필요시)
+# Push to remote (if needed)
 git push -u origin $(git branch --show-current)
 
-# PR 생성 (HEREDOC으로 본문 전달)
-gh pr create --title "PR 제목" --body "$(cat <<'EOF'
+# Create PR (pass body via HEREDOC)
+gh pr create --title "PR title" --body "$(cat <<'EOF'
 ## Summary
-- 변경 요약 1
-- 변경 요약 2
+- Change summary 1
+- Change summary 2
 
 ## Test plan
-- [ ] 테스트 항목 1
-- [ ] 테스트 항목 2
+- [ ] Test item 1
+- [ ] Test item 2
 EOF
 )"
 ```
@@ -144,55 +144,55 @@ EOF
 
 ---
 
-## PR 업데이트 모드
+## PR Update Mode
 
-PR 번호가 `$ARGUMENTS`로 전달된 경우.
+When PR number is passed via `$ARGUMENTS`.
 
-### 1단계: 기존 PR 확인
+### Step 1: Check Existing PR
 
 <pr_check>
 ```bash
-# PR 존재 여부 및 상태 확인
+# Check PR existence and status
 gh pr view $ARGUMENTS --json number,title,body,state,headRefName
 
-# 현재 브랜치가 PR의 브랜치와 일치하는지 확인
+# Verify current branch matches PR branch
 ```
 </pr_check>
 
-### 2단계: 변경사항 재분석
+### Step 2: Re-analyze Changes
 
-PR 생성 이후 추가된 커밋들을 분석합니다:
+Analyze commits added since PR creation:
 
 <update_analysis>
 ```bash
-# PR의 모든 커밋 확인
+# Check all commits in PR
 gh pr view $ARGUMENTS --json commits
 
-# 현재 diff 확인
+# Check current diff
 git diff main...HEAD --stat
 ```
 </update_analysis>
 
-### 3단계: PR 내용 업데이트
+### Step 3: Update PR Content
 
-기존 PR 내용을 **완전히 새로운 내용으로 교체**합니다.
+**Completely replace** existing PR content with new content.
 
 <important>
-**주의**: 업데이트 시 기존 내용에 append하지 않고 **완전 교체**합니다.
-모든 커밋을 분석하여 새로운 Summary와 Test plan을 작성합니다.
+**Note**: When updating, do NOT append to existing content. **Completely replace** it.
+Analyze all commits and write new Summary and Test plan.
 </important>
 
-### 4단계: PR 업데이트 실행
+### Step 4: Execute PR Update
 
 <pr_update>
 ```bash
-# PR 제목과 본문 업데이트
-gh pr edit $ARGUMENTS --title "새 PR 제목" --body "$(cat <<'EOF'
+# Update PR title and body
+gh pr edit $ARGUMENTS --title "New PR title" --body "$(cat <<'EOF'
 ## Summary
-- 업데이트된 변경 요약
+- Updated change summary
 
 ## Test plan
-- [ ] 업데이트된 테스트 항목
+- [ ] Updated test item
 EOF
 )"
 ```
@@ -200,60 +200,60 @@ EOF
 
 ---
 
-## PR 템플릿 활용
+## PR Template Usage
 
-`{project_root}/.github/PULL_REQUEST_TEMPLATE.md`가 존재하면 해당 템플릿의 구조를 따릅니다.
+If `{project_root}/.github/PULL_REQUEST_TEMPLATE.md` exists, follow that template's structure.
 
 <template_usage>
-1. 템플릿 파일 읽기
-2. 섹션 구조 파악
-3. 각 섹션에 맞는 내용 채우기
-4. 빈 섹션은 유지하되 가이드 텍스트 제거
+1. Read template file
+2. Understand section structure
+3. Fill in appropriate content for each section
+4. Keep empty sections but remove guide text
 </template_usage>
 
 ---
 
-## 오류 처리
+## Error Handling
 
 <error_handling>
-**gh CLI가 없는 경우**:
-- "GitHub CLI가 필요합니다. https://cli.github.com 에서 설치해주세요." 안내
+**gh CLI not installed**:
+- Display "GitHub CLI is required. Install from https://cli.github.com"
 
-**인증되지 않은 경우**:
-- "`gh auth login`을 실행하여 인증해주세요." 안내
+**Not authenticated**:
+- Display "Run `gh auth login` to authenticate."
 
-**PR 번호가 유효하지 않은 경우**:
-- "PR #N을 찾을 수 없습니다." 안내
+**Invalid PR number**:
+- Display "PR #N not found."
 
-**리모트에 푸시할 수 없는 경우**:
-- 권한 문제 또는 충돌 가능성 안내
+**Cannot push to remote**:
+- Inform about permission issues or potential conflicts
 
-**메인 브랜치에서 PR 생성 시도**:
-- "메인 브랜치에서는 PR을 생성할 수 없습니다. 새 브랜치를 만들어주세요." 안내
+**Attempting to create PR from main branch**:
+- Display "Cannot create PR from main branch. Please create a new branch."
 </error_handling>
 
 ---
 
-## 출력 예시
+## Output Example
 
 <output_example>
-**PR 생성 완료 시**:
-- PR URL 표시
-- PR 번호 표시
-- 요약 정보 (제목, 베이스 브랜치, 커밋 수)
+**On PR creation completion**:
+- Display PR URL
+- Display PR number
+- Summary info (title, base branch, commit count)
 
-**PR 업데이트 완료 시**:
-- PR URL 표시
-- "PR #N이 업데이트되었습니다." 메시지
-- 변경된 내용 요약
+**On PR update completion**:
+- Display PR URL
+- Display "PR #N has been updated."
+- Summary of changes
 </output_example>
 
 ---
 
-## 금지 사항
+## Prohibited Actions
 
 <prohibited>
-- PR 본문에 `Co-Authored-By` 라인 포함 금지
-- Force push (`git push --force`) 금지
-- 이미 머지된 PR 수정 시도 금지
+- Never include `Co-Authored-By` lines in PR body
+- Never force push (`git push --force`)
+- Never attempt to modify already merged PRs
 </prohibited>
