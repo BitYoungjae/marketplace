@@ -65,6 +65,8 @@ Skills for writing visual content in Obsidian using code blocks. Formulas, graph
 ### [gitkkal](./plugins/gitkkal/)
 
 > *Commit smarter, not harder.*
+>
+> Named after Korean "기깔나다" (giggal-nada), meaning stylish or impressive.
 
 Automate Git workflows—smart branch naming, flexible commit styles, and PR generation.
 

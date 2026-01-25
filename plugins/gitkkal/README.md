@@ -1,5 +1,7 @@
 # gitkkal
 
+> *Named after Korean "기깔나다" (giggal-nada), meaning stylish or impressive.*
+
 A Claude Code plugin that automates Git workflows—branch naming, commit messages, and pull requests.
 
 ## Installation
