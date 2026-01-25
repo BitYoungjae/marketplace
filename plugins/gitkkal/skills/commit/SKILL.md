@@ -111,6 +111,13 @@ git log --oneline -10
 ```
 </git_commands>
 
+**Commit Candidates**: All of the following are potential commit targets:
+- Staged changes (already added to index)
+- Unstaged changes (modified tracked files)
+- Untracked files (new files not yet tracked)
+
+Analyze all candidates together to determine optimal commit grouping.
+
 ### Step 3: Decide on Commit Splitting
 
 If `splitCommits` is `true`:
@@ -151,6 +158,7 @@ Write commit message according to configured pattern.
 <commit_execution>
 ```bash
 # Stage files (selectively if splitCommits)
+# Include both modified and untracked files as needed
 git add <files>
 
 # Create commit (pass message via HEREDOC)
@@ -160,6 +168,10 @@ EOF
 )"
 ```
 </commit_execution>
+
+**Staging includes**:
+- Modified tracked files (`M` in status)
+- Untracked files (`??` in status) — new files to be added to the repository
 
 ## Prohibited Actions
 

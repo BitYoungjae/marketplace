@@ -2,12 +2,22 @@
 
 > *Named after Korean "기깔나다" (giggal-nada), meaning stylish or impressive.*
 
+[한국어](./README.ko.md)
+
 A Claude Code plugin that automates Git workflows—branch naming, commit messages, and pull requests.
 
 ## Installation
 
+First, add the marketplace (one-time setup):
+
 ```
-/install gitkkal@bityoungjae-marketplace
+/plugin marketplace add bityoungjae/marketplace
+```
+
+Then install the plugin:
+
+```
+/plugin install gitkkal@bityoungjae-marketplace
 ```
 
 ## Commands
