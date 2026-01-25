@@ -2,8 +2,6 @@
 name: commit
 description: "Analyzes changes and creates commits following configured style. Git workflow automation."
 allowed-tools: Read, Write, Bash, Glob, Grep, AskUserQuestion
-user-invocable: true
-disable-model-invocation: true
 ---
 
 # gitkkal Commit Skill

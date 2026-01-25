@@ -2,8 +2,6 @@
 name: init
 description: "Interactive gitkkal setup. Configure Git commit style, PR templates, and more."
 allowed-tools: Read, Write, Glob, Grep, AskUserQuestion, Task
-user-invocable: true
-disable-model-invocation: true
 ---
 
 # gitkkal Init Skill
