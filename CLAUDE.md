@@ -4,9 +4,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a Claude Code plugin marketplace repository (`bityoungjae-marketplace`) containing four plugins:
+This is a Claude Code plugin marketplace repository (`bityoungjae-marketplace`) containing five plugins:
 
 - **dokhak** - Self-learning resource creation with multi-agent pipeline
+- **gitkkal** - Git workflow automation (branch naming, commits, PRs)
 - **nvim-doctor** - Neovim configuration diagnostics
 - **obsidian-blocks** - Visual content in Obsidian (LaTeX, Desmos, Mermaid, TikZ)
 - **omarchy** - Theme management for Hyprland-based Linux desktop
@@ -17,11 +18,16 @@ This is a Claude Code plugin marketplace repository (`bityoungjae-marketplace`) 
 bityoungjae-marketplace/
 ├── .claude-plugin/marketplace.json     # Marketplace registry (versions here)
 ├── plugins/
-│   ├── dokhak/                         # Main plugin
+│   ├── dokhak/                         # Self-learning resource creation
 │   │   ├── .claude-plugin/plugin.json  # Plugin metadata (version here)
 │   │   ├── commands/                   # /init, /write, /continue, /status, /doctor
 │   │   ├── agents/                     # Subagent definitions
 │   │   └── skills/                     # Reusable skill modules
+│   ├── gitkkal/                        # Git workflow automation
+│   │   ├── skills/init-gitkkal/        # Configuration setup
+│   │   ├── skills/branch/              # Branch naming
+│   │   ├── skills/commit/              # Commit creation
+│   │   └── skills/pr/                  # PR generation
 │   ├── nvim-doctor/
 │   ├── obsidian-blocks/
 │   └── omarchy/
@@ -142,7 +148,7 @@ Agents exchange structured data using XML with Markdown content:
 - **Page count**: 1 page ≈ 40-50 lines of content
 - **Session grouping**: 3-5 sections or 20-40 pages per session in task.md
 - **Task status**: `[ ]`/`[x]` checkboxes with `<!-- Session N: ... -->` boundaries
-- **Domain values**: `technology`, `history`, `science`, `arts`, `general`
+- **Domain values**: `technology`, `history`, `science`, `arts`, `language`, `general`
 
 ## Commit Message Style
 
@@ -157,5 +163,3 @@ This repository uses **Conventional Commits with Korean messages**:
 - **Types**: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`, `perf`
 - **Language**: Subject/body in Korean only (type/scope in English)
 - **Forbidden**: Emojis, English in body, future tense, "Co-Authored-By" lines
-
-Use the commit-helper skill (`.claude/skills/commit-helper/`) which enforces these conventions automatically.
