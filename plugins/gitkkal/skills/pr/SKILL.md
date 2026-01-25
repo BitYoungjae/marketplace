@@ -21,13 +21,29 @@ Pull Request를 생성하거나 업데이트합니다.
 
 ### 설정 파일 확인
 
-`{project_root}/.gitkkal/config.json` 파일이 존재하는지 확인합니다.
+`{project_root}/.gitkkal/config.json` 파일을 읽어 설정을 확인합니다.
 
 프로젝트 루트는 Git 저장소의 최상위 디렉터리입니다 (`git rev-parse --show-toplevel`로 확인).
 
-<if_not_exists>
-설정 파일이 없습니다. `/gitkkal:init`을 먼저 실행하여 설정을 완료해주세요.
-</if_not_exists>
+- **존재하면**: 파일에서 설정을 로드합니다.
+- **존재하지 않으면**: 기본 설정을 사용합니다.
+
+<default_config>
+
+```json
+{
+  "language": "en",
+  "commitPattern": "conventional",
+  "branchPattern": "type/description",
+  "splitCommits": true,
+  "askOnAmbiguity": true,
+  "createPrTemplate": false
+}
+```
+
+</default_config>
+
+설정 파일이 없을 때는 "기본 설정을 사용합니다. 커스터마이즈하려면 `/gitkkal:init`을 실행하세요." 메시지를 한 번 표시합니다.
 
 ### GitHub CLI 확인
 

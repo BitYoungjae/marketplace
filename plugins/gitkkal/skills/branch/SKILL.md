@@ -18,9 +18,25 @@ argument-hint: "[description]"
 
 프로젝트 루트는 Git 저장소의 최상위 디렉터리입니다 (`git rev-parse --show-toplevel`로 확인).
 
-- 존재하지 않으면: `/gitkkal:init`을 먼저 실행하라고 안내하고 종료합니다.
-- 존재하면: `branchPattern` 설정을 확인합니다.
-  - 설정이 없으면 기본값 `type/description` 사용
+- **존재하면**: 파일에서 설정을 로드합니다.
+- **존재하지 않으면**: 기본 설정을 사용합니다.
+
+<default_config>
+
+```json
+{
+  "language": "en",
+  "commitPattern": "conventional",
+  "branchPattern": "type/description",
+  "splitCommits": true,
+  "askOnAmbiguity": true,
+  "createPrTemplate": false
+}
+```
+
+</default_config>
+
+설정 파일이 없을 때는 "기본 설정을 사용합니다. 커스터마이즈하려면 `/gitkkal:init`을 실행하세요." 메시지를 한 번 표시합니다.
 
 ### 2단계: 현재 상태 확인
 
@@ -144,7 +160,6 @@ git checkout -b {branch_name}
 
 | 상황 | 처리 |
 |------|------|
-| 설정 파일 없음 | `/gitkkal:init`을 먼저 실행하라고 안내 |
 | Git 저장소 아님 | "Git 저장소가 아닙니다" 안내 |
 | 동일 브랜치명 존재 | 다른 이름을 입력받거나 숫자 접미사 추가 제안 |
 | 현재 브랜치에 커밋되지 않은 변경 있음 | 경고 후 계속 진행할지 확인 |
