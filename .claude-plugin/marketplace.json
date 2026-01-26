@@ -15,7 +15,13 @@
         "name": "BitYoungjae",
         "email": "bityoungjae@gmail.com"
       },
-      "keywords": ["self-learning", "documentation", "tutorial", "guide", "독학"]
+      "keywords": [
+        "self-learning",
+        "documentation",
+        "tutorial",
+        "guide",
+        "독학"
+      ]
     },
     {
       "name": "nvim-doctor",
@@ -26,7 +32,15 @@
         "name": "BitYoungjae",
         "email": "bityoungjae@gmail.com"
       },
-      "keywords": ["neovim", "nvim", "doctor", "diagnose", "configuration", "troubleshoot", "lazyvim"]
+      "keywords": [
+        "neovim",
+        "nvim",
+        "doctor",
+        "diagnose",
+        "configuration",
+        "troubleshoot",
+        "lazyvim"
+      ]
     },
     {
       "name": "obsidian-blocks",
@@ -37,7 +51,17 @@
         "name": "BitYoungjae",
         "email": "bityoungjae@gmail.com"
       },
-      "keywords": ["obsidian", "latex", "mathjax", "desmos", "mermaid", "tikz", "tikzjax", "diagram", "graph"]
+      "keywords": [
+        "obsidian",
+        "latex",
+        "mathjax",
+        "desmos",
+        "mermaid",
+        "tikz",
+        "tikzjax",
+        "diagram",
+        "graph"
+      ]
     },
     {
       "name": "omarchy",
@@ -48,18 +72,37 @@
         "name": "BitYoungjae",
         "email": "bityoungjae@gmail.com"
       },
-      "keywords": ["omarchy", "hyprland", "theme", "linux", "desktop", "colors", "waybar", "alacritty", "kitty", "ghostty"]
+      "keywords": [
+        "omarchy",
+        "hyprland",
+        "theme",
+        "linux",
+        "desktop",
+        "colors",
+        "waybar",
+        "alacritty",
+        "kitty",
+        "ghostty"
+      ]
     },
     {
       "name": "gitkkal",
       "source": "./plugins/gitkkal",
       "description": "Automate Git workflows—smart branch naming, flexible commit styles, and PR generation.",
-      "version": "0.3.0",
+      "version": "1.0.0",
       "author": {
         "name": "BitYoungjae",
         "email": "bityoungjae@gmail.com"
       },
-      "keywords": ["git", "commit", "pr", "pull-request", "workflow", "conventional-commits", "gitmoji"]
+      "keywords": [
+        "git",
+        "commit",
+        "pr",
+        "pull-request",
+        "workflow",
+        "conventional-commits",
+        "gitmoji"
+      ]
     }
   ]
 }

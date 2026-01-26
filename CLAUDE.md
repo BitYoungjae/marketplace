@@ -24,13 +24,17 @@ bityoungjae-marketplace/
 │   │   ├── agents/                     # Subagent definitions
 │   │   └── skills/                     # Reusable skill modules
 │   ├── gitkkal/                        # Git workflow automation
-│   │   ├── skills/init-gitkkal/        # Configuration setup
-│   │   ├── skills/branch/              # Branch naming
-│   │   ├── skills/commit/              # Commit creation
-│   │   └── skills/pr/                  # PR generation
-│   ├── nvim-doctor/
-│   ├── obsidian-blocks/
-│   └── omarchy/
+│   │   └── commands/                   # /init, /branch, /commit, /pr
+│   ├── nvim-doctor/                    # Neovim configuration diagnostics
+│   │   ├── commands/                   # /diagnose
+│   │   ├── agents/                     # diagnostician, auditor, investigator
+│   │   └── skills/                     # neovim-debugging, config-auditing, plugin-research
+│   ├── obsidian-blocks/                # Visual content in Obsidian
+│   │   ├── commands/                   # /enhance
+│   │   ├── agents/                     # doc-enhancer
+│   │   └── skills/                     # mathjax, desmos, mermaid, tikzjax
+│   └── omarchy/                        # Hyprland desktop theming
+│       └── skills/                     # omarchy-theming
 ├── contexts/                           # Reference documentation
 │   └── cc/                             # Claude Code docs (synced from official)
 └── scripts/
@@ -91,6 +95,7 @@ reviewer (haiku) → PASS or NEEDS_REVISION → optional revision loop
 
 ### Agent Model Assignments
 
+**Dokhak agents:**
 | Agent | Model | Purpose |
 |-------|-------|---------|
 | `project-interviewer` | opus | Conversational interview for persona creation |
@@ -99,6 +104,18 @@ reviewer (haiku) → PASS or NEEDS_REVISION → optional revision loop
 | `researcher` | haiku | Section-specific research |
 | `writer` | opus | Document generation |
 | `reviewer` | haiku | Quality review |
+
+**nvim-doctor agents:**
+| Agent | Model | Purpose |
+|-------|-------|---------|
+| `nvim-diagnostician` | sonnet | Deep root cause analysis with hypothesis testing |
+| `config-auditor` | haiku | Configuration scanning and A-F grading |
+| `plugin-investigator` | haiku | Plugin version compatibility and GitHub research |
+
+**obsidian-blocks agents:**
+| Agent | Model | Purpose |
+|-------|-------|---------|
+| `doc-enhancer` | opus | Analyze documents and add visual elements |
 
 ### Plugin File Formats
 
@@ -144,11 +161,18 @@ Agents exchange structured data using XML with Markdown content:
 
 ## Key Conventions
 
-- **Output file naming** (dokhak): `docs/{chapter}-{section}-{slug}.md` (zero-padded: `01-2-introduction.md`)
-- **Page count**: 1 page ≈ 40-50 lines of content
+### Dokhak-specific
+- **Output file naming**: `docs/{chapter}-{section}-{slug}.md` (zero-padded: `01-2-introduction.md`)
+- **Page count**: 1 page ≈ 50-70 lines of content
 - **Session grouping**: 3-5 sections or 20-40 pages per session in task.md
 - **Task status**: `[ ]`/`[x]` checkboxes with `<!-- Session N: ... -->` boundaries
 - **Domain values**: `technology`, `history`, `science`, `arts`, `language`, `general`
+
+### Gitkkal-specific
+- **Config location**: `.gitkkal/config.json` (created via `/gitkkal:init`)
+- **Commit patterns**: `conventional`, `gitmoji`, `simple`
+- **Branch patterns**: `type/description`, `description-only`
+- **Requires**: GitHub CLI (`gh`) for PR features
 
 ## Commit Message Style
 

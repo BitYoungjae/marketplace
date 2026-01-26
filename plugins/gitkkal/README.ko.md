@@ -24,7 +24,7 @@ Git 워크플로우를 자동화하는 Claude Code 플러그인입니다. 브랜
 
 | 명령어 | 설명 |
 |--------|------|
-| `/gitkkal:init-gitkkal` | 커밋 스타일 및 환경설정 구성 |
+| `/gitkkal:init` | 커밋 스타일 및 환경설정 구성 |
 | `/gitkkal:branch` | 변경사항에 기반한 브랜치 생성 |
 | `/gitkkal:commit` | 설정된 스타일로 커밋 생성 |
 | `/gitkkal:pr` | Pull Request 생성 또는 업데이트 |
@@ -37,7 +37,7 @@ Git 워크플로우를 자동화하는 Claude Code 플러그인입니다. 브랜
 
 ## 설정
 
-`.gitkkal/config.json`에 저장됩니다 (`/gitkkal:init-gitkkal`으로 생성):
+`.gitkkal/config.json`에 저장됩니다 (`/gitkkal:init`으로 생성):
 
 ```json
 {
