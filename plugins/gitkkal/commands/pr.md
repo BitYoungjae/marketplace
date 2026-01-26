@@ -33,7 +33,7 @@ git rev-parse --show-toplevel  # Find project root
 ```
 
 Read `{project_root}/.gitkkal/config.json`. If not exists, use defaults and display once:
-"Using default settings. Run `/gitkkal:init-gitkkal` to customize."
+"Using default settings. Run `/gitkkal:init` to customize."
 
 ### 2. Verify GitHub CLI
 

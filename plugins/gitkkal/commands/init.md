@@ -132,5 +132,5 @@ Available commands:
 - /gitkkal:commit — Commit with configured style
 - /gitkkal:pr — Create or update PR
 
-To reconfigure: /gitkkal:init-gitkkal
+To reconfigure: /gitkkal:init
 ```
