@@ -6,8 +6,6 @@
     "name": "BitYoungjae",
     "email": "bityoungjae@gmail.com"
   },
-  "homepage": "https://github.com/bityoungjae/dokhak",
-  "repository": "https://github.com/bityoungjae/dokhak",
   "license": "MIT",
   "keywords": ["self-learning", "documentation", "tutorial", "guide", "독학"]
 }

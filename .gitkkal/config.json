@@ -1,8 +1,8 @@
 {
   "language": "ko",
-  "commitPattern": "conventional",
+  "commitPattern": "gitmoji",
   "branchPattern": "type/description",
   "splitCommits": true,
   "askOnAmbiguity": true,
-  "createPrTemplate": false
+  "createPrTemplate": true
 }
