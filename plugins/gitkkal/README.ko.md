@@ -20,14 +20,51 @@ Git 워크플로우를 자동화하는 Claude Code 플러그인입니다. 브랜
 /plugin install gitkkal@bityoungjae-marketplace
 ```
 
+## 빠른 시작
+
+```
+/gitkkal:init                      # 환경설정 (처음 한 번)
+/gitkkal:branch [설명]             # 새 브랜치 생성
+/gitkkal:commit [힌트]             # 변경사항 커밋
+/gitkkal:pr [힌트]                 # PR 생성 또는 업데이트
+```
+
+## 워크플로우
+
+gitkkal를 사용한 일반적인 개발 워크플로우:
+
+1. **작업 시작**
+   ```
+   /gitkkal:branch add user authentication
+   ```
+   변경사항이나 설명을 기반으로 새 브랜치를 생성합니다.
+
+2. **변경사항 커밋**
+   ```
+   /gitkkal:commit
+   ```
+   변경사항을 분석하고 설정된 스타일로 커밋을 생성합니다.
+
+3. **PR 생성**
+   ```
+   /gitkkal:pr
+   ```
+   자동 생성된 제목과 설명으로 PR을 생성합니다.
+
+4. **PR 업데이트** (추가 커밋 후)
+   ```
+   /gitkkal:pr emphasize refactoring
+   ```
+   새 변경사항으로 기존 PR을 업데이트합니다.
+
 ## 명령어
 
 | 명령어 | 설명 |
 |--------|------|
 | `/gitkkal:init` | 커밋 스타일 및 환경설정 구성 |
-| `/gitkkal:branch` | 변경사항에 기반한 브랜치 생성 |
-| `/gitkkal:commit` | 설정된 스타일로 커밋 생성 |
-| `/gitkkal:pr` | Pull Request 생성 또는 업데이트 |
+| `/gitkkal:branch [설명]` | 변경사항이나 설명을 기반으로 브랜치 생성 |
+| `/gitkkal:commit [힌트]` | 설정된 스타일로 커밋 생성 |
+| `/gitkkal:pr [힌트]` | Pull Request 생성 또는 업데이트 |
 
 ## 커밋 스타일
 

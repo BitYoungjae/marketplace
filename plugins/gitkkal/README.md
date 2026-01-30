@@ -20,14 +20,51 @@ Then install the plugin:
 /plugin install gitkkal@bityoungjae-marketplace
 ```
 
+## Quick Start
+
+```
+/gitkkal:init                      # Configure preferences (first time)
+/gitkkal:branch [description]      # Create a new branch
+/gitkkal:commit [hint]             # Commit changes
+/gitkkal:pr [hint]                 # Create or update PR
+```
+
+## Workflow
+
+The typical development workflow with gitkkal:
+
+1. **Start work**
+   ```
+   /gitkkal:branch add user authentication
+   ```
+   Creates a new branch based on your changes or description.
+
+2. **Commit changes**
+   ```
+   /gitkkal:commit
+   ```
+   Analyzes changes and creates commits in your configured style.
+
+3. **Create PR**
+   ```
+   /gitkkal:pr
+   ```
+   Creates a pull request with auto-generated title and description.
+
+4. **Update PR** (after additional commits)
+   ```
+   /gitkkal:pr emphasize refactoring
+   ```
+   Updates the existing PR with new changes.
+
 ## Commands
 
 | Command | Description |
 |---------|-------------|
 | `/gitkkal:init` | Configure commit style and preferences |
-| `/gitkkal:branch` | Create a branch based on your changes |
-| `/gitkkal:commit` | Generate commits in your preferred style |
-| `/gitkkal:pr` | Create or update a pull request |
+| `/gitkkal:branch [description]` | Create a branch based on your changes or description |
+| `/gitkkal:commit [hint]` | Generate commits in your preferred style |
+| `/gitkkal:pr [hint]` | Create or update a pull request |
 
 ## Commit Styles
 
