@@ -38,16 +38,45 @@ Read `{project_root}/.gitkkal/config.json`. If not exists, use defaults and disp
 
 ### 2. Analyze Current State
 
+Run in parallel:
+
 ```bash
 git status --short
-git diff --stat
-git diff --cached --stat
+git diff              # Actual content changes (unstaged)
+git diff --cached     # Actual content changes (staged)
 ```
 
 - No changes → Ask user for branch description directly
-- Changes exist → Analyze and determine type
+- Changes exist → Proceed to semantic analysis
 
-### 3. Determine Branch Type
+### 3. Understand Semantic Intent
+
+Focus on the **"why"** rather than the **"what"**:
+
+- Read actual diff content, not just file statistics
+- Identify the semantic meaning of changes (e.g., "renaming SKU to Bundle ID", "adding retry logic")
+- Look for patterns: variable renames, API changes, new abstractions, bug fixes
+
+<examples>
+| Diff observation | Semantic intent | Branch |
+|------------------|-----------------|--------|
+| New `validateEmail()` function + test file | Adding email validation | `feat/add-email-validation` |
+| `catch` block added, null checks inserted | Fixing unhandled error crash | `fix/handle-null-user-error` |
+| `userId` → `oderId` typo fixed | Fixing variable typo | `fix/order-id-typo` |
+| Loop replaced with `.map()`, no behavior change | Refactoring to functional style | `refactor/use-map-for-transform` |
+| `setTimeout` → `requestIdleCallback` | Improving render performance | `perf/defer-non-critical-updates` |
+</examples>
+
+<bad-analysis>
+Diff shows: 5 files changed, 47 insertions, 32 deletions
+Result: `feat/update-files` ← Too vague, based on file stats only
+</bad-analysis>
+
+**When intent is unclear from code alone:**
+- Use AskUserQuestion to clarify: "I see changes to product naming. What's the purpose of this change?"
+- Do NOT guess or default to generic names
+
+### 4. Determine Branch Type
 
 | Type       | When to use                                            |
 | ---------- | ------------------------------------------------------ |
@@ -61,9 +90,9 @@ git diff --cached --stat
 | `perf`     | Performance improvements                               |
 | `ci`       | CI/CD config (.github/workflows/)                      |
 
-When ambiguous: Choose the most significant change. Default to `feat` if truly uncertain.
+When type is ambiguous: Use AskUserQuestion to clarify the primary purpose of the changes.
 
-### 4. Generate Branch Name
+### 5. Generate Branch Name
 
 **Slug rules:**
 1. English kebab-case only
@@ -88,20 +117,20 @@ Action: Use AskUserQuestion to request English description
 | `type/description` | `{type}/{slug}` | `feat/add-user-login` |
 | `description-only` | `{slug}`        | `add-user-login`      |
 
-### 5. Confirm with User
+### 6. Confirm with User
 
 Use AskUserQuestion:
 - header: "Branch"
 - question: "Create this branch?"
 - options: Generated name (recommended) / Custom
 
-### 6. Create Branch
+### 7. Create Branch
 
 ```bash
 git checkout -b {branch_name}
 ```
 
-### 7. Output
+### 8. Output
 
 ```
 Created branch: `{branch_name}`
@@ -122,4 +151,5 @@ If user provides argument (e.g., `/gitkkal:branch add user authentication`):
 | Not a Git repository       | "This is not a Git repository"                   |
 | Branch already exists      | Suggest different name or numeric suffix         |
 | Non-English description    | Request English description via AskUserQuestion  |
+| Intent unclear from code   | Ask user to clarify the purpose of changes       |
 | Name too long              | Auto-truncate to 50 characters                   |
