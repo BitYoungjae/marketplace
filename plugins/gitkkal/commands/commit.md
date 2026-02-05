@@ -39,14 +39,15 @@ Read `{project_root}/.gitkkal/config.json`. If not exists, use defaults and disp
 ```
 </defaults>
 
-### 2. Analyze Changes
+### 2. Gather Change Information
+
+Run in parallel:
 
 ```bash
-git diff --cached --stat    # Staged changes
-git diff --cached           # Staged diff
-git diff --stat             # Unstaged changes
-git status --porcelain      # Untracked files
-git log --oneline -10       # Recent commit style reference
+git status --short          # All file states (NEVER use -uall flag)
+git diff --cached           # Staged changes (actual content)
+git diff                    # Unstaged changes (actual content)
+git log --oneline -5        # Recent commit style reference
 ```
 
 **Commit candidates** (analyze all together):
@@ -54,7 +55,35 @@ git log --oneline -10       # Recent commit style reference
 - Unstaged changes (modified tracked files)
 - Untracked files (new files)
 
-### 3. User Hint
+### 3. Understand Semantic Intent
+
+Focus on the **"why"** rather than the **"what"**:
+
+- Read actual diff content, not just file statistics
+- Identify the semantic meaning of changes
+- Determine if changes represent: new feature, enhancement to existing feature, bug fix, refactoring, etc.
+- Ensure verb choice reflects intent: "add" = wholly new, "update" = enhancement, "fix" = bug fix
+
+<examples>
+| Diff observation | Semantic intent | Commit message |
+|------------------|-----------------|----------------|
+| New `validateEmail()` + test file | Adding validation feature | `feat: add email validation` |
+| `catch` block added, null checks | Fixing unhandled error | `fix: handle null user error` |
+| `userId` → `orderId` typo fixed | Correcting typo | `fix: correct order-id typo` |
+| Loop → `.map()`, same behavior | Functional refactoring | `refactor: use map for transform` |
+| `setTimeout` → `requestIdleCallback` | Performance optimization | `perf: defer non-critical updates` |
+</examples>
+
+<bad-analysis>
+Diff shows: 5 files changed, 47 insertions, 32 deletions
+Result: `chore: update files` ← Too vague, based on file stats only
+</bad-analysis>
+
+**When intent is unclear from code alone:**
+- Use AskUserQuestion to clarify: "I see changes to error handling. Is this fixing a bug or adding new validation?"
+- Do NOT guess or default to generic messages like "update code"
+
+### 4. User Hint
 
 **$ARGUMENTS** — If provided, use as guidance for:
 - Commit message content/style
@@ -63,7 +92,7 @@ git log --oneline -10       # Recent commit style reference
 
 The hint is advisory — incorporate appropriately.
 
-### 4. Decide Commit Splitting
+### 5. Decide Commit Splitting
 
 When `splitCommits: true`:
 
@@ -82,7 +111,7 @@ Formatting + logic changes → Should be separate commits
 
 When `askOnAmbiguity: true` and splitting is unclear → Use AskUserQuestion.
 
-### 5. Write Commit Message
+### 6. Write Commit Message
 
 **Patterns:**
 
@@ -108,12 +137,13 @@ When `askOnAmbiguity: true` and splitting is unclear → Use AskUserQuestion.
 | `chore`    | Other                      | 🔧      |
 
 **Message guidelines:**
-- Focus on "why" not "what"
+- Focus on "why" not "what" — explain the purpose, not just the change
 - Imperative present tense: "Add", "Fix" (not "Added", "Fixed")
 - First line under 50 characters
+- Body (optional): use for additional context when the "why" isn't obvious
 - Language follows config (`ko` or `en`)
 
-### 6. Execute Commit
+### 7. Execute Commit
 
 ```bash
 # Stage specific files
@@ -129,7 +159,7 @@ EOF
 )"
 ```
 
-### 7. Output
+### 8. Output
 
 ```
 Created: abc1234
@@ -146,3 +176,5 @@ If multiple commits: show count and summary of each.
 | No changes to commit   | "No changes to commit."                             |
 | Pre-commit hook fails  | Fix issue, create NEW commit (never amend)          |
 | Merge conflict state   | "Resolve conflicts before committing."              |
+| Intent unclear from code | Ask user to clarify the purpose of changes        |
+| Sensitive file detected | Warn user and exclude from staging                 |
