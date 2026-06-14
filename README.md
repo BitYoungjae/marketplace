@@ -80,6 +80,19 @@ Automate Git workflows—smart branch naming, flexible commit styles, and PR gen
 - `/gitkkal:commit`: Generate commits in your preferred style
 - `/gitkkal:pr`: Create or update a pull request
 
+### [hermes-tweet](./plugins/hermes-tweet/)
+
+> *Read first, act with approval.*
+
+Native Hermes Agent X/Twitter plugin for Xquik automation with read-first workflows and approval-gated actions.
+
+```bash
+/plugin install hermes-tweet@bityoungjae-marketplace
+```
+
+**Skills:**
+- `hermes-tweet`: Guide Hermes Agent X/Twitter workflows with safe endpoint discovery, runtime credential setup, and action gating
+
 ### [omarchy](./plugins/omarchy/)
 
 > *Theme once, apply everywhere.*
