@@ -103,6 +103,24 @@
         "conventional-commits",
         "gitmoji"
       ]
+    },
+    {
+      "name": "hermes-tweet",
+      "source": "./plugins/hermes-tweet",
+      "description": "Native Hermes Agent X/Twitter plugin for Xquik automation with read-first workflows and approval-gated actions.",
+      "version": "0.1.6",
+      "author": {
+        "name": "Xquik"
+      },
+      "keywords": [
+        "hermes-agent",
+        "hermes-plugin",
+        "xquik",
+        "twitter",
+        "x",
+        "social-media",
+        "automation"
+      ]
     }
   ]
 }
