@@ -210,6 +210,7 @@ The following fields can be used in the YAML frontmatter. Only `name` and `descr
 | `permissionMode`  | No       | [Permission mode](#permission-modes): `default`, `acceptEdits`, `dontAsk`, `bypassPermissions`, or `plan`                                                                                                    |
 | `skills`          | No       | [Skills](/en/skills) to load into the subagent's context at startup. The full skill content is injected, not just made available for invocation. Subagents don't inherit skills from the parent conversation |
 | `hooks`           | No       | [Lifecycle hooks](#define-hooks-for-subagents) scoped to this subagent                                                                                                                                       |
+| `memory`          | No       | [Persistent memory scope](#enable-persistent-memory): `user`, `project`, or `local`. Enables cross-session learning                                                                                          |
 
 ### Choose a model
 
@@ -278,6 +279,49 @@ The full content of each skill is injected into the subagent's context, not just
   This is the inverse of [running a skill in a subagent](/en/skills#run-skills-in-a-subagent). With `skills` in a subagent, the subagent controls the system prompt and loads skill content. With `context: fork` in a skill, the skill content is injected into the agent you specify. Both use the same underlying system.
 </Note>
 
+#### Enable persistent memory
+
+The `memory` field designates a persistent directory for the subagent to write to across conversations. The subagent uses this directory to build up knowledge over time: codebase patterns, debugging insights, architectural decisions, and other learnings.
+
+```yaml  theme={null}
+---
+name: code-reviewer
+description: Reviews code for quality and best practices
+memory: user
+---
+
+You are a code reviewer. As you review code, update your agent memory with
+patterns, conventions, and recurring issues you discover.
+```
+
+Choose a scope based on how broadly the memory should apply:
+
+| Scope     | Location                                      | Use when                                                                                    |
+| :-------- | :-------------------------------------------- | :------------------------------------------------------------------------------------------ |
+| `user`    | `~/.claude/agent-memory/<name-of-agent>/`     | the subagent should remember learnings across all projects                                  |
+| `project` | `.claude/agent-memory/<name-of-agent>/`       | the subagent's knowledge is project-specific and shareable via version control              |
+| `local`   | `.claude/agent-memory-local/<name-of-agent>/` | the subagent's knowledge is project-specific but should not be checked into version control |
+
+When memory is enabled:
+
+* The subagent's system prompt includes instructions for reading and writing to the memory directory.
+* The subagent's system prompt also includes the first 200 lines of `MEMORY.md` in the memory directory, with instructions to curate `MEMORY.md` if it exceeds 200 lines.
+* Read, Write, and Edit tools are automatically enabled so the subagent can manage its memory files.
+
+##### Persistent memory tips
+
+* `user` is the recommended default scope. Use `project` or `local` when the subagent's knowledge is only relevant to a specific codebase.
+* Ask the subagent to consult its memory before starting work: "Review this PR, and check your memory for patterns you've seen before."
+* Ask the subagent to update its memory after completing a task: "Now that you're done, save what you learned to your memory." Over time, this builds a knowledge base that makes the subagent more effective.
+* Include memory instructions directly in the subagent's markdown file so it proactively maintains its own knowledge base:
+
+  ```
+  **Update your agent memory** as you discover codepaths, patterns, library
+  locations, and key architectural decisions. This builds up institutional
+  knowledge across conversations. Write concise notes about what you found
+  and where.
+  ```
+
 #### Conditional rules with hooks
 
 For more dynamic control over tool usage, use `PreToolUse` hooks to validate operations before they execute. This is useful when you need to allow some operations of a tool while blocking others.
@@ -298,7 +342,7 @@ hooks:
 ---
 ```
 
-Claude Code [passes hook input as JSON](/en/hooks#pretooluse-input) via stdin to hook commands. The validation script reads this JSON, extracts the Bash command, and [exits with code 2](/en/hooks#exit-code-2-behavior) to block write operations:
+Claude Code [passes hook input as JSON](/en/hooks#pretooluse-input) via stdin to hook commands. The validation script reads this JSON, extracts the Bash command, and [exits with code 2](/en/hooks#exit-code-2-behavior-per-event) to block write operations:
 
 ```bash  theme={null}
 #!/bin/bash
@@ -316,7 +360,7 @@ fi
 exit 0
 ```
 
-See [Hook input](/en/hooks#pretooluse-input) for the complete input schema and [exit codes](/en/hooks#simple-exit-code) for how exit codes affect behavior.
+See [Hook input](/en/hooks#pretooluse-input) for the complete input schema and [exit codes](/en/hooks#exit-code-output) for how exit codes affect behavior.
 
 #### Disable specific subagents
 
@@ -336,7 +380,7 @@ This works for both built-in and custom subagents. You can also use the `--disal
 claude --disallowedTools "Task(Explore)"
 ```
 
-See [IAM documentation](/en/iam#tool-specific-permission-rules) for more details on permission rules.
+See [Permissions documentation](/en/permissions#tool-specific-permission-rules) for more details on permission rules.
 
 ### Define hooks for subagents
 
@@ -349,11 +393,13 @@ Subagents can define [hooks](/en/hooks) that run during the subagent's lifecycle
 
 Define hooks directly in the subagent's markdown file. These hooks only run while that specific subagent is active and are cleaned up when it finishes.
 
-| Event         | Matcher input | When it fires                   |
-| :------------ | :------------ | :------------------------------ |
-| `PreToolUse`  | Tool name     | Before the subagent uses a tool |
-| `PostToolUse` | Tool name     | After the subagent uses a tool  |
-| `Stop`        | (none)        | When the subagent finishes      |
+All [hook events](/en/hooks#hook-events) are supported. The most common events for subagents are:
+
+| Event         | Matcher input | When it fires                                                       |
+| :------------ | :------------ | :------------------------------------------------------------------ |
+| `PreToolUse`  | Tool name     | Before the subagent uses a tool                                     |
+| `PostToolUse` | Tool name     | After the subagent uses a tool                                      |
+| `Stop`        | (none)        | When the subagent finishes (converted to `SubagentStop` at runtime) |
 
 This example validates Bash commands with the `PreToolUse` hook and runs a linter after file edits with `PostToolUse`:
 
@@ -379,14 +425,14 @@ hooks:
 
 #### Project-level hooks for subagent events
 
-Configure hooks in `settings.json` that respond to subagent lifecycle events in the main session. Use the `matcher` field to target specific agent types by name.
+Configure hooks in `settings.json` that respond to subagent lifecycle events in the main session.
 
 | Event           | Matcher input   | When it fires                    |
 | :-------------- | :-------------- | :------------------------------- |
 | `SubagentStart` | Agent type name | When a subagent begins execution |
-| `SubagentStop`  | Agent type name | When a subagent completes        |
+| `SubagentStop`  | (none)          | When any subagent completes      |
 
-This example runs setup and cleanup scripts only when the `db-agent` subagent starts and stops:
+`SubagentStart` supports matchers to target specific agent types by name. `SubagentStop` fires for all subagent completions regardless of matcher values. This example runs a setup script only when the `db-agent` subagent starts, and a cleanup script when any subagent stops:
 
 ```json  theme={null}
 {
@@ -401,7 +447,6 @@ This example runs setup and cleanup scripts only when the `db-agent` subagent st
     ],
     "SubagentStop": [
       {
-        "matcher": "db-agent",
         "hooks": [
           { "type": "command", "command": "./scripts/cleanup-db-connection.sh" }
         ]
@@ -431,7 +476,7 @@ Have the code-reviewer subagent look at my recent changes
 Subagents can run in the foreground (blocking) or background (concurrent):
 
 * **Foreground subagents** block the main conversation until complete. Permission prompts and clarifying questions (like [`AskUserQuestion`](/en/settings#tools-available-to-claude)) are passed through to you.
-* **Background subagents** run concurrently while you continue working. They inherit the parent's permissions and auto-deny anything not pre-approved. If a background subagent needs a permission it doesn't have or needs to ask clarifying questions, that tool call fails but the subagent continues. MCP tools are not available in background subagents.
+* **Background subagents** run concurrently while you continue working. Before launching, Claude Code prompts for any tool permissions the subagent will need, ensuring it has the necessary approvals upfront. Once running, the subagent inherits these permissions and auto-denies anything not pre-approved. If a background subagent needs to ask clarifying questions, that tool call fails but the subagent continues. MCP tools are not available in background subagents.
 
 If a background subagent fails due to missing permissions, you can [resume it](#resume-subagents) in the foreground to retry with interactive prompts.
 
@@ -691,7 +736,7 @@ When asked to analyze data:
 You cannot modify data. If asked to INSERT, UPDATE, DELETE, or modify schema, explain that you only have read access.
 ```
 
-Claude Code [passes hook input as JSON](/en/hooks#pretooluse-input) via stdin to hook commands. The validation script reads this JSON, extracts the command being executed, and checks it against a list of SQL write operations. If a write operation is detected, the script [exits with code 2](/en/hooks#exit-code-2-behavior) to block execution and returns an error message to Claude via stderr.
+Claude Code [passes hook input as JSON](/en/hooks#pretooluse-input) via stdin to hook commands. The validation script reads this JSON, extracts the command being executed, and checks it against a list of SQL write operations. If a write operation is detected, the script [exits with code 2](/en/hooks#exit-code-2-behavior-per-event) to block execution and returns an error message to Claude via stderr.
 
 Create the validation script anywhere in your project. The path must match the `command` field in your hook configuration:
 
@@ -724,7 +769,7 @@ Make the script executable:
 chmod +x ./scripts/validate-readonly-query.sh
 ```
 
-The hook receives JSON via stdin with the Bash command in `tool_input.command`. Exit code 2 blocks the operation and feeds the error message back to Claude. See [Hooks](/en/hooks#simple-exit-code) for details on exit codes and [Hook input](/en/hooks#pretooluse-input) for the complete input schema.
+The hook receives JSON via stdin with the Bash command in `tool_input.command`. Exit code 2 blocks the operation and feeds the error message back to Claude. See [Hooks](/en/hooks#exit-code-output) for details on exit codes and [Hook input](/en/hooks#pretooluse-input) for the complete input schema.
 
 ## Next steps
 

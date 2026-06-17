@@ -1,13 +1,15 @@
 ---
-description: "Initialize a new learning resource project through interactive interview. Creates plan.md, task.md, persona.md, project-context.md, interview-data.md, and CLAUDE.md. Supports multiple domains: technology, history, science, arts, and general."
-allowed-tools: Read, Write, Edit, Bash, Glob, WebSearch, WebFetch, Task, AskUserQuestion
-argument-hint: "[--glm]"
+description: "Initialize a new learning resource project through interactive interview"
+allowed-tools: Read, Write, Edit, Glob, WebSearch, WebFetch, Task, AskUserQuestion
+argument-hint: ""
 model: opus
 ---
 
 # Initialize Self-Learning Resource Project
 
 Interactive interview-based project initialization for learning resources.
+
+**Output files**: persona.md, interview-data.md, plan.md, task.md, project-context.md, CLAUDE.md
 
 ---
 
@@ -17,7 +19,7 @@ Interactive interview-based project initialization for learning resources.
 CRITICAL: The interviewer agent communicates DIRECTLY with the user.
 
 - Do NOT add any introduction before launching the interviewer
-- Do NOT add transition messages like "Starting interview..." or "Let me start the interview"
+- Do NOT add transition messages like "Starting interview..." or "Let me begin..."
 - Do NOT summarize or rephrase the agent's output after it completes
 - Let the conversation flow naturally as if the interviewer IS the main assistant
 - The user should feel they are talking to ONE entity, not being handed off to another
@@ -30,8 +32,7 @@ When the interview completes, silently proceed to Phase 2 without announcing com
 ```
 Task(
   subagent_type="dokhak:project-interviewer",
-  model="opus",
-  description="Conduct project initialization interview",
+  description="Conduct project interview",
   prompt="""
     <role>
     You are a learning experience designer having a direct conversation with the learner.
@@ -73,18 +74,6 @@ Store the returned `project_metadata` XML for subsequent phases.
 
 ---
 
-## Argument Parsing
-
-**CRITICAL**: Parse the `--glm` flag from $ARGUMENTS:
-
-```
-use_glm_tools = $ARGUMENTS.includes("--glm") ? "true" : "false"
-```
-
-The `use_glm_tools` value MUST be the string `"true"` or `"false"` for XML.
-
----
-
 ## Phase 2-6: Background Processing
 
 <background_processing_rules>
@@ -94,7 +83,16 @@ After the interview completes, execute Phases 2-6 silently in sequence.
 - Do NOT show progress updates between phases
 - Process all phases quietly, then show only the final Completion Report
 - If any phase fails, note it in the report rather than interrupting with error messages
-  </background_processing_rules>
+
+CRITICAL: Phases must execute SEQUENTIALLY due to dependencies:
+- Phase 3 depends on Phase 2 results (.research/init/)
+- Phase 4 depends on Phase 3 results (plan.md)
+- Phase 5-6 depend on Phase 4 results
+
+Do NOT run phases in parallel. Wait for each phase to complete before starting the next.
+</background_processing_rules>
+
+---
 
 ### Phase 2: Research Collection
 
@@ -111,7 +109,6 @@ Task(
       <topic>{topic}</topic>
       <domain>{domain}</domain>
       <audience_level>{audience}</audience_level>
-      <use_glm_tools>{use_glm_tools}</use_glm_tools>
     </research_request>
 
     Conduct research appropriate for this domain using the domain-profiles skill.
@@ -121,14 +118,7 @@ Task(
 )
 ```
 
-Agent returns confirmation like:
-```
-research_saved:.research/init/
-sources:12
-concepts:8
-```
-
-**IMPORTANT**: Do NOT store the research content. The confirmation message is sufficient.
+**Wait for Phase 2 to complete.** Verify `.research/init/` contains research data before proceeding.
 
 ---
 
@@ -137,10 +127,11 @@ concepts:8
 Use the structure-designer subagent to create plan.md.
 Pass file PATHS only - structure-designer reads files directly.
 
+Execute only after Phase 2 completes successfully.
+
 ```
 Task(
   subagent_type="dokhak:structure-designer",
-  model="opus",
   description="Create plan.md structure",
   prompt="""
     <structure_request>
@@ -163,7 +154,7 @@ Task(
 )
 ```
 
-**IMPORTANT**: Do NOT Read the research files in this command. The structure-designer reads them directly in its isolated context.
+**Wait for Phase 3 to complete.** Verify `plan.md` exists before proceeding.
 
 ---
 
@@ -171,10 +162,11 @@ Task(
 
 Use the structure-designer subagent to create task.md with session distribution.
 
+Execute only after Phase 3 completes successfully.
+
 ```
 Task(
   subagent_type="dokhak:structure-designer",
-  model="opus",
   description="Create task.md with sessions",
   prompt="""
     Read plan.md and create task.md using the project-scaffolder skill as reference.
@@ -183,30 +175,31 @@ Task(
 )
 ```
 
+**Wait for Phase 4 to complete.** Verify `task.md` exists before proceeding.
+
 ---
 
 ### Phase 5: Create project-context.md
 
+Execute only after Phase 4 completes successfully.
+
 Create project-context.md with research results and domain-specific information.
 
-```
-Using project-context-template.md from project-scaffolder skill as reference,
-
-Create project-context.md with:
+Using project-context-template.md from project-scaffolder skill as reference, create project-context.md with:
 - Research results from Phase 2 (authoritative sources)
-- Domain-specific context from {domain_specific} XML
+- Domain-specific context
 - Environment-specific notes (if technology)
 - Version information (if applicable)
 - Learning path recommendations
 - Prerequisites summary
-```
 
 ---
 
 ### Phase 6: Create CLAUDE.md
 
-Create CLAUDE.md using claude-md-template.md from project-scaffolder skill as reference:
+Execute only after Phase 5 completes successfully.
 
+Create CLAUDE.md using claude-md-template.md from project-scaffolder skill as reference:
 - Project overview (topic, domain, audience)
 - Key skills and agents references (/write, researcher, writer)
 - Document structure guidelines
@@ -246,7 +239,7 @@ Next Steps:
 
 ---
 
-## Variable Mapping
+## Variable Reference
 
 Interview collects and maps the following variables:
 
@@ -263,9 +256,11 @@ Interview collects and maps the following variables:
 
 ---
 
-## Error Recovery
+## Error Handling
 
-- If research yields limited results: Proceed with available information, note gaps
-- If page allocation doesn't sum correctly: Adjust proportionally
-- If any file creation fails: Report specific error, continue with others
-- If persona.md already exists: Ask user whether to overwrite or merge
+| Error                           | Action                                         |
+| ------------------------------- | ---------------------------------------------- |
+| Research yields limited results | Proceed with available information, note gaps  |
+| Page allocation doesn't sum     | Adjust proportionally                          |
+| File creation fails             | Report specific error, continue with others    |
+| persona.md already exists       | Ask user whether to overwrite or merge         |
